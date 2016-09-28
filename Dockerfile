@@ -1,4 +1,4 @@
-FROM node:5
+FROM node:6.7
 
 # Install gem sass for  grunt-contrib-sass
 RUN apt-get update -qq && apt-get install -y build-essential
