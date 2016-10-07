@@ -7,9 +7,7 @@ var path = require('path'),
   errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
   mongoose = require('mongoose'),
   passport = require('passport'),
-  winston = require('winston'),
-  User = mongoose.model('User'),
-  Role = mongoose.model('Role')  ;
+  User = mongoose.model('User');
 
 // URLs for which user can't be redirected on signin
 var noReturnUrls = [
@@ -29,50 +27,38 @@ exports.signup = function (req, res) {
   user.provider = 'local';
   user.displayName = user.firstName + ' ' + user.lastName;
 
-  //Set default Role
+  // Then save the user
+  user.save(function (err) {
+    if (err) {
+      return res.status(400).send({
+        message: errorHandler.getErrorMessage(err)
+      });
+    } else {
+      // Remove sensitive data before login
+      user.password = undefined;
+      user.salt = undefined;
 
-    Role.findOne({name:'user'}).exec( function(err,data){
-      if(err){
-        return res.status(400).send({
-          message: errorHandler.getErrorMessage(err)
-        });
-      }
-      user.roles.push(data);
-      user.save(function (err) {
+      req.login(user, function (err) {
         if (err) {
-          return res.status(400).send({
-            message: errorHandler.getErrorMessage(err)
-          });
+          res.status(400).send(err);
         } else {
-          // Remove sensitive data before login
-          user.password = undefined;
-          user.salt = undefined;
-
-          req.login(user, function (err) {
-            if (err) {
-              res.status(400).send(err);
-            } else {
-              res.json(user);
-            }
-          });
+          res.json(user);
         }
       });
-
-    });
-
-
-
-
-  // Then save the user
-
+    }
+  });
 };
 
 /**
  * Signin after passport authentication
  */
 exports.signin = function (req, res, next) {
-  passport.authenticate('local', function (err, user, info) {
+
+  console.log('passport.authenticate --> ldapauth')
+
+  passport.authenticate('ldapauth', { session: false }, function (err, user, info) {
     if (err || !user) {
+      console.log('passport.authenticate.ldapauth --> ERROR:', err);
       res.status(400).send(info);
     } else {
       // Remove sensitive data before login
@@ -88,6 +74,34 @@ exports.signin = function (req, res, next) {
       });
     }
   })(req, res, next);
+
+  // passport.authenticate('local', function (err, user, info) {
+  //   if (err || !user) {
+  //     res.status(400).send(info);
+  //   } else {
+  //     // Remove sensitive data before login
+  //     user.password = undefined;
+  //     user.salt = undefined;
+
+  //     req.login(user, function (err) {
+  //       if (err) {
+  //         res.status(400).send(err);
+  //       } else {
+
+  //         User.findOne({ '_id': user._id }, '-salt -password')
+  //           .populate('roles', 'name description permissions')
+  //           .populate('groups', 'name description permissions landscapes')
+  //           .exec(function (err, userWithRoles) {
+  //             if (err) {
+  //               res.status(400).send(err);
+  //             } else {
+  //               res.json(userWithRoles);
+  //             }
+  //           });
+  //       }
+  //     });
+  //   }
+  // })(req, res, next);
 };
 
 /**
@@ -103,11 +117,6 @@ exports.signout = function (req, res) {
  */
 exports.oauthCall = function (strategy, scope) {
   return function (req, res, next) {
-    // Set redirection path on session.
-    // Do not redirect to a signin or signup page
-    if (noReturnUrls.indexOf(req.query.redirect_to) === -1) {
-      req.session.redirect_to = req.query.redirect_to;
-    }
     // Authenticate
     passport.authenticate(strategy, scope)(req, res, next);
   };
@@ -118,11 +127,9 @@ exports.oauthCall = function (strategy, scope) {
  */
 exports.oauthCallback = function (strategy) {
   return function (req, res, next) {
-    // Pop redirect URL from session
-    var sessionRedirectURL = req.session.redirect_to;
-    delete req.session.redirect_to;
 
-    passport.authenticate(strategy, function (err, user, redirectURL) {
+    // info.redirect_to contains inteded redirect path
+    passport.authenticate(strategy, function (err, user, info) {
       if (err) {
         return res.redirect('/authentication/signin?err=' + encodeURIComponent(errorHandler.getErrorMessage(err)));
       }
@@ -134,7 +141,7 @@ exports.oauthCallback = function (strategy) {
           return res.redirect('/authentication/signin');
         }
 
-        return res.redirect(redirectURL || sessionRedirectURL || '/');
+        return res.redirect(info.redirect_to || '/');
       });
     })(req, res, next);
   };
@@ -163,6 +170,15 @@ exports.saveOAuthUserProfile = function (req, providerUserProfile, done) {
       $or: [mainProviderSearchQuery, additionalProviderSearchQuery]
     };
 
+    // Setup info object
+    var info = {};
+
+    // Set redirection path on session.
+    // Do not redirect to a signin or signup page
+    if (noReturnUrls.indexOf(req.query.redirect_to) === -1) {
+      info.redirect_to = req.query.redirect_to;
+    }
+
     User.findOne(searchQuery, function (err, user) {
       if (err) {
         return done(err);
@@ -176,19 +192,23 @@ exports.saveOAuthUserProfile = function (req, providerUserProfile, done) {
               lastName: providerUserProfile.lastName,
               username: availableUsername,
               displayName: providerUserProfile.displayName,
-              email: providerUserProfile.email,
               profileImageURL: providerUserProfile.profileImageURL,
               provider: providerUserProfile.provider,
               providerData: providerUserProfile.providerData
             });
 
+            // Email intentionally added later to allow defaults (sparse settings) to be applid.
+            // Handles case where no email is supplied.
+            // See comment: https://github.com/meanjs/mean/pull/1495#issuecomment-246090193
+            user.email = providerUserProfile.email;
+
             // And save the user
             user.save(function (err) {
-              return done(err, user);
+              return done(err, user, info);
             });
           });
         } else {
-          return done(err, user);
+          return done(err, user, info);
         }
       }
     });

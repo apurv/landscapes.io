@@ -18,9 +18,9 @@ exports.invokeRolesPolicies = function () {
       resources: '/api/users',
       permissions: '*'
     }, {
-      resources: '/api/users/:userId',
-      permissions: '*'
-    }]
+        resources: '/api/users/:userId',
+        permissions: '*'
+      }]
   }]);
 };
 
@@ -28,8 +28,12 @@ exports.invokeRolesPolicies = function () {
  * Check If Admin Policy Allows
  */
 exports.isAllowed = function (req, res, next) {
-  var roles = (req.user) ? req.user.roles : ['guest'];
+  // var rolesArray = (req.user) ? req.user.roles : [{ name: 'guest' }];
+  // var roles = req.user.roles.map( (r)=>{return r.name;} );
+  // console.log('roles:', roles)
 
+  var roles = (req.user) ? req.user.roles : ['user'];
+  
   // Check for user roles
   acl.areAnyRolesAllowed(roles, req.route.path, req.method.toLowerCase(), function (err, isAllowed) {
     if (err) {

@@ -1,4 +1,3 @@
-/*jshint -W069 */
 (function () {
   'use strict';
 
@@ -6,13 +5,16 @@
     .module('landscapes')
     .controller('LandscapesController', LandscapesController);
 
-  LandscapesController.$inject = ['$scope', '$state', 'Upload','landscapesResolve', 'ValidationService',  'Authentication'];
+  LandscapesController.$inject = ['$scope', '$state', 'Upload', 'landscapesResolve', 'ValidationService', 'Authentication'];
 
   function LandscapesController($scope, $state, Upload, landscape, ValidationService, Authentication) {
+
+    console.log('LandscapesController')
+
     var vm = this;
     vm.landscape = landscape;
     vm.landscape.version = '1.0';
-    vm.landscape.imageUri ='modules/landscapes/client/img/aws.png';
+    vm.landscape.imageUri = 'modules/landscapes/client/img/aws.png';
     vm.authentication = Authentication;
     vm.error = null;
     vm.form = {};
@@ -23,14 +25,14 @@
 
     vm.imgSrc = vm.landscape.imageUri;
 
-    vm.toggleUploadNewImage = function() {
+    vm.toggleUploadNewImage = function () {
       vm.showUploadNewImage = !vm.showUploadNewImage;
       vm.imageError = false;
     };
 
-    vm.resetSelectCloudFormationTemplatePanel = function (form){
+    vm.resetSelectCloudFormationTemplatePanel = function (form) {
       vm.form = form;
-      if(vm.landscape.description === JSON.parse(vm.landscape.cloudFormationTemplate).Description){
+      if (vm.landscape.description === JSON.parse(vm.landscape.cloudFormationTemplate).Description) {
         vm.landscape.description = undefined;
       }
       vm.landscape.cloudFormationTemplate = undefined;
@@ -39,68 +41,69 @@
       vm.form['template'].$setValidity('json', true);
     };
 
-
-
-    vm.onImageSelect = function(files) {
+    vm.onImageSelect = function (files) {
       vm.imageError = false;
 
       for (var i = 0; i < files.length; i++) {
         var file = files[i];
+
+        console.log(file)
+
         vm.upload = Upload.upload({
-              url: '/api/upload/image',
-              withCredentials: true,
-              file: file
-            })
-            .success(function (data, status, headers, config) {
-             // data = JSON.parse(data);
-              vm.landscape.imageUri = data.imageUri;
-              vm.imageSelected = true;
-              vm.showUploadNewImage = false;
-              vm.imgSrc = data.imageUri;
-              vm.form.$dirty = true;
-            })
-            .error(function(err, status, headers){
-                  if(status === 400) {
-                    vm.imageError = err.msg || err;
-                    console.log(err);
-                  } else if(status === 500) {
-                    vm.imageError = '500 (Internal Server Error)';
-                    console.log(err);
-                  }
-                }
-            );
+          url: '/api/upload/image',
+          withCredentials: true,
+          file: file
+        })
+          .success(function (data, status, headers, config) {
+            // data = JSON.parse(data);
+            vm.landscape.imageUri = data.imageUri;
+            vm.imageSelected = true;
+            vm.showUploadNewImage = false;
+            vm.imgSrc = data.imageUri;
+            vm.form.$dirty = true;
+          })
+          .error(function (err, status, headers) {
+            if (status === 400) {
+              vm.imageError = err.msg || err;
+              console.log(err);
+            } else if (status === 500) {
+              vm.imageError = '500 (Internal Server Error)';
+              console.log(err);
+            }
+          }
+          );
       }
     };
 
-    vm.onFileSelect = function(files, form) {
+    vm.onFileSelect = function (files, form) {
       vm.form = form;
       for (var i = 0; i < files.length; i++) {
         var file = files[i];
         vm.upload = Upload.upload({
-              url: '/api/upload/template',
-              method: 'POST',
-              withCredentials: true,
-              //data: {myObj: $scope.myModelObj},
-              file: file
-            })
-            .success(function (data, status, headers, config) {
-              var templateDescription = data.Description;
-              vm.landscape.cloudFormationTemplate = JSON.stringify(data,null, 2);
-              vm.templateSelected = true;
-              vm.form['template'].$setValidity('required', true);
-              vm.form['template'].$setValidity('json', true);
-              vm.form.template.$valid = true;
-              vm.form.template.$invalid = false;
+          url: '/api/upload/template',
+          method: 'POST',
+          withCredentials: true,
+          //data: {myObj: $scope.myModelObj},
+          file: file
+        })
+          .success(function (data, status, headers, config) {
+            var templateDescription = data.Description;
+            vm.landscape.cloudFormationTemplate = JSON.stringify(data, null, 2);
+            vm.templateSelected = true;
+            vm.form['template'].$setValidity('required', true);
+            vm.form['template'].$setValidity('json', true);
+            vm.form.template.$valid = true;
+            vm.form.template.$invalid = false;
 
 
 
-              console.log(templateDescription);
-              console.log(vm.landscape.description);
-              vm.landscape.description = vm.landscape.description || templateDescription;
-            })
-            .error(function(err){
-              console.log(err);
-            });
+            console.log(templateDescription);
+            console.log(vm.landscape.description);
+            vm.landscape.description = vm.landscape.description || templateDescription;
+          })
+          .error(function (err) {
+            console.log(err);
+          });
       }
     };
 
@@ -109,7 +112,7 @@
     function save(form) {
       vm.form = form;
       vm.submitted = true;
-      if(vm.landscape.cloudFormationTemplate === undefined || vm.templateSelected === false) {
+      if (vm.landscape.cloudFormationTemplate === undefined || vm.templateSelected === false) {
         vm.form.$valid = false;
       } else {
         var obj = ValidationService.tryParseJSON(vm.landscape.cloudFormationTemplate);
@@ -121,7 +124,7 @@
       }
 
 
-      if ( !vm.form.$valid) {
+      if (!vm.form.$valid) {
         $scope.$broadcast('show-errors-check-validity', 'vm.form.landscapesForm');
         return false;
       }

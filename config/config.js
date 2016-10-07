@@ -33,7 +33,9 @@ var getGlobbedPaths = function (globPatterns, excludes) {
         files = files.map(function (file) {
           if (_.isArray(excludes)) {
             for (var i in excludes) {
-              file = file.replace(excludes[i], '');
+              if (excludes.hasOwnProperty(i)) {
+                file = file.replace(excludes[i], '');
+              }
             }
           } else {
             file = file.replace(excludes, '');
@@ -64,6 +66,14 @@ var validateEnvironmentVariable = function () {
   }
   // Reset console color
   console.log(chalk.white(''));
+};
+
+/** Validate config.domain is set
+ */
+var validateDomainIsSet = function (config) {
+  if (!config.app.domain) {
+    console.log(chalk.red('+ Important warning: config.domain is empty. It should be set to the fully qualified domain of the app.'));
+  }
 };
 
 /**
@@ -201,6 +211,9 @@ var initGlobalConfig = function () {
 
   // Validate session secret
   validateSessionSecret(config);
+
+  // Print a warning if config.domain is not set
+  validateDomainIsSet(config);
 
   // Expose configuration utilities
   config.utils = {

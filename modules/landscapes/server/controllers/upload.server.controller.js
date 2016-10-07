@@ -1,17 +1,3 @@
-// Copyright 2014 OpenWhere, Inc.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 'use strict';
 
 var winston = require('winston'),
@@ -45,7 +31,6 @@ function tryParseJSON(jsonString) {
     winston.info(' ---> validating JSON');
     try {
         var o = JSON.parse(jsonString);
-
         if (o && typeof o === "object" && o !== null) {
             return o;
         }
@@ -57,12 +42,12 @@ function tryParseJSON(jsonString) {
 
 
 exports.postCloudFormationTemplate = function (req, res) {
-    winston.info('Uploading posting cloudFormationTemplate');
+    winston.info('Uploading posted cloudFormationTemplate');
 
     var user = req.user || {name: 'anonymous'};
 
-    if(!req.file){
-        return res.send(500, 'No Files Uploaded');
+    if(!req.file) {
+        return res.status(500).send('No Files Uploaded')
     }
     var f = req.file;
 
@@ -92,15 +77,15 @@ exports.postCloudFormationTemplate = function (req, res) {
 
 
 exports.postImage = function (req, res) {
-    winston.info('Uploading Image image');
+    winston.info('Uploading image');
 
     //Move this to Policy
-    //var user = req.user.userInfo;
-    //if(user === undefined) {
-    //    return res.send(401);
-    //}
+    var user = req.user;
+    if(user === undefined) {
+       return res.sendStatus(401);
+    }
     if(!req.file){
-        return res.send(500, 'No Files Uploaded');
+        return res.status(500).send('No Files Uploaded');
     }
     var f = req.file;
 

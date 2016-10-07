@@ -3,7 +3,7 @@
     <div class="col-md-3">
         <div class="pull-right">
             <button type="button" class="btn btn-default"
-                    ng-show="vm.hasPermission(vm.currentUser, 'C')"
+                    ng-show="vm.currentUser.roles.indexOf('admin')!==-1"
                     ui-sref="landscapes.create">
                 <span class="glyphicon glyphicon-plus-sign"></span> New
             </button>
@@ -16,16 +16,17 @@
 
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title"><strong>{{landscape.name}}</strong></h3>
+                    <h3 class="panel-title"><strong>{{landscape.name}}</strong></h3>                    
                 </div>
                 <div class="panel-body">
+                    
 
                     <div class="media">
                         <!--hide hyperlink-->
-                        <a class="pull-left" href="{{ '/landscapes/'}}" ng-show="!vm.hasPermission(vm.currentUser, 'R', landscape._id)">
+                        <a class="pull-left" href="{{ '/landscapes/'}}" ng-show="!(vm.currentUser.roles.indexOf('admin')!==-1)">
                           <img class="media-object" style="max-height: 128px; max-width: 192px" ng-src="{{landscape.imageUri}}" />
                         </a>
-                        <a class="pull-left" href="{{ '/landscapes/'+ landscape._id }}" ng-show="vm.hasPermission(vm.currentUser, 'R', landscape._id)">
+                        <a class="pull-left" href="{{ '/landscapes/'+ landscape._id }}" ng-show="vm.currentUser.roles.indexOf('admin')!==-1">
                          <img class="media-object" style="max-height: 128px; max-width: 192px"
                               ng-src="{{landscape.imageUri}}" />
                         </a>
@@ -36,12 +37,12 @@
                     <div style="position: relative">
                         <div style="position: absolute; right: 0px; bottom: 0px;" class="pull-right">
                             <button type="button" class="btn btn-default"
-                                    ng-show="vm.hasPermission(vm.currentUser, 'R', landscape._id)"
+                                    ng-show="vm.currentUser.roles.indexOf('admin')!==-1"
                                     ui-sref="landscapes.view({ landscapeId: landscape._id })">
                                 <span class="glyphicon glyphicon-share-alt"></span> View
                             </button>
                             <button type="button" class="btn btn-default"
-                                    ng-show="vm.hasPermission(vm.currentUser, 'X', landscape._id)"
+                                    ng-show="vm.currentUser.roles.indexOf('admin')!==-1"
                                     ui-sref="landscapes.createdeploy({ landscapeId: landscape._id })">
                                 <span class="glyphicon glyphicon-cloud-upload"></span> Deploy
                             </button>

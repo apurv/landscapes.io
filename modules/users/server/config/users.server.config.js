@@ -20,19 +20,21 @@ module.exports = function (app, db) {
   // Deserialize sessions
   passport.deserializeUser(function (id, done) {
 
-    User.findOne({_id: id},'-salt -password')
-        .populate('roles','name description permissions')
-        .populate('groups','name description permissions landscapes')
-        .exec(function (err, user) {
-          done(err, user);
-        });
+    // User.findOne({ _id: id }, '-salt -password')
+    //   .populate('roles', 'name description permissions')
+    //   .populate('groups', 'name description permissions landscapes')
+    //   .exec(function (err, user) {
 
+    //   //  user.roles = user.roles.map((r) => { return r.name });
+    //    console.log('passport.deserializeUser --> ', user)
+    //    done(err, user);
+    //   });
 
-   /* User.findOne({
+    User.findOne({
       _id: id
     }, '-salt -password', function (err, user) {
       done(err, user);
-    });*/
+    });
   });
 
   // Initialize strategies

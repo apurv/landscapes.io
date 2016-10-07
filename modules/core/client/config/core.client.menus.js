@@ -2,44 +2,42 @@
   'use strict';
 
   angular
-  .module('core')
-  .run(MenuConfig);
+    .module('core')
+    .run(menuConfig);
 
-  MenuConfig.$inject = ['Menus'];
+  menuConfig.$inject = ['menuService'];
 
-  function MenuConfig(Menus) {
-
-    Menus.addMenu('account', {
-      roles: ['user']
+  function menuConfig(menuService) {
+    menuService.addMenu('account', {
+      roles: ['*']
     });
 
-    Menus.addMenuItem('account', {
+    menuService.addMenuItem('account', {
       title: '',
       state: 'settings',
       type: 'dropdown',
-      roles: ['user']
+      roles: ['*']
     });
 
-    Menus.addSubMenuItem('account', 'settings', {
+    menuService.addSubMenuItem('account', 'settings', {
       title: 'Edit Profile',
       state: 'settings.profile'
     });
 
-    Menus.addSubMenuItem('account', 'settings', {
+    menuService.addSubMenuItem('account', 'settings', {
       title: 'Edit Profile Picture',
       state: 'settings.picture'
     });
 
-    Menus.addSubMenuItem('account', 'settings', {
-      title: 'Change Password',
-      state: 'settings.password'
-    });
+    // SHOW IF --> user.provider === 'local'
+    // menuService.addSubMenuItem('account', 'settings', {
+    //   title: 'Change Password',
+    //   state: 'settings.password',
+    // });
 
-    Menus.addSubMenuItem('account', 'settings', {
-      title: 'Manage Social Accounts',
-      state: 'settings.accounts'
-    });
-
+    // menuService.addSubMenuItem('account', 'settings', {
+    //   title: 'Manage Social Accounts',
+    //   state: 'settings.accounts'
+    // });
   }
-
-})();
+}());

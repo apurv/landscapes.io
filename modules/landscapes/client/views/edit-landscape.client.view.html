@@ -5,16 +5,13 @@
       <h2 class="pull-left col-md-8"><span class="glyphicon glyphicon-edit"></span> Edit Landscape</h2>
       <div class="col-md-4">
         <div class="pull-right">
-          <button type="button" class="btn btn-primary"
-                  ui-sref="landscapes.view({ landscapeId: vm.landscape._id })">
+          <button type="button" class="btn btn-primary" ui-sref="landscapes.view({ landscapeId: vm.landscape._id })">
             <span class="glyphicon glyphicon-ban-circle"></span> Cancel
           </button>
-          <button class="btn btn-danger" type="button"
-                  ng-show="vm.hasPermission(vm.currentUser, 'D', vm.landscape._id)"
-                  ng-click="vm.deleteLandscape(vm.landscape.name)">
+          <button class="btn btn-danger" type="button" ng-show="vm.hasPermission(vm.currentUser, 'D', vm.landscape._id)" ng-click="vm.deleteLandscape(vm.landscape.name)">
             <span class="glyphicon glyphicon-remove"></span> Delete
           </button>
-          <button class="btn" type="submit" ng-class="{'btn-success': vm.form.$dirty }" ng-disabled=!vm.form.$dirty >
+          <button class="btn" type="submit" ng-class="{'btn-success': vm.form.$dirty }" ng-disabled=!vm.form.$dirty>
             <span class="glyphicon glyphicon-save"></span> Save
           </button>
         </div>
@@ -47,9 +44,9 @@
                 <div class="col-sm-9">
                   <div class="input-group">
                     <input type="text" id="landscapeVersion" name="version" class="form-control" ng-model="vm.landscape.version">
-                                        <span class="input-group-btn">
+                    <span class="input-group-btn">
                                             <button class="btn btn-default" type="button" ng-click="vm.incrementVersion()"><span class="glyphicon glyphicon-plus"></span></button>
-                                        </span>
+                    </span>
                   </div>
                 </div>
 
@@ -103,7 +100,7 @@
             </div>
             <div class="media" ng-show="!vm.showUploadNewImage">
               <div class="pull-right" style="min-height: 128px; min-width: 128px; margin-left: 25px">
-                <img ng-src={{vm.imgSrc}} >
+                <img ng-src={{vm.imgSrc}}>
               </div>
               <div class="media-body">
                 <div class="form-group" ng-class="{ 'has-success': vm.form.imageUri.$valid && vm.submitted, 'has-error': vm.form.imageUri.$invalid && vm.submitted }">
@@ -146,17 +143,10 @@
                 drop file here
               </div>
               <div class="form-group" ng-class="{ 'has-success': vm.templateSelected && vm.submitted, 'has-error': !vm.templateSelected && vm.submitted }">
-                <input type="file" ngf-select="vm.onFileSelect($files, vm.form)" >
+                <input type="file" ngf-select="vm.onFileSelect($files, vm.form)">
               </div>
             </div>
-               <textarea class="form-control awsTemplate"
-                                  ng-model="vm.landscape.cloudFormationTemplate"
-                                  ng-show="!vm.showUploadNewTemplate"
-                                  ng-file-drop="vm.onFileSelect($files, vm.form)"
-                                  ng-file-drag-over-class="dragover"
-                                  msd-elastic
-                                  required>
-                        </textarea>
+            <textarea class="form-control awsTemplate" ng-model="vm.landscape.cloudFormationTemplate" msd-elastic required></textarea>
 
 
 
@@ -171,12 +161,10 @@
           <button type="button" class="btn btn-primary" ng-click="go('/landscapes/' + landscape._id)">
             <span class="glyphicon glyphicon-ban-circle"></span> Cancel
           </button>
-          <button class="btn btn-danger" type="button"
-                  ng-show="vm.hasPermission(vm.currentUser, 'D', vm.landscape._id)"
-                  ng-click="vm.deleteLandscape()">
+          <button class="btn btn-danger" type="button" ng-show="vm.hasPermission(vm.currentUser, 'D', vm.landscape._id)" ng-click="vm.deleteLandscape()">
             <span class="glyphicon glyphicon-remove"></span> Delete
           </button>
-          <button class="btn" type="submit" ng-class="{'btn-success': vm.form.$dirty }" ng-disabled=!vm.form.$dirty >
+          <button class="btn" type="submit" ng-class="{'btn-success': vm.form.$dirty }" ng-disabled=!vm.form.$dirty>
             <span class="glyphicon glyphicon-save"></span> Save
           </button>
         </div>

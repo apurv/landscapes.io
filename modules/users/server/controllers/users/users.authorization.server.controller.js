@@ -17,16 +17,17 @@ exports.userByID = function (req, res, next, id) {
     });
   }
 
-  User.findOne({
-    _id: id
-  }).exec(function (err, user) {
-    if (err) {
-      return next(err);
-    } else if (!user) {
-      return next(new Error('Failed to load User ' + id));
-    }
+  User.findOne({ _id: id })
+    // .populate('roles', 'name description permissions')
+    // .populate('groups', 'name description permissions landscapes')
+    .exec(function (err, user) {
+      if (err) {
+        return next(err);
+      } else if (!user) {
+        return next(new Error('Failed to load User ' + id));
+      }
 
-    req.profile = user;
-    next();
-  });
+      req.profile = user;
+      next();
+    });
 };

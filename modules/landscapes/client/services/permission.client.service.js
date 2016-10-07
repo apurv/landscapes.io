@@ -5,7 +5,7 @@
         .module('landscapes.services')
         .factory('PermissionService', PermissionService);
 
-    PermissionService.$inject = ['lodash'];
+    PermissionService.$inject = [];
 
     function PermissionService() {
 

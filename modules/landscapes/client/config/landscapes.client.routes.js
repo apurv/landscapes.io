@@ -5,95 +5,84 @@
     .module('landscapes.routes')
     .config(routeConfig);
 
-  routeConfig.$inject = ['$stateProvider','$urlMatcherFactoryProvider','$urlRouterProvider'];
+  routeConfig.$inject = ['$stateProvider'];
 
-  function routeConfig($stateProvider,$urlMatcherFactoryProvider,$urlRouterProvider) {
+  function routeConfig($stateProvider) {
+    $stateProvider
+      .state('landscapes', {
+        abstract: true,
+        url: '/landscapes',
+        template: '<ui-view/>'
+      })
+      .state('landscapes.admin', {
+        url: '/admin',
+        templateUrl: 'modules/landscapes/client/views/admin-main.client.view.html',
+        controller: 'AdminController',
+        controllerAs: 'vm'
+      })
+      .state('landscapes.list', {
+      url: '',
+      templateUrl: 'modules/landscapes/client/views/list-landscapes.client.view.html',
+      controller: 'LandscapesListController',
+      controllerAs: 'vm',
+      data: {
+        pageTitle: 'Landscapes List'
+      }
+    })
+      .state('landscapes.view', {
+        url: '/:landscapeId',
+        templateUrl: 'modules/landscapes/client/views/view-landscape.client.view.html',
+        controller: 'LandscapesViewController',
+        controllerAs: 'vm',
+        resolve: {
+          landscapesResolve: getLandscape
+        },
+        data: {
+          pageTitle: 'Landscape {{ landscapesResolve.title }}'
+        }
+      })
 
-     //$urlMatcherFactoryProvider.strictMode(false);
+      .state('landscapes.create', {
+        url: '/create',
+        templateUrl: 'modules/landscapes/client/views/form-landscape.client.view.html',
+        controller: 'LandscapesController',
+        controllerAs: 'vm',
+        resolve: {
+          landscapesResolve: newLandscape
+        }
+      })
 
-      $urlRouterProvider.rule(function ($injector, $location) {
-          var path = $location.url();
+      .state('landscapes.edit', {
+        url: '/:landscapeId/edit',
+        templateUrl: 'modules/landscapes/client/views/edit-landscape.client.view.html',
+        controller: 'LandscapeEditController',
+        controllerAs: 'vm',
+        resolve: {
+          landscapesResolve: getLandscape
+        }
+      })
+      .state('landscapes.createdeploy', {
+        url: '/deploy/:landscapeId',
+        templateUrl: 'modules/landscapes/client/views/create-deployment.client.view.html',
+        controller: 'CreateDeploymentController',
+        controllerAs: 'vm',
+        resolve: {
+          landscapesResolve: getLandscape
+        }
+      })
+      .state('landscapes.settings', {
+        url: '/settings',
+        templateUrl: 'modules/landscapes/client/views/settings.client.view.html',
+        controller: 'SettingsController',
+        controllerAs: 'vm'
 
-          // check to see if the path already has a slash where it should be
-          if (path[path.length - 1] === '/' || path.indexOf('/?') > -1) {
-              return;
-          }
-
-          if (path.indexOf('?') > -1) {
-              return path.replace('?', '/?');
-          }
-
-          return path + '/';
-      });
-
-
-      $stateProvider
-          .state('landscapes', {
-            abstract: true,
-          //  url: '/landscapes/',
-            template: '<ui-view/>'
-          })
-          .state('landscapes.list', {
-            url: '/landscapes/',
-            templateUrl: 'modules/landscapes/client/views/list-landscapes.client.view.html',
-            controller: 'LandscapesListController',
-            controllerAs: 'vm'
-          })
-          .state('landscapes.create', {
-            url: '/landscapes/create/',
-            templateUrl: 'modules/landscapes/client/views/form-landscape.client.view.html',
-            controller: 'LandscapesController',
-            controllerAs: 'vm',
-            resolve: {
-              landscapesResolve: newLandscape
-            }
-          })
-          .state('landscapes.view', {
-            url: '/landscapes/:landscapeId/',
-            templateUrl: 'modules/landscapes/client/views/view-landscape.client.view.html',
-            controller: 'LandscapesViewController',
-            controllerAs: 'vm',
-            resolve: {
-              landscapesResolve: getLandscape
-            }
-          })
-          .state('landscapes.edit', {
-              url: '/landscapes/:landscapeId/edit/',
-              templateUrl: 'modules/landscapes/client/views/edit-landscape.client.view.html',
-              controller: 'LandscapeEditController',
-              controllerAs: 'vm',
-              resolve: {
-                  landscapesResolve: getLandscape
-              }
-          })
-          .state('landscapes.createdeploy', {
-            url: '/landscapes/deploy/:landscapeId/',
-            templateUrl: 'modules/landscapes/client/views/create-deployment.client.view.html',
-            controller: 'CreateDeploymentController',
-            controllerAs: 'vm',
-            resolve: {
-              landscapesResolve: getLandscape
-            }
-          }).state('landscapes.settings', {
-            url: '/landscapes/settings/',
-            templateUrl: 'modules/landscapes/client/views/settings.client.view.html',
-            controller: 'SettingsController',
-            controllerAs: 'vm'
-
-          }).state('landscapes.admin', {
-            url: '/landscapesadmin/',
-            templateUrl: 'modules/landscapes/client/views/admin-main.client.view.html',
-            controller: 'AdminController',
-            controllerAs: 'vm'
-          }) ;
-
+      })
   }
-
 
   getLandscape.$inject = ['$stateParams', 'LandscapesService'];
 
   function getLandscape($stateParams, LandscapeService) {
-          return LandscapeService.get({landscapeId: $stateParams.landscapeId}).$promise;
+    return LandscapeService.get({ landscapeId: $stateParams.landscapeId }).$promise
   }
 
   newLandscape.$inject = ['LandscapesService'];
