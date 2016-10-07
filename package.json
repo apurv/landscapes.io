@@ -1,6 +1,6 @@
 {
   "name": "landscapes.io",
-  "description": "AWS CloudFormation Management",
+  "description": "AWS CloudFormation management tool",
   "version": "0.10.0",
   "meanjs-version": "0.5.0-beta",
   "private": false,
@@ -22,16 +22,16 @@
       "email": "aheifetz@openwhere.com"
     },
     {
-      "name": "Andrew Pierce",
-      "email": "apierce@openwhere.com"
-    },
-    {
       "name": "Matthew Fincher",
-      "email": "mfincher@openwhere.com"
+      "email": "matthewfincher@gmail.com"
     },
     {
       "name": "Jaymie Price",
       "email": "jprice@blacksky.com"
+    },
+    {
+      "name": "Andrew Pierce",
+      "email": "apierce@openwhere.com"
     }
   ],
   "engines": {
