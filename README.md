@@ -43,6 +43,11 @@ ldapmodify -a -f development.ldif -x -H ldap://localhost:389 -w password -D cn=a
 ldapmodify -f development-set-roles.ldif -x -H ldap://localhost:389 -w password -D cn=admin,dc=landscapes,dc=io 
 ```
 
+**Change OpenLDAP password...**
+```
+ldappasswd -s n3wP@ssw0rd -W -D cn=admin,dc=landscapes,dc=io" -x "uid=test_admin_user,ou=people,dc=landscapes,dc=io"
+```
+
 ---
 
 The [landscapes.io wiki](https://github.com/OpenWhere/landscapes.io/wiki) is a repository for detailed documentation.
