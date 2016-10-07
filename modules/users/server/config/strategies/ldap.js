@@ -2,8 +2,9 @@
 
 var passport = require('passport'),
     LdapStrategy = require('passport-ldapauth'),
-    User = require('mongoose').model('User');
-// config = require('../config');
+    User = require('mongoose').model('User'),
+    path = require('path'),
+    config = require(path.resolve('./config/config'));
 
 var loginSuccess = function (userLdap, done) {
     User.findOne({
@@ -48,17 +49,14 @@ var loginSuccess = function (userLdap, done) {
 };
 
 module.exports = function () {
-
-    // TO DO: Map these values via UI and save to DB
     passport.use(new LdapStrategy({
         server: {
-            url: 'ldap://localhost:389',
-            bindDn: 'cn=admin,dc=landscapes,dc=io',
-            bindCredentials: 'admin',
-            searchBase: 'ou=users,dc=landscapes,dc=io',
-            searchFilter: '(uid={{username}})',
-            // searchAttributes: config.ldap.searchAttributes
-            
+            url: config.ldap.url,
+            bindDn: config.ldap.bindDn,
+            bindCredentials: config.ldap.bindCredentials,
+            searchBase: config.ldap.searchBase,
+            searchFilter: config.ldap.searchFilter,
+            // searchAttributes: config.ldap.searchAttributes            
         },
         usernameField: 'username',
         passwordField: 'password'
