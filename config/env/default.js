@@ -28,6 +28,13 @@ module.exports = {
   // sessionKey is the cookie session name
   sessionKey: 'sessionId',
   sessionCollection: 'sessions',
+  ldap:{
+    url: 'ldap://localhost:389',
+    bindDn: 'cn=admin,dc=landscapes,dc=io',
+    bindCredentials: 'password',
+    searchBase: 'ou=people,dc=landscapes,dc=io',
+    searchFilter: '(uid={{username}})',
+  },
   // Lusca config
   csrf: {
     csrf: false,
