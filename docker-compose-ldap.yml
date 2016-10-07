@@ -7,7 +7,7 @@ openldap:
     LDAP_ORGANISATION: "Landscapes"
     LDAP_DOMAIN: "landscapes.io"
     LDAP_BASE_DN: "dc=landscapes,dc=io"
-    LDAP_ADMIN_PASSWORD: "admin"
+    LDAP_ADMIN_PASSWORD: "password"
   ports:
     - "389:389"
     - "636:636"
@@ -26,4 +26,7 @@ phpldapadmin:
     - "8443:443"
 
 # https://localhost:8443
+# Login DN:
 # cn=admin,dc=landscapes,dc=io
+# Password:
+# password
