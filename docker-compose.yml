@@ -1,5 +1,9 @@
 version: '2'
 services:
+
+# landscapes
+# http://localhost:3000
+
   web:
     restart: always
     build: .
@@ -11,6 +15,7 @@ services:
     environment:
      - NODE_ENV=development
      - DB_1_PORT_27017_TCP_ADDR=db
+     - LDAP_1_PORT_389_TCP_ADDR=openldap
     depends_on:
      - db
     volumes_from:
@@ -53,6 +58,12 @@ services:
     ports:
       - "389:389"
       - "636:636"
+
+# phpLDAPadmin
+# https://localhost:8443
+# Login DN: cn=admin,dc=landscapes,dc=io
+# Password: password
+
   phpldapadmin:
     image: osixia/phpldapadmin
     container_name: phpldapadmin

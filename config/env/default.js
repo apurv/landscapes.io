@@ -1,5 +1,7 @@
 'use strict';
 
+let ldapUrl = `ldap://${process.env.LDAP_1_PORT_389_TCP_ADDR}:389` || 'ldap://localhost:389';
+
 module.exports = {
   app: {
     title: 'landscapes',
@@ -8,6 +10,7 @@ module.exports = {
   },
   port: process.env.PORT || 3000,
   host: process.env.HOST || '0.0.0.0',
+
   // DOMAIN config should be set to the fully qualified application accessible
   // URL. For example: https://www.myapp.com (including port if required).
   domain: process.env.DOMAIN,
@@ -29,7 +32,7 @@ module.exports = {
   sessionKey: 'sessionId',
   sessionCollection: 'sessions',
   ldap:{
-    url: 'ldap://localhost:389',
+    url: ldapUrl,
     bindDn: 'cn=admin,dc=landscapes,dc=io',
     bindCredentials: 'password',
     searchBase: 'ou=people,dc=landscapes,dc=io',

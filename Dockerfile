@@ -7,7 +7,7 @@
 # Compose:
 # docker-compose up -d
 
-FROM ubuntu:latest
+FROM node:6
 MAINTAINER BlackSky
 
 # 80=HTTP, 443=HTTPS, 3000=landscapes, 35729=livereload
@@ -30,7 +30,6 @@ RUN apt-get update -q  \
  ssh \
  tree \
  tcpdump \
- nano \
  psmisc \
  gcc \
  make \
@@ -44,11 +43,8 @@ RUN apt-get update -q  \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Install nodejs
-RUN curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
-RUN sudo apt-get install -yq nodejs \
- && apt-get clean \
- && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+ # Install ImageMagick
+RUN apt-get install -y imagemagick
 
 # Install gem sass for grunt-contrib-sass
 RUN gem install sass
@@ -63,8 +59,9 @@ WORKDIR /opt/landscapes
 # and utilities docker container cache to not needing to rebuild
 # and install node_modules/ everytime we build the docker, but only
 # when the local package.json file changes.
-# Install npm packages
 COPY package.json /opt/landscapes/package.json
+
+# Install npm packages
 RUN npm install --quiet && npm cache clean
 
 # Install bower packages
