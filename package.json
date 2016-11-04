@@ -2,7 +2,6 @@
   "name": "landscapes.io",
   "description": "AWS CloudFormation management tool",
   "version": "0.10.0",
-  "meanjs-version": "0.5.0-beta",
   "private": false,
   "license": "Apache-2.0",
   "repository": {
@@ -31,12 +30,12 @@
     },
     {
       "name": "Andrew Pierce",
-      "email": "apierce@openwhere.com"
+      "email": "apierce@blacksky.com"
     }
   ],
   "engines": {
-    "node": ">=0.12.0",
-    "npm": ">=2.0.0"
+    "node": ">=6.3.0",
+    "npm": ">=3.10.0"
   },
   "scripts": {
     "update": "npm update && npm prune && bower install --allow-root && bower prune --allow-root",
@@ -83,7 +82,7 @@
     "lusca": "~1.4.1",
     "method-override": "~2.3.5",
     "mocha": "~3.0.2",
-    "mongoose": "~4.5.10",
+    "mongoose": "~4.6.6",
     "morgan": "~1.7.0",
     "multer": "~1.2.0",
     "nodemailer": "~2.5.0",
@@ -93,6 +92,7 @@
     "passport-ldapauth": "^0.6.0",
     "passport-local": "~1.0.0",
     "phantomjs-prebuilt": "~2.1.4",
+    "secure-random": "^1.1.1",
     "serve-favicon": "~2.3.0",
     "socket.io": "^1.4.8",
     "uuid": "^2.0.3",

@@ -72,7 +72,7 @@ var validateEnvironmentVariable = function () {
  */
 var validateDomainIsSet = function (config) {
   if (!config.app.domain) {
-    console.log(chalk.red('+ Important warning: config.domain is empty. It should be set to the fully qualified domain of the app.'));
+    console.log(chalk.red('+ Warning: config.domain is empty and should be set to the fully qualified domain of the app.\n'));
   }
 };
 
@@ -193,9 +193,9 @@ var initGlobalConfig = function () {
   // Merge config files
   var config = _.merge(defaultConfig, environmentConfig);
 
-  // read package.json for MEAN.JS project information
+  // Include values from package.json
   var pkg = require(path.resolve('./package.json'));
-  config.meanjs = pkg;
+  config.landscapes = pkg;
 
   // Extend the config object with the local-NODE_ENV.js custom/local environment. This will override any settings present in the local configuration.
   config = _.merge(config, (fs.existsSync(path.join(process.cwd(), 'config/env/local-' + process.env.NODE_ENV + '.js')) && require(path.join(process.cwd(), 'config/env/local-' + process.env.NODE_ENV + '.js'))) || {});

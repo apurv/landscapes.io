@@ -3,13 +3,13 @@
 /**
  * Module dependencies
  */
-var path = require('path'),
-  errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
-  mongoose = require('mongoose'),
-  passport = require('passport'),
-  User = mongoose.model('User'),
-  path = require('path'),
-  config = require(path.resolve('./config/config'));
+var path = require('path');
+var errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller'));
+var mongoose = require('mongoose');
+var passport = require('passport');
+var User = mongoose.model('User');
+var path = require('path');
+var config = require(path.resolve('./config/config'));
 
 console.log('users.authentication.server.controller: config -->\n', config.ldap)
 
@@ -58,55 +58,71 @@ exports.signup = function (req, res) {
  */
 exports.signin = function (req, res, next) {
 
-  console.log('passport.authenticate --> ldapauth')
+console.log('users.authentication.server.controller.signin()')
 
-  passport.authenticate('ldapauth', { session: false }, function (err, user, info) {
-    if (err || !user) {
-      console.log('passport.authenticate.ldapauth --> ERROR:', err);
-      res.status(400).send(info);
-    } else {
-      // Remove sensitive data before login
-      user.password = undefined;
-      user.salt = undefined;
+  if (config.authStrategy === 'ldap') {
 
-      req.login(user, function (err) {
-        if (err) {
-          res.status(400).send(err);
-        } else {
-          res.json(user);
-        }
-      });
-    }
-  })(req, res, next);
+    console.log('users.authentication.server.controller.signin() --> passport.authenticate: ldapauth')
 
-  // passport.authenticate('local', function (err, user, info) {
-  //   if (err || !user) {
-  //     res.status(400).send(info);
-  //   } else {
-  //     // Remove sensitive data before login
-  //     user.password = undefined;
-  //     user.salt = undefined;
+    passport.authenticate('ldapauth', {
+      session: false
+    }, function (err, user, info) {
+      if (err || !user) {
+        console.log('passport.authenticate.ldapauth --> ERROR:', err);
+        res.status(400).send(info);
+      } else {
+        // Remove sensitive data before login
+        user.password = undefined;
+        user.salt = undefined;
 
-  //     req.login(user, function (err) {
-  //       if (err) {
-  //         res.status(400).send(err);
-  //       } else {
+        req.login(user, function (err) {
+          if (err) {
+            res.status(400).send(err);
+          } else {
+            res.json(user);
+          }
+        });
+      }
+    })(req, res, next);
 
-  //         User.findOne({ '_id': user._id }, '-salt -password')
-  //           .populate('roles', 'name description permissions')
-  //           .populate('groups', 'name description permissions landscapes')
-  //           .exec(function (err, userWithRoles) {
-  //             if (err) {
-  //               res.status(400).send(err);
-  //             } else {
-  //               res.json(userWithRoles);
-  //             }
-  //           });
-  //       }
-  //     });
-  //   }
-  // })(req, res, next);
-};
+  } else {
+
+    console.log('users.authentication.server.controller.signin() --> passport.authenticate: local')
+
+    passport.authenticate('local', function (err, user, info) {
+      if (err || !user) {
+        console.log(err)
+        res.status(400).send(info);
+      } else {
+        // Remove sensitive data before login
+        user.password = undefined;
+        user.salt = undefined;
+
+        req.login(user, function (err) {
+          if (err) {
+            console.log(err)
+            res.status(400).send(err);
+          } else {
+
+            User.findOne({
+                '_id': user._id
+              }, '-salt -password')
+              // .populate('roles', 'name description permissions')
+              // .populate('groups', 'name description permissions landscapes')
+              .exec(function (err, userWithRoles) {
+                if (err) {
+                  console.log(err)
+                  res.status(400).send(err);
+                } else {
+                  res.json(userWithRoles);
+                }
+              });
+          }
+        });
+      }
+    })(req, res, next);
+  };
+}
 
 /**
  * Signout

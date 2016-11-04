@@ -26,7 +26,9 @@ var validateLocalStrategyProperty = function (property) {
  * A Validation function for local strategy email
  */
 var validateLocalStrategyEmail = function (email) {
-  return ((this.provider !== 'local' && !this.updated) || validator.isEmail(email, { require_tld: false }));
+  return ((this.provider !== 'local' && !this.updated) || validator.isEmail(email, {
+    require_tld: false
+  }));
 };
 
 var roleNames = ['user', 'admin'];
@@ -87,12 +89,20 @@ var UserSchema = new Schema({
   providerData: {},
   additionalProvidersData: {},
   roles: {
-    type: [{ type: String, enum: roleNames }], default: ['admin']
+    type: [{
+      type: String,
+      enum: roleNames
+    }],
+    default: ['admin']
   },
-  permissions: { type: Array, "default": [] },
+  permissions: {
+    type: Array,
+    "default": []
+  },
   groups: {
     type: [{
-      type: Schema.ObjectId, ref: 'Group'
+      type: Schema.ObjectId,
+      ref: 'Group'
     }]
   },
   updated: {
@@ -112,7 +122,7 @@ var UserSchema = new Schema({
 });
 
 UserSchema.roleNames = function () {
-    return roleNames;
+  return roleNames;
 };
 
 /**
@@ -183,10 +193,10 @@ UserSchema.statics.findUniqueUsername = function (username, suffix, callback) {
 };
 
 /**
-* Generates a random passphrase that passes the owasp test
-* Returns a promise that resolves with the generated passphrase, or rejects with an error if something goes wrong.
-* NOTE: Passphrases are only tested against the required owasp strength tests, and not the optional tests.
-*/
+ * Generates a random passphrase that passes the owasp test
+ * Returns a promise that resolves with the generated passphrase, or rejects with an error if something goes wrong.
+ * NOTE: Passphrases are only tested against the required owasp strength tests, and not the optional tests.
+ */
 UserSchema.statics.generateRandomPassphrase = function () {
   return new Promise(function (resolve, reject) {
     var password = '';

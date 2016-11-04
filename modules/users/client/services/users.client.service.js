@@ -62,7 +62,7 @@
       userSignup: function (credentials) {
         return this.signup(credentials).$promise;
       },
-      userSignin: function (credentials) {
+      userSignin: function (credentials) {        
         return this.signin(credentials).$promise;
       }
     });

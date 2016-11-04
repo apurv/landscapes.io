@@ -39,6 +39,7 @@
     }
 
     function signin(isValid) {
+      console.log('AuthenticationController.signin()')
       vm.error = null;
 
       if (!isValid) {
