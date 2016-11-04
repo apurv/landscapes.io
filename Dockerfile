@@ -1,35 +1,74 @@
-FROM node:5
+# Build:
+# docker build -t landscapes .
+#
+# Run:
+# docker run -it landscapes
+#
+# Compose:
+# docker-compose up -d
 
-# Install gem sass for  grunt-contrib-sass
-RUN apt-get update -qq && apt-get install -y build-essential
-RUN apt-get install -y ruby
-RUN gem install sass
+FROM node:6
+MAINTAINER BlackSky
 
-# Install ImageMagick
-RUN apt-get install -y imagemagick
-
-WORKDIR /home/mean
-
-# Install Mean.JS Prerequisites
-RUN npm install -g grunt-cli
-RUN npm install -g bower
-
-# Install Mean.JS packages
-ADD package.json /home/mean/package.json
-RUN npm install
-
-# Manually trigger bower. Why doesnt this work via npm install?
-ADD .bowerrc /home/mean/.bowerrc
-ADD bower.json /home/mean/bower.json
-RUN bower install --config.interactive=false --allow-root
-
-# Make everything available for start
-ADD . /home/mean
+# 80=HTTP, 443=HTTPS, 3000=landscapes, 35729=livereload
+EXPOSE 80 443 3000 35729
 
 # Set development environment as default
 ENV NODE_ENV development
 
-# Port 3000 for server
-# Port 35729 for livereload
-EXPOSE 3000 35729
-CMD ["grunt"]
+# Install Utilities
+RUN apt-get update -q  \
+ && apt-get install -yqq curl \
+ wget \
+ aptitude \
+ htop \
+ vim \
+ git \
+ traceroute \
+ dnsutils \
+ curl \
+ ssh \
+ tree \
+ tcpdump \
+ psmisc \
+ gcc \
+ make \
+ build-essential \
+ libfreetype6 \
+ libfontconfig \
+ libkrb5-dev \
+ ruby \
+ sudo \
+ apt-utils \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+ # Install ImageMagick
+RUN apt-get install -y imagemagick
+
+# Install gem sass for grunt-contrib-sass
+RUN gem install sass
+
+# Install Prerequisites
+RUN npm install --quiet -g grunt-cli gulp bower yo mocha karma-cli pm2 && npm cache clean
+
+RUN mkdir -p /opt/landscapes/public/lib
+WORKDIR /opt/landscapes
+
+# Copies the local package.json file to the container
+# and utilities docker container cache to not needing to rebuild
+# and install node_modules/ everytime we build the docker, but only
+# when the local package.json file changes.
+COPY package.json /opt/landscapes/package.json
+
+# Install npm packages
+RUN npm install --quiet && npm cache clean
+
+# Install bower packages
+COPY bower.json /opt/landscapes/bower.json
+COPY .bowerrc /opt/landscapes/.bowerrc
+RUN bower install --quiet --allow-root --config.interactive=false
+
+COPY . /opt/landscapes
+
+CMD ["npm", "start"]

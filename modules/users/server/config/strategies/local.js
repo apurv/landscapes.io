@@ -5,8 +5,7 @@
  */
 var passport = require('passport'),
   LocalStrategy = require('passport-local').Strategy,
-  User = require('mongoose').model('User'),
-    Role = require('mongoose').model('Role');
+  User = require('mongoose').model('User');
 
 module.exports = function () {
   // Use local strategy
@@ -15,20 +14,19 @@ module.exports = function () {
     passwordField: 'password'
   },
   function (username, password, done) {
-    User.findOne({ username: username.toLowerCase()})
-        .populate('roles','name description permissions')
-        .populate('groups','name description permissions landscapes')
-        .exec(function (err, user) {
-          if (err) {
-            return done(err);
-          }
-          if (!user || !user.authenticate(password)) {
-            return done(null, false, {
-              message: 'Invalid username or password'
-            });
-          }
-          return done(null, user);
+    User.findOne({
+      username: username.toLowerCase()
+    }, function (err, user) {
+      if (err) {
+        return done(err);
+      }
+      if (!user || !user.authenticate(password)) {
+        return done(null, false, {
+          message: 'Invalid username or password (' + (new Date()).toLocaleTimeString() + ')'
         });
+      }
 
+      return done(null, user);
+    });
   }));
 };

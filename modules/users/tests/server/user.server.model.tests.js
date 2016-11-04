@@ -10,7 +10,9 @@ var should = require('should'),
 /**
  * Globals
  */
-var user1, user2, user3;
+var user1,
+  user2,
+  user3;
 
 /**
  * Unit tests
@@ -185,6 +187,29 @@ describe('User Model Unit Tests:', function () {
           _user1.remove(function(err) {
             should.not.exist(err);
             done();
+          });
+        });
+      });
+
+    });
+
+    it('should not index missing email field, thus not enforce the model\'s unique index', function (done) {
+      var _user1 = new User(user1);
+      _user1.email = undefined;
+
+      var _user3 = new User(user3);
+      _user3.email = undefined;
+
+      _user1.save(function (err) {
+        should.not.exist(err);
+        _user3.save(function (err) {
+          should.not.exist(err);
+          _user3.remove(function (err) {
+            should.not.exist(err);
+            _user1.remove(function (err) {
+              should.not.exist(err);
+              done();
+            });
           });
         });
       });

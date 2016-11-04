@@ -11,7 +11,7 @@ var config = require('../config'),
 
 function seedDB() {
   if (config.seedDB && config.seedDB.seed) {
-    console.log(chalk.bold.red('Warning:  Database seeding is turned on'));
+    console.log(chalk.bold.red('+ Info: Database seeding is turned on\n'));
     seed.start();
   }
 }
@@ -19,11 +19,8 @@ function seedDB() {
 // Initialize Models
 mongoose.loadModels(seedDB);
 
-module.exports.loadModels = function loadModels() {
-  mongoose.loadModels();
-};
-
 module.exports.init = function init(callback) {
+  mongoose.Promise = global.Promise;
   mongoose.connect(function (db) {
     // Initialize express
     var app = express.init(db);
@@ -44,14 +41,12 @@ module.exports.start = function start(callback) {
       // Logging initialization
       console.log('--');
       console.log(chalk.green(config.app.title));
-      console.log();
+      console.log();      
       console.log(chalk.green('Environment:     ' + process.env.NODE_ENV));
+      console.log(chalk.green('Authentication:  ' + config.authStrategy));
       console.log(chalk.green('Server:          ' + server));
       console.log(chalk.green('Database:        ' + config.db.uri));
-      console.log(chalk.green('App version:     ' + config.meanjs.version));
-      if (config.meanjs['meanjs-version'])
-        console.log(chalk.green('MEAN.JS version: ' + config.meanjs['meanjs-version']));
-      console.log('--');
+      console.log(chalk.green('Version:         ' + config.landscapes.version));
 
       if (callback) callback(app, db, config);
     });

@@ -1,6 +1,7 @@
 'use strict';
 
-var should = require('should'),
+var semver = require('semver'),
+  should = require('should'),
   request = require('supertest'),
   path = require('path'),
   mongoose = require('mongoose'),
@@ -10,7 +11,12 @@ var should = require('should'),
 /**
  * Globals
  */
-var app, agent, credentials, user, _user, admin;
+var app,
+  agent,
+  credentials,
+  user,
+  _user,
+  admin;
 
 /**
  * User routes tests
@@ -99,7 +105,7 @@ describe('User CRUD tests', function () {
 
             // NodeJS v4 changed the status code representation so we must check
             // before asserting, to be comptabile with all node versions.
-            if (process.version.indexOf('v4') === 0) {
+            if (semver.satisfies(process.versions.node, '>=4.0.0')) {
               signoutRes.text.should.equal('Found. Redirecting to /');
             } else {
               signoutRes.text.should.equal('Moved Temporarily. Redirecting to /');
@@ -254,7 +260,6 @@ describe('User CRUD tests', function () {
           }
 
           agent.delete('/api/users/' + user._id)
-            //.send(userUpdate)
             .expect(200)
             .end(function (userInfoErr, userInfoRes) {
               if (userInfoErr) {
@@ -631,7 +636,7 @@ describe('User CRUD tests', function () {
 
           var userUpdate = {
             firstName: 'user_update_first',
-            lastName: 'user_update_last',
+            lastName: 'user_update_last'
           };
 
           agent.put('/api/users')
@@ -802,6 +807,54 @@ describe('User CRUD tests', function () {
     });
   });
 
+  it('should not be able to update secure fields', function (done) {
+    var resetPasswordToken = 'password-reset-token';
+    user.resetPasswordToken = resetPasswordToken;
+
+    user.save(function (saveErr) {
+      if (saveErr) {
+        return done(saveErr);
+      }
+      agent.post('/api/auth/signin')
+        .send(credentials)
+        .expect(200)
+        .end(function (signinErr, signinRes) {
+          // Handle signin error
+          if (signinErr) {
+            return done(signinErr);
+          }
+          var userUpdate = {
+            password: 'Aw3$0m3P@ssWord',
+            salt: 'newsaltphrase',
+            created: new Date(2000, 9, 9),
+            resetPasswordToken: 'tweeked-reset-token'
+          };
+
+          // Get own user details
+          agent.put('/api/users')
+            .send(userUpdate)
+            .expect(200)
+            .end(function (err, res) {
+              if (err) {
+                return done(err);
+              }
+
+              User.findById(user._id, function (dbErr, updatedUser) {
+                if (dbErr) {
+                  return done(dbErr);
+                }
+
+                updatedUser.password.should.be.equal(user.password);
+                updatedUser.salt.should.be.equal(user.salt);
+                updatedUser.created.getTime().should.be.equal(user.created.getTime());
+                updatedUser.resetPasswordToken.should.be.equal(resetPasswordToken);
+                done();
+              });
+            });
+        });
+    });
+  });
+
   it('should not be able to update own user details if not logged-in', function (done) {
     user.roles = ['user'];
 
@@ -811,7 +864,7 @@ describe('User CRUD tests', function () {
 
       var userUpdate = {
         firstName: 'user_update_first',
-        lastName: 'user_update_last',
+        lastName: 'user_update_last'
       };
 
       agent.put('/api/users')

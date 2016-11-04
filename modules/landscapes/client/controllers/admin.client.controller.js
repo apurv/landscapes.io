@@ -5,10 +5,11 @@
         .module('landscapes')
         .controller('AdminController', AdminController);
 
-    AdminController.$inject = ['$scope', '$state','lodash','LandscapesService','UserService', 'RoleService','GroupService','PermissionService','CloudAccountService', 'AppSettingsService','GlobalTagService', 'Authentication'];
+    AdminController.$inject = ['$scope', '$state', 'LandscapesService', 'UserService', 'RoleService','GroupService','PermissionService','CloudAccountService', 'AppSettingsService','GlobalTagService', 'Authentication'];
 
-    function AdminController($scope, $state, lodash, LandscapesService, UserService, RoleService, GroupService, PermissionService,CloudAccountService, AppSettingsService, GlobalTagService, Authentication) {
+    function AdminController($scope, $state, LandscapesService, UserService, RoleService, GroupService, PermissionService,CloudAccountService, AppSettingsService, GlobalTagService, Authentication) {
 
+        console.log('AdminController')
 
         var vm = this;
 

@@ -19,7 +19,6 @@ var winston = require('winston'),
     Group = mongoose.model('Group'),
     User = mongoose.model('User');
 
-
 // GET /api/groups
 exports.retrieve = function (req, res) {
     winston.info('GET /api/groups ---> retrieving Groups');

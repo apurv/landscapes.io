@@ -19,7 +19,6 @@ var winston = require('winston'),
     Role = mongoose.model('Role'),
     User = mongoose.model('User');
 
-
 // GET /api/roles
 exports.retrieve = function (req, res) {
     winston.info('GET /api/roles ---> retrieving Roles');

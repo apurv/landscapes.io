@@ -32,7 +32,7 @@ exports.forgot = function (req, res, next) {
         User.findOne({
           username: req.body.username.toLowerCase()
         }, '-salt -password', function (err, user) {
-          if (!user) {
+          if (err || !user) {
             return res.status(400).send({
               message: 'No account with that username has been found'
             });
@@ -61,11 +61,14 @@ exports.forgot = function (req, res, next) {
       if (config.secure && config.secure.ssl === true) {
         httpTransport = 'https://';
       }
+      var baseUrl = req.app.get('domain') || httpTransport + req.headers.host;
+      console.log(baseUrl);
       res.render(path.resolve('modules/users/server/templates/reset-password-email'), {
         name: user.displayName,
         appName: config.app.title,
-        url: httpTransport + req.headers.host + '/api/auth/reset/' + token
+        url: baseUrl + '/api/auth/reset/' + token
       }, function (err, emailHTML) {
+        console.log(emailHTML);
         done(err, emailHTML, user);
       });
     },
@@ -108,7 +111,7 @@ exports.validateResetToken = function (req, res) {
       $gt: Date.now()
     }
   }, function (err, user) {
-    if (!user) {
+    if (err || !user) {
       return res.redirect('/password/reset/invalid');
     }
 
@@ -205,7 +208,6 @@ exports.reset = function (req, res, next) {
 exports.changePassword = function (req, res, next) {
   // Init Variables
   var passwordDetails = req.body;
-  var message = null;
 
   if (req.user) {
     if (passwordDetails.newPassword) {
