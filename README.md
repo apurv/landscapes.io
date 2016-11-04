@@ -2,6 +2,11 @@ landscapes.io
 ===============
 Designed to handle the most complicated DevOps deployments, landscapes.io is an AWS CloudFormation management tool built with the MEAN stack.
 
+### Set auth via config/env/default.js
+```
+authStrategy: 'local', // ldap
+```
+
 ### Database Seeding
 
 To have default local account(s) created at runtime:
