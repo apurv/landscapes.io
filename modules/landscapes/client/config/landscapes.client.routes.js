@@ -13,7 +13,7 @@
         abstract: true,
         url: '/landscapes',
         template: '<ui-view/>'
-      })
+      }) 
       .state('landscapes.admin', {
         url: '/admin',
         templateUrl: 'modules/landscapes/client/views/admin-main.client.view.html',

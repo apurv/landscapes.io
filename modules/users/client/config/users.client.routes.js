@@ -27,7 +27,7 @@
         controller: 'EditProfileController',
         controllerAs: 'vm',
         data: {
-          pageTitle: 'Settings'
+          pageTitle: 'Profile'
         }
       })
       .state('settings.password', {
@@ -36,7 +36,7 @@
         controller: 'ChangePasswordController',
         controllerAs: 'vm',
         data: {
-          pageTitle: 'Settings password'
+          pageTitle: 'Profile'
         }
       })
       .state('settings.accounts', {
@@ -54,7 +54,7 @@
         controller: 'ChangeProfilePictureController',
         controllerAs: 'vm',
         data: {
-          pageTitle: 'Settings picture'
+          pageTitle: 'Profile'
         }
       })
       .state('authentication', {

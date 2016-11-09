@@ -13,5 +13,11 @@
       title: 'Landscapes',
       state: 'landscapes.list'
     });
+
+    menuService.addMenuItem('topbar', {
+      title: 'Settings',
+      state: 'landscapes.admin'
+    });
+
   }
 }());

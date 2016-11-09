@@ -11,8 +11,6 @@ var User = mongoose.model('User');
 var path = require('path');
 var config = require(path.resolve('./config/config'));
 
-console.log('users.authentication.server.controller: config -->\n', config.ldap)
-
 // URLs for which user can't be redirected on signin
 var noReturnUrls = [
   '/authentication/signin',
@@ -62,8 +60,6 @@ console.log('users.authentication.server.controller.signin()')
 
   if (config.authStrategy === 'ldap') {
 
-    console.log('users.authentication.server.controller.signin() --> passport.authenticate: ldapauth')
-
     passport.authenticate('ldapauth', {
       session: false
     }, function (err, user, info) {
@@ -86,8 +82,6 @@ console.log('users.authentication.server.controller.signin()')
     })(req, res, next);
 
   } else {
-
-    console.log('users.authentication.server.controller.signin() --> passport.authenticate: local')
 
     passport.authenticate('local', function (err, user, info) {
       if (err || !user) {

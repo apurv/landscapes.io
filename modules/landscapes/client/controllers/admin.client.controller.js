@@ -14,17 +14,18 @@
         var vm = this;
 
         vm.menu = [
-            'Users',
-            'Roles',
-            'Groups',
+            // 'Users',
+            // 'Roles',
+            // 'Groups',
+            'AWS Accounts',
             'Global Tags',
-            'Accounts',
-            'AppSettings'
+            'System'
         ];
 
-        vm.selected = vm.menu[5];
+        vm.selected = vm.menu[0];
 
         vm.buttonClick = function(text){
+            console.log(text)
             vm.selected = text;
         };
 
