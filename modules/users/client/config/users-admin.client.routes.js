@@ -16,7 +16,7 @@
         controller: 'UserListController',
         controllerAs: 'vm',
         data: {
-          pageTitle: 'Users List'
+          pageTitle: 'Users'
         }
       })
       .state('admin.user', {

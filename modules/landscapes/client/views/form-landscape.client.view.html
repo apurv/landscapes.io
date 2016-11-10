@@ -67,7 +67,7 @@
       </div>
 
       <div class="col-md-6">
-        <div class="panel panel-default" ng-class="{'panel-danger': imageError}">
+        <div class="panel panel-default" ng-class="{'panel-danger': vm.imageError}">
           <div class="panel-heading title-heading">
             <h2 class="panel-title pull-left">Image</h2>
             <!-- Image upload toggle button -->
@@ -79,13 +79,15 @@
             </button>
           </div>
           <div class="panel-body">
-            <div class="alert alert-danger" ng-show="imageError">
-              <strong>{{imageError}}</strong>
-            </div>
-
+            
             <div ng-show="vm.showUploadNewImage">              
               <div image-upload></div>
             </div>
+
+            <div style="margin-top: 15px; margin-bottom: 0;" class="alert alert-danger" ng-show="vm.imageError">
+              <strong>{{vm.imageError}}</strong>
+            </div>
+
             <div class="media" ng-show="!vm.showUploadNewImage">
               <!-- icon image -->
               <div class="pull-right" style="min-height: 128px; min-width: 128px; margin-left: 25px">

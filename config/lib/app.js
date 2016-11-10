@@ -39,7 +39,6 @@ module.exports.start = function start(callback) {
       // Create server URL
       var server = (process.env.NODE_ENV === 'secure' ? 'https://' : 'http://') + config.host + ':' + config.port;
       // Logging initialization
-      console.log('--');
       console.log(chalk.green(config.app.title));
       console.log();      
       console.log(chalk.green('Environment:     ' + process.env.NODE_ENV));
@@ -47,6 +46,7 @@ module.exports.start = function start(callback) {
       console.log(chalk.green('Server:          ' + server));
       console.log(chalk.green('Database:        ' + config.db.uri));
       console.log(chalk.green('Version:         ' + config.landscapes.version));
+      console.log();
 
       if (callback) callback(app, db, config);
     });

@@ -1,6 +1,6 @@
 <div class="row">
   <div id="titleRow" class="col-md-12 tableRow">
-    <h2>Administrator</h2>
+    <h2><span class="glyphicon glyphicon-cog"></span> Settings</h2>
   </div>
   <div class="col-md-12">
 
@@ -25,7 +25,7 @@
 
       <div class="col-md-10" style="padding:0;">
 
-        <div class="col-md-12" ng-show="vm.selected=='Users'">
+        <!--<div class="col-md-12" ng-show="vm.selected=='Users'">
           <div ng-include="'/modules/landscapes/client/views/admin-users.client.view.html'"></div>
         </div>
 
@@ -35,20 +35,20 @@
 
         <div class="col-md-12" ng-show="vm.selected=='Groups'">
           <div ng-include="'/modules/landscapes/client/views/admin-groups.client.view.html'"></div>
-        </div>
+        </div>-->
 
         <div class="col-md-12" ng-show="vm.selected=='Global Tags'">
           <div ng-include="'/modules/landscapes/client/views/admin-globalTags.client.view.html'"></div>
         </div>
 
-        <div class="col-md-12" ng-show="vm.selected=='Accounts'">
+        <div class="col-md-12" ng-show="vm.selected=='AWS Accounts'">
           <div ng-include="'/modules/landscapes/client/views/admin-accounts.client.view.html'"></div>
         </div>
 
-        <div class="col-md-12" ng-show="vm.selected=='AppSettings'">
+        <div class="col-md-12" ng-show="vm.selected=='System'">
           <div class="panel panel-default">
             <div class="panel-heading title-heading">
-              <h2 class="panel-title pull-left">App Settings</h2>
+              <h2 class="panel-title pull-left">System</h2>
             </div>
             <div class="panel-body">
               <div class="form-horizontal">

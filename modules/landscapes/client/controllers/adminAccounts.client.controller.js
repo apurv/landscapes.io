@@ -1,72 +1,99 @@
 'use strict';
 
 angular.module('landscapes')
-    .controller('AdminAccountsCtrl', function ($scope, $state,$uibModal, CloudAccountService) {
-        
+    .controller('AdminAccountsCtrl', function ($scope, $state, $uibModal, CloudAccountService) {
+
         var vm = this;
-        vm.account = { };
+        vm.account = {
+            rejectUnauthorizedSsl: true
+        };
 
         vm.addingAccount = false;
         vm.editingAccount = false;
 
-        vm.editAccount = function(id) {
+        vm.editAccount = function (id) {
             console.log('editAccount: ' + id);
             vm.editingAccount = true;
             vm.account = CloudAccountService.retrieveOne(id);
+            console.log(vm.account);
+            vm.showAdvanced = _showAdvanced(vm.account);
         };
 
-        vm.updateAccount = function(id) {
+        function _showAdvanced(account) {
+            let show = false;
+            if(!account.rejectUnauthorizedSsl || account.endpoint || account.caBundlePath || account.signatureBlock) {
+                show = true
+            }
+            return show;
+        }
+
+        vm.updateAccount = function (id) {
             console.log('updateAccount');
             console.log(vm.account);
             //Whys is this empty - AH?
         };
 
-        vm.addAccount = function() {
+        vm.addAccount = function () {
             console.log('addAccount');
-            vm.account = { };
+            vm.account = {
+                rejectUnauthorizedSsl: true
+            };
             vm.addingAccount = true;
         };
 
-        vm.resetAccounts = function() {
+        vm.resetAccounts = function () {
             console.log('resetAccounts');
 
             CloudAccountService.retrieve()
-                .then(function(data){
+                .then(function (data) {
                     $scope.$parent.vm.accounts = data;
                 });
 
             vm.addingAccount = false;
             vm.editingAccount = false;
-            vm.account = { };
+            vm.account = {
+                rejectUnauthorizedSsl: true
+            };
             vm.submitted = false;
+
         };
+
+        vm.errors = {};
 
         vm.saveAccount = function (form) {
             vm.submitted = true;
-            vm.form  = form;
+            vm.form = form;
 
             if (vm.form.$invalid) {
-                console.log('form.$invalid: ' + (vm.form.$error)); //TODO fix error logging
+                console.log('form.$invalid:', vm.form.$error); //TODO fix error logging
 
             } else if (vm.addingAccount) {
 
+                console.log('vm.account', vm.account)
+
                 CloudAccountService.create({
                     name: vm.account.name,
-                    region: vm.account.region,
                     accessKeyId: vm.account.accessKeyId,
-                    secretAccessKey: vm.account.secretAccessKey
+                    secretAccessKey: vm.account.secretAccessKey,
+                    region: vm.account.region || 'us-east-1',
+                    isOtherRegion: vm.account.isOtherRegion,
+                    rejectUnauthorizedSsl: vm.account.rejectUnauthorizedSsl,
+                    endpoint: vm.account.endpoint,
+                    caBundlePath: vm.account.caBundlePath,
+                    signatureBlock: vm.account.signatureBlock
+
                 })
-                    .then(function () {
-                        vm.resetAccounts();
-                    })
+                    .then(function () { vm.resetAccounts(); })
                     .catch(function (err) {
                         err = err.data || err;
-                        console.log(err);
+                        console.log(' CloudAccountService.create() --> ERROR:', err);
 
                         vm.errors = {};
 
                         // Update validity of form fields that match the mongoose errors
                         angular.forEach(err.errors, function (error, field) {
+                            console.log('error, field', error, field)
+                            console.log(vm.form);
                             vm.form[field].$setValidity('mongoose', false);
                             vm.errors[field] = error.message;
                         });
@@ -79,9 +106,14 @@ angular.module('landscapes')
 
                 CloudAccountService.update(vm.account._id, {
                     name: vm.account.name,
-                    region: vm.account.region,
                     accessKeyId: vm.account.accessKeyId,
-                    secretAccessKey: vm.account.secretAccessKey
+                    secretAccessKey: vm.account.secretAccessKey,
+                    region: vm.account.region || 'us-east-1',
+                    isOtherRegion: vm.account.showOtherRegion,
+                    rejectUnauthorizedSsl: vm.account.rejectUnauthorizedSsl,
+                    endpoint: vm.account.endpoint,
+                    caBundlePath: vm.account.caBundlePath,
+                    signatureBlock: vm.account.signatureBlock
                 })
                     .then(function () {
                         vm.resetAccounts();
@@ -101,14 +133,14 @@ angular.module('landscapes')
             }
         };
 
-        vm.deleteAccount = function(){
-            console.log('deleteAccount: ' + vm.account._id);
+        vm.deleteAccount = function () {
+            console.log('deleteAccount: ' + vm.account.id);
 
-            vm.confirmDelete(vm.account.name, function(deleteConfirmed) {
+            vm.confirmDelete(vm.account.name, function (deleteConfirmed) {
                 console.log('deleteAccount.deleteConfirmed: ' + deleteConfirmed);
                 if (deleteConfirmed === true) {
 
-                    CloudAccountService.delete(vm.account._id)
+                    CloudAccountService.delete(vm.account.id)
                         .then(function () {
                             vm.resetAccounts();
                         })
@@ -121,27 +153,27 @@ angular.module('landscapes')
         };
 
         vm.confirmDelete = function (msg, callback) {
-            var modalInstance = $uibModal.open( {
+            console.log(msg)
+            var modalInstance = $uibModal.open({
                 templateUrl: 'confirmDeleteModal.html',
                 controller: 'DeleteModalInstanceCtrl as vm',
                 size: 'sm',
                 resolve: { msg: function () { return msg; } }
             });
 
-            modalInstance.result.then(function(result) {
-                    return callback(result);
-                });
+            modalInstance.result.then(function (result) {
+                return callback(result);
+            });
         };
     });
 
 
 angular.module('landscapes')
-    .controller('DeleteModalInstanceCtrl', function($scope, $uibModalInstance, msg) {
-
+    .controller('DeleteModalInstanceCtrl', function ($scope, $uibModalInstance, msg) {
         var vm = this;
         vm.msg = msg;
 
-        vm.close = function(result) {
+        vm.close = function (result) {
             $uibModalInstance.close(result); // close, but give 500ms for bootstrap to animate
-    };
-});
+        };
+    });

@@ -33,6 +33,8 @@ module.exports = {
   authStrategy: 'local',
   // authStrategy: 'ldap',
 
+  caBundlePath: '../sslcerts/cacert.pem',
+
   ldap:{
     url: ldapUrl,
     bindDn: 'cn=admin,dc=landscapes,dc=io',
