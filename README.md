@@ -2,6 +2,8 @@
 [![Code Climate](https://codeclimate.com/github/OpenWhere/landscapes.io/badges/gpa.svg)](https://codeclimate.com/github/OpenWhere/landscapes.io)
 [![David](https://david-dm.org/OpenWhere/landscapes.io.svg)](https://david-dm.org/)
 
+
+
 landscapes.io
 ===============
 Designed to handle the most complicated DevOps deployments, landscapes.io is an AWS CloudFormation management tool built with the MEAN stack.
