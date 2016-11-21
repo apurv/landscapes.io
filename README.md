@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/OpenWhere/landscapes.io.svg?branch=master)](https://travis-ci.org/OpenWhere/landscapes.io)
 [![Code Climate](https://codeclimate.com/github/OpenWhere/landscapes.io/badges/gpa.svg)](https://codeclimate.com/github/OpenWhere/landscapes.io)
-[![David](https://david-dm.org/OpenWhere/landscapes.io.svg)](https://david-dm.org/)
+[![-](https://david-dm.org/OpenWhere/landscapes.io.svg)](https://david-dm.org/)
 
 
 
