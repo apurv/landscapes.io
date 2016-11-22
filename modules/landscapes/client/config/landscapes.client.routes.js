@@ -21,14 +21,14 @@
         controllerAs: 'vm'
       })
       .state('landscapes.list', {
-      url: '',
-      templateUrl: 'modules/landscapes/client/views/list-landscapes.client.view.html',
-      controller: 'LandscapesListController',
-      controllerAs: 'vm',
-      data: {
-        pageTitle: 'Landscapes List'
-      }
-    })
+        url: '',
+        templateUrl: 'modules/landscapes/client/views/list-landscapes.client.view.html',
+        controller: 'LandscapesListController',
+        controllerAs: 'vm',
+        data: {
+          pageTitle: 'Landscapes List'
+        }
+      })
       .state('landscapes.view', {
         url: '/:landscapeId',
         templateUrl: 'modules/landscapes/client/views/view-landscape.client.view.html',

@@ -97,7 +97,7 @@ var UserSchema = new Schema({
   },
   permissions: {
     type: Array,
-    "default": []
+    'default': []
   },
   groups: {
     type: [{

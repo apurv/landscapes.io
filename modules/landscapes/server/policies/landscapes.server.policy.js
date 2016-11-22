@@ -3,7 +3,7 @@
 /**
  * Module dependencies
  */
-var _ = require("lodash"),
+var _ = require('lodash'),
   Group = require('mongoose').model('Group'),
   util = require('util');
 
@@ -19,7 +19,7 @@ var isAdmin = function (roles) {
 
 var isPermissionInRole = function (roles, level) {
 
-console.log('isPermissionInRole', roles, level)
+  console.log('isPermissionInRole', roles, level)
 
   var fullAccessRole = _.find(roles, function (role) {
     var permissions = role.permissions;

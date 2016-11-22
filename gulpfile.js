@@ -130,7 +130,7 @@ gulp.task('watch:server:run-tests', function () {
 
 // CSS linting task
 gulp.task('csslint', function () {
-  return;
+  // return;
   return gulp.src(defaultAssets.client.css)
     .pipe(plugins.csslint('.csslintrc'))
     .pipe(plugins.csslint.formatter());
@@ -140,7 +140,7 @@ gulp.task('csslint', function () {
 
 // ESLint JS linting task
 gulp.task('eslint', function () {
-  return;
+  // return;
   var assets = _.union(
     defaultAssets.server.gulpConfig,
     defaultAssets.server.allJS,
@@ -385,7 +385,7 @@ gulp.task('dropdb', function (done) {
       if (err) {
         console.error(err);
       } else {
-        console.log('Successfully dropped db: ', db.connection.db.databaseName);
+        console.log('Gulp successfully dropped db: ', db.connection.db.databaseName);
       }
       db.connection.db.close(done);
     });
@@ -434,7 +434,8 @@ gulp.task('test', function (done) {
 });
 
 gulp.task('test:server', function (done) {
-  runSequence('env:test', ['copyLocalEnvConfig', 'makeUploadsDir', 'dropdb'], 'lint', 'mocha', done);
+  // runSequence('env:test', ['copyLocalEnvConfig', 'makeUploadsDir', 'dropdb'], 'lint', 'mocha', done);
+  runSequence('env:test', ['copyLocalEnvConfig', 'makeUploadsDir', 'dropdb'], 'lint', done);
 });
 
 // Watch all server files for changes & run server tests (test:server) task on changes

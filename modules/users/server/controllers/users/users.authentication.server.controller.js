@@ -56,7 +56,7 @@ exports.signup = function (req, res) {
  */
 exports.signin = function (req, res, next) {
 
-console.log('users.authentication.server.controller.signin()')
+  console.log('users.authentication.server.controller.signin()')
 
   if (config.authStrategy === 'ldap') {
 
@@ -99,8 +99,8 @@ console.log('users.authentication.server.controller.signin()')
           } else {
 
             User.findOne({
-                '_id': user._id
-              }, '-salt -password')
+              '_id': user._id
+            }, '-salt -password')
               // .populate('roles', 'name description permissions')
               // .populate('groups', 'name description permissions landscapes')
               .exec(function (err, userWithRoles) {

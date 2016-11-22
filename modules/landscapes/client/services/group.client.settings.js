@@ -1,19 +1,19 @@
 (function () {
-    'use strict';
+  'use strict';
 
-    angular
+  angular
         .module('landscapes.services')
         .factory('GroupService', GroupService);
 
-    GroupService.$inject = ['$resource'];
+  GroupService.$inject = ['$resource'];
 
-    function GroupService($resource) {
-        return $resource('/api/groups/:id', {
-            id: '@id'
-        }, {
-            update: {
-                method: 'PUT'
-            }
-        });
-    }
+  function GroupService($resource) {
+    return $resource('/api/groups/:id', {
+      id: '@id'
+    }, {
+      update: {
+        method: 'PUT'
+      }
+    });
+  }
 })();

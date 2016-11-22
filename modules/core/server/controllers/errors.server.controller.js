@@ -37,18 +37,18 @@ exports.getErrorMessage = function (err) {
 
   if (err.code) {
     switch (err.code) {
-      case 11000:
-      case 11001:
-        message = getUniqueErrorMessage(err);
-        break;
-      case 'LIMIT_FILE_SIZE':
-        message = 'Image too big. Please maximum ' + (config.uploads.profileUpload.limits.fileSize / (1024 * 1024)).toFixed(2) + ' Mb files.';
-        break;
-      case 'LIMIT_UNEXPECTED_FILE':
-        message = 'Missing `newProfilePicture` field';
-        break;
-      default:
-        message = 'Something went wrong';
+    case 11000:
+    case 11001:
+      message = getUniqueErrorMessage(err);
+      break;
+    case 'LIMIT_FILE_SIZE':
+      message = 'Image too big. Please maximum ' + (config.uploads.profileUpload.limits.fileSize / (1024 * 1024)).toFixed(2) + ' Mb files.';
+      break;
+    case 'LIMIT_UNEXPECTED_FILE':
+      message = 'Missing `newProfilePicture` field';
+      break;
+    default:
+      message = 'Something went wrong';
     }
   } else if (err.message && !err.errors) {
     message = err.message;

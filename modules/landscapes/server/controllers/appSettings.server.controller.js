@@ -14,116 +14,116 @@
 
 'use strict';
 var winston = require('winston'),
-    mongoose = require('mongoose'),
-    AppSettings = mongoose.model('AppSettings'),
-    Group = mongoose.model('Group');
+  mongoose = require('mongoose'),
+  AppSettings = mongoose.model('AppSettings'),
+  Group = mongoose.model('Group');
 
 
 // GET /api/appSettings
 exports.retrieve = function (req, res) {
-    winston.info(' ---> retrieving AppSettings');
+  winston.info(' ---> retrieving AppSettings');
 
-    var user = req.user || undefined;
-    if(user === undefined) {
-        return res.send(401);
-    }
+  var user = req.user || undefined;
+  if(user === undefined) {
+    return res.send(401);
+  }
 
-    AppSettings.find({})
+  AppSettings.find({})
         .populate('defaultAccount')
         .exec(function(err, data) {
-            if (err) {
-                winston.log('error', err);
-                return res.send(500, err);
-            } else {
-                winston.info(' ---> AppSettings retrieved: ' + data.length);
-                return res.json(data);
-            }
+          if (err) {
+            winston.log('error', err);
+            return res.send(500, err);
+          } else {
+            winston.info(' ---> AppSettings retrieved: ' + data.length);
+            return res.json(data);
+          }
         });
 };
 
 
 // POST /api/appSettings
 exports.create = function (req, res, next) {
-    winston.info(' ---> creating AppSettings');
+  winston.info(' ---> creating AppSettings');
 
-    var user = req.user || undefined;
-    if(user === undefined) {
-        return res.send(401);
+  var user = req.user || undefined;
+  if(user === undefined) {
+    return res.send(401);
+  }
+
+  var data = req.body;
+  console.log(data);
+
+  var newAppSettings = new AppSettings(req.body);
+  newAppSettings.createdBy = user._id;
+  newAppSettings.save(function(err) {
+    if (err) {
+      winston.log('error', err);
+      return res.json(400, err);
+    } else {
+      console.log(JSON.stringify(newAppSettings));
+      return res.json(newAppSettings);
     }
-
-    var data = req.body;
-    console.log(data);
-
-    var newAppSettings = new AppSettings(req.body);
-    newAppSettings.createdBy = user._id;
-    newAppSettings.save(function(err) {
-        if (err) {
-            winston.log('error', err);
-            return res.json(400, err);
-        } else {
-            console.log(JSON.stringify(newAppSettings));
-            return res.json(newAppSettings);
-        }
-    });
+  });
 };
 
 
 // PUT /api/groups/<id>
 exports.update = function(req, res, next) {
-    winston.info(' ---> updating Group');
+  winston.info(' ---> updating Group');
 
-    var user = req.user || undefined;
-    if(user === undefined) {
-        return res.send(401);
-    }
+  var user = req.user || undefined;
+  if(user === undefined) {
+    return res.send(401);
+  }
 
-    var groupId = req.params.id;
-    var data = req.body;
+  var groupId = req.params.id;
+  var data = req.body;
 
-    Group.findById(groupId, function (err, group) {
-        if(err) {
-            winston.log('error', err);
-            return res.send(500, err);
-        } else if (!group) {
-            return res.send(404);
-        } else {
-            group.createdBy = user._id;
-            group.name = data.name;
-            group.description = data.description;
-            group.users = data.users;
-            group.permissions = data.permissions;
-            group.landscapes = data.landscapes;
+  Group.findById(groupId, function (err, group) {
+    if(err) {
+      winston.log('error', err);
+      return res.send(500, err);
+    } else if (!group) {
+      return res.send(404);
+    } else {
+      group.createdBy = user._id;
+      group.name = data.name;
+      group.description = data.description;
+      group.users = data.users;
+      group.permissions = data.permissions;
+      group.landscapes = data.landscapes;
 
-            group.save(function(err) {
-                if (err) {
-                    winston.log('error', err);
-                    return res.send(400);
-                }
-                else {
-                    winston.info(' ---> Group updated: ' + groupId);
-                    return res.json(group);
-                }
-            });
+      group.save(function(err) {
+        if (err) {
+          winston.log('error', err);
+          return res.send(400);
         }
-    });
+        else {
+          winston.info(' ---> Group updated: ' + groupId);
+          return res.json(group);
+        }
+      });
+    }
+  });
 };
 
 // DELETE /api/groups/<id>
 exports.delete = function (req, res, next) {
-    winston.info(' ---> deleting Group');
+  winston.info(' ---> deleting Group');
 
-    var user = req.user || undefined;
-    if(user === undefined) {
-        return res.send(401);
+  var user = req.user || undefined;
+  if(user === undefined) {
+    return res.send(401);
+  }
+
+  Group.findByIdAndRemove(req.params.id, function(err, docs){
+    if (err) {
+      winston.log('error', err);
+      return res.json(400, err);
+    } else {
+      winston.info(' ---> Group deleted: ' + req.params.id);
+      return res.send(200);
     }
-
-    Group.findByIdAndRemove(req.params.id, function(err, docs){
-        if (err) {
-            winston.log('error', err);
-            return res.json(400, err);
-        } else {
-            winston.info(' ---> Group deleted: ' + req.params.id);
-            return res.send(200);
-        }
-    });
+  });
 };

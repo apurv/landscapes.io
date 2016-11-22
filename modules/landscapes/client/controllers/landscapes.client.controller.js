@@ -119,7 +119,7 @@
         if (!obj) {
           vm.form.$valid = false;
           vm.form['template'].$setValidity('json', false);
-          console.log("form['template']: " + JSON.stringify(form['template']));
+          console.log('form[\'template\']: ' + JSON.stringify(form['template']));
         }
       }
 

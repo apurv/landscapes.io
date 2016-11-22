@@ -1,6 +1,6 @@
 {
   "name": "landscapes.io",
-  "description": "AWS Cloudformation management tool",
+  "description": "AWS CloudFormation management tool",
   "homepage": "landscapes.io",
   "license": "MIT",
   "dependencies": {

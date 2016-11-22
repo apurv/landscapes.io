@@ -4,7 +4,7 @@
  * Module dependencies
  */
 var fs = require('fs'),
-    path = require('path');
+  path = require('path');
 
 /**
  * Module init function.

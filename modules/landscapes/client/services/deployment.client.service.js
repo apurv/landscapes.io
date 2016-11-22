@@ -2,52 +2,52 @@
 
 angular.module('landscapes')
     .factory('DeploymentService', function DeploymentService($location, $rootScope, Deployment, $http) {
-        return {
-            create: function(deployment, callback) {
+      return {
+        create: function(deployment, callback) {
 
-                console.log(deployment)
+          console.log(deployment)
 
-                var cb = callback || angular.noop;
+          var cb = callback || angular.noop;
 
-                return Deployment.save(deployment,
+          return Deployment.save(deployment,
                     function(deployment) {
-                        return cb(deployment);
+                      return cb(deployment);
                     },
                     function(err) {
-                        return cb(err);
+                      return cb(err);
                     }
                 ).$promise;
-            },
-            retrieveForLandscape: function(id, callback) {
-                var cb = callback || angular.noop;
+        },
+        retrieveForLandscape: function(id, callback) {
+          var cb = callback || angular.noop;
 
-                $http.get('/api/landscapes/' + id + '/deployments')
+          $http.get('/api/landscapes/' + id + '/deployments')
                     .success(function(deployments) {
-                        return cb(null, deployments);
+                      return cb(null, deployments);
                     })
                     .error(function(err) {
-                        return cb(err);
+                      return cb(err);
                     });
-            },
-            update: function(id, deployment, callback) {
-                var cb = callback || angular.noop;
+        },
+        update: function(id, deployment, callback) {
+          var cb = callback || angular.noop;
 
-                $http.put('/api/deployments/' + id, deployment)
+          $http.put('/api/deployments/' + id, deployment)
                     .success(function(data) {
-                        return cb(null, data);
+                      return cb(null, data);
                     })
                     .error(function(err) {
-                        return cb(err);
+                      return cb(err);
                     });
-            }
-        };
+        }
+      };
     });
 
 angular.module('landscapes')
     .factory('Deployment', function ($resource) {
-        return $resource('/api/deployments/:id', {
-            id: '@id'
-        }, {
-            update: { method: 'PUT' }
-        });
+      return $resource('/api/deployments/:id', {
+        id: '@id'
+      }, {
+        update: { method: 'PUT' }
+      });
     });

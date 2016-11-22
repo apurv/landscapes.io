@@ -1,37 +1,37 @@
 'use strict';
 
 var openclient = require('openclient'),
-    path = require('path'),
-    winston = require('winston'),
-    config = require(path.resolve('./config/config'));
+  path = require('path'),
+  winston = require('winston'),
+  config = require(path.resolve('./config/config'));
 
 function Stacks() {
-    this.username = null;
-    this.password = null;
+  this.username = null;
+  this.password = null;
 }
 
 Stacks.prototype.config = function(_username, _password){
-    this.username = _username;
-    this.password = _password;
+  this.username = _username;
+  this.password = _password;
 };
 
 Stacks.prototype.authenticate = function(callback){
-    var Keystone = openclient.getAPI('openstack', 'identity', '2.0');
-    var client = new Keystone({ url: config.openStack.keystoneURL, debug: false });
-    client.authenticate(
-        {
-            username: this.username,
-            password: this.password,
-            project:  config.openStack.tenant
-        }, function (err, token) {
-            if(err){
-                winston.error(err);
-                callback(err);
-            }
-            winston.info('Successfully authenticated to OpenStack ');
-            winston.debug('Open Stack Token' + JSON.stringify(token));
-            callback(null,token);
-    });
+  var Keystone = openclient.getAPI('openstack', 'identity', '2.0');
+  var client = new Keystone({ url: config.openStack.keystoneURL, debug: false });
+  client.authenticate(
+    {
+      username: this.username,
+      password: this.password,
+      project:  config.openStack.tenant
+    }, function (err, token) {
+    if(err){
+      winston.error(err);
+      callback(err);
+    }
+    winston.info('Successfully authenticated to OpenStack ');
+    winston.debug('Open Stack Token' + JSON.stringify(token));
+    callback(null,token);
+  });
 };
 
 
@@ -50,7 +50,7 @@ Stacks.prototype.describeStacks = function(params, callback){
     });
 
     heatclient.stacks.get({
-      endpoint_type: "adminURL", 
+      endpoint_type: 'adminURL', 
       id: params.StackName,
       success: function (stack) {
         callback(null,stack);
@@ -59,7 +59,7 @@ Stacks.prototype.describeStacks = function(params, callback){
         if (err.message.indexOf('The resource could not be found') !== -1) {
           // The resource could not be found.
           var fakeError = {};
-          fakeError.message = "does not exist";
+          fakeError.message = 'does not exist';
           callback(fakeError);
         }else{
           //its a real error
@@ -93,13 +93,13 @@ Stacks.prototype.createStack = function(params, callback){
     }
     
     heatclient.stacks.create({
-      endpoint_type: "adminURL",  // Defaults to "publicURL". 
-      data: {"stack_name": params.StackName, "template": JSON.stringify( JSON.parse(params.TemplateBody)), "parameters" : heatParameters},
+      endpoint_type: 'adminURL',  // Defaults to "publicURL". 
+      data: { 'stack_name': params.StackName, 'template': JSON.stringify(JSON.parse(params.TemplateBody)), 'parameters' : heatParameters },
       success: function (stack) {
         callback(null,stack);
       },
       error: function (err) {
-        winston.error("Error Creating Open stack"  + err.message);
+        winston.error('Error Creating Open stack' + err.message);
         callback(err);
       }
     });

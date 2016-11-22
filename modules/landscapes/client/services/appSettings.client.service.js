@@ -16,65 +16,65 @@
 
 angular.module('landscapes')
     .factory('AppSettingsService', function AppSettingsService($location, $rootScope, AppSettings) {
-        return {
-            create: function(group, callback) {
-                var cb = callback || angular.noop;
-                return AppSettings.save(group,
+      return {
+        create: function(group, callback) {
+          var cb = callback || angular.noop;
+          return AppSettings.save(group,
                     function(data) {
-                        return cb(data);
+                      return cb(data);
                     },
                     function(err) {
-                        return cb(err);
+                      return cb(err);
                     }
                 ).$promise;
-            },
-            retrieve: function(callback) {
-                var cb = callback || angular.noop;
+        },
+        retrieve: function(callback) {
+          var cb = callback || angular.noop;
 
-                return AppSettings.query({},
+          return AppSettings.query({},
                     function(data) {
-                        return cb(data);
+                      return cb(data);
                     },
                     function(err) {
-                        return cb(err);
+                      return cb(err);
                     }
                 ).$promise;
-            },
-            retrieveOne: function(id) {
-                return AppSettings.get({id:id}, function(){});
-            },
-            update: function(id, group, callback) {
-                var cb = callback || angular.noop;
+        },
+        retrieveOne: function(id) {
+          return AppSettings.get({ id:id }, function(){});
+        },
+        update: function(id, group, callback) {
+          var cb = callback || angular.noop;
 
-                return AppSettings.update({id:id}, group,
+          return AppSettings.update({ id:id }, group,
                     function(data) {
-                        return cb(data);
+                      return cb(data);
                     },
                     function(err) {
-                        return cb(err);
+                      return cb(err);
                     }
                 ).$promise;
-            },
-            delete: function(id, callback) {
-                var cb = callback || angular.noop;
+        },
+        delete: function(id, callback) {
+          var cb = callback || angular.noop;
 
-                return AppSettings.remove({id: id},
+          return AppSettings.remove({ id: id },
                     function(data) {
-                        return cb(data);
+                      return cb(data);
                     },
                     function(err) {
-                        return cb(err);
+                      return cb(err);
                     }
                 ).$promise;
-            }
-        };
+        }
+      };
     });
 
 angular.module('landscapes')
     .factory('AppSettings', function ($resource) {
-        return $resource('/api/appSettings/:id', {
-            id: '@id'
-        }, {
-            update: { method: 'PUT' }
-        });
+      return $resource('/api/appSettings/:id', {
+        id: '@id'
+      }, {
+        update: { method: 'PUT' }
+      });
     });

@@ -49,7 +49,7 @@ exports.update = function (req, res) {
     user.updated = Date.now();
     user.displayName = user.firstName + ' ' + user.lastName;
 
-console.log('user', user)
+    console.log('user', user)
 
     user.save(function (err) {
       if (err) {

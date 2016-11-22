@@ -9,13 +9,13 @@
 
   function LandscapesService($resource) {
     return $resource('/api/landscapes/:landscapeId',
-        {
-          landscapesId: '@_id'
-        },
-        {
-          update: {
+      {
+        landscapesId: '@_id'
+      },
+      {
+        update: {
           method: 'PUT'
         }
-    });
+      });
   }
 })();

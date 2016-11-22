@@ -20,12 +20,12 @@ Schema = mongoose.Schema;
 
 
 var globalTagSchema = new Schema({
-    createdAt: { type: Date, default: Date.now },
-    createdBy: { type: Schema.ObjectId, ref: 'User' },
+  createdAt: { type: Date, default: Date.now },
+  createdBy: { type: Schema.ObjectId, ref: 'User' },
     
-    key: { type: String, required: true },
-    defaultValue: { type: String },
-    required: { type: Boolean, required: true }
+  key: { type: String, required: true },
+  defaultValue: { type: String },
+  required: { type: Boolean, required: true }
 });
 
 mongoose.model('GlobalTag', globalTagSchema);

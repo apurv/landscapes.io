@@ -1,34 +1,34 @@
 (function () {
-    'use strict';
+  'use strict';
 
 
-angular.module('landscapes.services')
+  angular.module('landscapes.services')
     .factory('ValidationService', ValidationService);
 
 
-ValidationService.$inject = ['$resource'];
+  ValidationService.$inject = ['$resource'];
 
   function ValidationService($resource) {
 
-        return {
+    return {
 
-            tryParseJSON: function (jsonString) {
-                try {
-                    var o = JSON.parse(jsonString);
+      tryParseJSON: function (jsonString) {
+        try {
+          var o = JSON.parse(jsonString);
 
-                    if (o && typeof o === "object" && o !== null) {
-                        return o;
-                    }
-                }
-                catch (e) { }
+          if (o && typeof o === 'object' && o !== null) {
+            return o;
+          }
+        }
+        catch (e) { }
 
-                return false;
-            },
+        return false;
+      },
 
-            isValidCloudFormationTemplate: function (template) {
+      isValidCloudFormationTemplate: function (template) {
                 // call AWS CloudFormation ValidateTemplate
-                return true;
-            }
-        };
-    }
+        return true;
+      }
+    };
+  }
 })();

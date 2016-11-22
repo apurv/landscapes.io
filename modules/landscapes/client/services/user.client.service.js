@@ -1,34 +1,34 @@
 (function () {
-    'use strict';
+  'use strict';
 
-    angular
+  angular
         .module('landscapes.services')
         .factory('UserService', UserService);
 
-    UserService.$inject = ['$resource'];
+  UserService.$inject = ['$resource'];
 
-    function UserService($resource) {
-        return $resource('/api/users/:id',
-            {id: '@id', roleId: '@roleId', groupId:'@groupId'}, {
-            update: {
+  function UserService($resource) {
+    return $resource('/api/users/:id',
+            { id: '@id', roleId: '@roleId', groupId:'@groupId' }, {
+              update: {
                 method: 'PUT'
-            },
-            addRole: {
+              },
+              addRole: {
                 method: 'POST',
                 url: '/api/users/:id/:roleId'
-            },
-            deleteRole: {
+              },
+              deleteRole: {
                 method: 'Delete',
                 url: '/api/users/:id/:roleId'
-            },
-            addGroup: {
-                    method: 'POST',
-                    url: '/api/users/:id/group/:groupId'
-                },
-            deleteGroup: {
-                    method: 'Delete',
-                    url: '/api/users/:id/group/:groupId'
-                }
-        });
-    }
+              },
+              addGroup: {
+                method: 'POST',
+                url: '/api/users/:id/group/:groupId'
+              },
+              deleteGroup: {
+                method: 'Delete',
+                url: '/api/users/:id/group/:groupId'
+              }
+            });
+  }
 })();

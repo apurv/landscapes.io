@@ -1,16 +1,17 @@
 {
   rules: {
-    indent: 2,
+    indent: ["error", 2],
     no-multi-spaces: 2,
     no-underscore-dangle: 0,
     no-use-before-define: [1, "nofunc"],
     no-unused-expressions: 0,
     no-empty-class: 0,
     object-curly-spacing: [2, "always"],
-    quotes: [1, "single"],
+    // quotes: [1, "single"],
     space-in-parens: [2, "never"]
   },
   env: {
+    es6: true,
     node: true
   },
   globals: {

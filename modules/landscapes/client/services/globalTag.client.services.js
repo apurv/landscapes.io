@@ -13,22 +13,22 @@
 // limitations under the License.
 
 (function () {
-    'use strict';
+  'use strict';
 
-    angular
+  angular
         .module('landscapes.services')
         .factory('GlobalTagService', GlobalTagService);
 
-    GlobalTagService.$inject = ['$resource'];
+  GlobalTagService.$inject = ['$resource'];
 
-    function GlobalTagService($resource) {
-        return $resource('/api/globalTags/:id', {
-            id: '@_id'
-        }, {
-            update: {
-                method: 'PUT'
-            }
-        });
-    }
+  function GlobalTagService($resource) {
+    return $resource('/api/globalTags/:id', {
+      id: '@_id'
+    }, {
+      update: {
+        method: 'PUT'
+      }
+    });
+  }
 })();
 

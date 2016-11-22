@@ -4,9 +4,9 @@
 
 angular.module('landscapes')
     .directive('imageUpload', function($parse) {
-        return {
-            restrict: 'AE',
-            templateUrl: 'modules/landscapes/client/directives/imageUpload/imageUpload.html',
-            replace: true
-        };
+      return {
+        restrict: 'AE',
+        templateUrl: 'modules/landscapes/client/directives/imageUpload/imageUpload.html',
+        replace: true
+      };
     });
