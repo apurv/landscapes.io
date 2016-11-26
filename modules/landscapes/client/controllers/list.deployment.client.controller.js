@@ -46,6 +46,14 @@
                 });
     };
 
+    $scope.delete = function (stackName, region) {
+      DeploymentService.delete(stackName, region).then(function (response) {
+          return response
+      }).catch(function (err) {
+          console.log(err)
+      })
+    }
+
     vm.loadDeployments();
 
     vm.cancelNote = function (index) {

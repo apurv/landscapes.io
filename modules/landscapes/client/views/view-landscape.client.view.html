@@ -83,7 +83,7 @@
                   </table>
                 </uib-tab>
                 <uib-tab heading="Deployments">
-                  <uib-tab-heading>Deployments 
+                  <uib-tab-heading>Deployments
                       <!--<span class="badge">{{ vm.mappingsKeys.length || 0 }}</span>-->
                   </uib-tab-heading>
                   <div class="col-md-12" ng-controller="ListDeployments as app">
@@ -91,7 +91,7 @@
                       <!--<div class="panel-heading title-heading">
                         <h2 class="panel-title">Deployments</h2>
                       </div>-->
-                     
+
                       <div class="panel-body">
                         <div>
                           <uib-accordion>
@@ -102,9 +102,12 @@
                                   {{deployment.createdAt | date : 'MM/dd/yyyy @ HH:mm'}}
                                 </div>
                                 <div class="pull-right">
+                                  <button class="btn btn-sm btn-default" ng-show="deployment.open" ng-click="delete(deployment.stackName, deployment.location)">
+                                    Delete
+                                  </button>
                                   <button class="btn btn-sm btn-default" target="_blank" ng-show="deployment.open" ng-click="newWindow('https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks?filter=active')">
-                                    <span class="glyphicon glyphicon-share-alt"></span> View in AWS
-                                </button>
+                                      <span class="glyphicon glyphicon-share-alt"></span> View in AWS
+                                  </button>
                                 </div>
                               </uib-accordion-heading>
                               <table class="deploymentsTable">

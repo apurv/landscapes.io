@@ -39,6 +39,13 @@ angular.module('landscapes')
                     .error(function(err) {
                       return cb(err);
                     });
+        },
+        delete: function (stackName, region) {
+            return $http.delete('/api/deployments/' + stackName + '/' + region).then(function (response) {
+                return response
+            }).catch(function (err) {
+                console.log(err)
+            })
         }
       };
     });
