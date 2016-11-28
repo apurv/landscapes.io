@@ -40,10 +40,12 @@ angular.module('landscapes')
                       return cb(err);
                     });
         },
-        delete: function (stackName, region) {
-            return $http.delete('/api/deployments/' + stackName + '/' + region).then(function (response) {
-                return response
-            }).catch(function (err) {
+        delete: (stackName, region, accountName) => {
+            return $http.delete('/api/deployments/' + stackName + '/' + region + '/' + accountName).then(response => {
+                if (response.status === 200) {
+                    return response
+                }
+            }).catch(err => {
                 console.log(err)
             })
         }

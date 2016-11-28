@@ -1,6 +1,7 @@
 'use strict';
 
 var mongoose = require('mongoose');
+var Account = mongoose.model('Account');
 var Landscape = mongoose.model('Landscape');
 var Deployment = mongoose.model('Deployment');
 var winston = require('winston');
@@ -260,33 +261,53 @@ exports.delete = function(req, res) {
 
     winston.info('---> Deleting Deployment')
 
-    var cloudformation = new AWS.CloudFormation();
+    var cloudformation = new AWS.CloudFormation()
 
     var params = {
         StackName: req.params.stackName
     }
 
-    // TODO: need to add key/secret
-    cloudformation.config.update({
-        region: req.params.region,
-        accessKeyId: '',
-        secretAccessKey: ''
-    })
-
     return new Promise((resolve, reject) => {
-        cloudformation.deleteStack(params, function(err, data) {
+        Account.findOne({ name: req.params.account }, (err, account) => {
             if (err) {
-                console.log(err, err.stack)
+                console.log(err)
                 reject(err)
-            } else {
-                resolve(data)
             }
+
+            cloudformation.config.update({
+                region: req.params.region,
+                accessKeyId: account.accessKeyId,
+                secretAccessKey: account.secretAccessKey
+            })
+
+            resolve(req.params.accountName)
         })
-    }).then((response) => {
-        console.log('response', response)
+    }).then(accountName => {
+        return new Promise((resolve, reject) => {
+            cloudformation.deleteStack(params, function(err, data) {
+                if (err) {
+                    console.log(err, err.stack)
+                    reject(err)
+                }
+
+                resolve(data)
+            })
+        })
+    }).then(response => {
+        return new Promise((resolve, reject) => {
+            Deployment.findOneAndUpdate({ stackName: req.params.stackName },
+                { $set: { isDeleted: true } }, { new: true }, (err, doc) => {
+                    if (err) {
+                        console.log(err)
+                        reject(err)
+                    }
+                    res.send(doc)
+            })
+        })
+    }).catch(err => {
+        console.log('ERROR:', err)
+        res.send(err)
     })
-
-
 };
 
 

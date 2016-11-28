@@ -88,9 +88,6 @@
                   </uib-tab-heading>
                   <div class="col-md-12" ng-controller="ListDeployments as app">
                     <div class="panel panel-default" style="border-width: 0;">
-                      <!--<div class="panel-heading title-heading">
-                        <h2 class="panel-title">Deployments</h2>
-                      </div>-->
 
                       <div class="panel-body">
                         <div>
@@ -101,7 +98,7 @@
                                 <div class="pull-right" ng-show="!deployment.open">
                                   {{deployment.createdAt | date : 'MM/dd/yyyy @ HH:mm'}}
                                 </div>
-                                <div class="pull-right">
+                                <div ng-hide="deployment.isDeleted" class="pull-right">
                                   <button class="btn btn-sm btn-default" ng-show="deployment.open" ng-click="delete(deployment.stackName, deployment.location)">
                                     Delete
                                   </button>
