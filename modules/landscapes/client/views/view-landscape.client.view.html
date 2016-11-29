@@ -98,6 +98,11 @@
                                 <div class="pull-right" ng-show="!deployment.open">
                                   {{deployment.createdAt | date : 'MM/dd/yyyy @ HH:mm'}}
                                 </div>
+                                <div ng-show="deployment.isDeleted" class="pull-right">
+                                  <button class="btn btn-sm btn-default" ng-show="deployment.open" ng-click="purge(deployment.stackName)">
+                                    Purge
+                                  </button>
+                                </div>
                                 <div ng-hide="deployment.isDeleted" class="pull-right">
                                   <button class="btn btn-sm btn-default" ng-show="deployment.open" ng-click="delete(deployment.stackName, deployment.location)">
                                     Delete

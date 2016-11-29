@@ -64,6 +64,9 @@ module.exports = function (app) {
   app.route('/api/deployments/:id').all(landscapesPolicy.isDeployAllowed)
     .put(deployments.update);
 
+  app.route('/api/deployments/:stackName').all(landscapesPolicy.isDeployAllowed)
+    .delete(deployments.purge);
+
   app.route('/api/deployments/:stackName/:region/:account').all(landscapesPolicy.isDeployAllowed)
     .delete(deployments.delete);
 

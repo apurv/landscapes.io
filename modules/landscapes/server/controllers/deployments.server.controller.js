@@ -256,6 +256,24 @@ exports.create = function(req, res) {
 
 
 // DELETE /api/deployments/<stackName>
+// Purge deployment for a given stackName
+exports.purge = function(req, res) {
+
+    winston.info('---> Purging Deployment')
+
+    return new Promise((resolve, reject) => {
+        Deployment.remove({ stackName: req.params.stackName }, (err, result) => {
+            if (err) {
+                console.log(err)
+                reject(err)
+            }
+
+            res.send(result)
+        })
+    })
+}
+
+// DELETE /api/deployments/<stackName>
 // Delete deployment for a given stackName
 exports.delete = function(req, res) {
 

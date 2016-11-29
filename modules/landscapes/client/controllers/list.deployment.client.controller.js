@@ -54,11 +54,18 @@
 
     $scope.delete = function (stackName, region) {
       DeploymentService.delete(stackName, region, vm.accountName).then(response => {
-          console.log('%c in controller ', 'background: #1c1c1c; color: deeppink', response.data)
           return response
       }).catch(function (err) {
           console.log(err)
       })
+    }
+
+    $scope.purge = function (stackName) {
+        DeploymentService.purge(stackName).then(response => {
+            return response
+        }).catch(function (err) {
+            console.log(err)
+        })
     }
 
     vm.loadDeployments();

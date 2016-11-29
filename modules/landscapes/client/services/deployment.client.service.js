@@ -48,6 +48,15 @@ angular.module('landscapes')
             }).catch(err => {
                 console.log(err)
             })
+        },
+        purge: (stackName) => {
+            return $http.delete('/api/deployments/' + stackName).then(response => {
+                if (response.status === 200) {
+                    return response
+                }
+            }).catch(err => {
+                console.log(err)
+            })
         }
       };
     });
