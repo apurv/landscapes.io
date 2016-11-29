@@ -41,6 +41,7 @@
                 vm.deployment.location = vm.accounts[0].region;
                 vm.deployment.isOtherRegion = vm.accounts[0].isOtherRegion;
 
+                vm.deployment.accountName = vm.accounts[0].name;
                 vm.deployment.secretAccessKey = vm.accounts[0].secretAccessKey;
                 vm.deployment.accessKeyId = vm.accounts[0].accessKeyId;
 
@@ -112,6 +113,7 @@
         if (vm.accounts[i].id === vm.deployment.account) {
           vm.deployment.location = vm.accounts[i].region;
           vm.deployment.isOtherRegion = vm.accounts[i].isOtherRegion;
+          vm.deployment.accountName = vm.accounts[i].name;
           vm.deployment.secretAccessKey = vm.accounts[i].secretAccessKey;
           vm.deployment.accessKeyId = vm.accounts[i].accessKeyId;
           vm.deployment.caBundlePath = vm.accounts[i].caBundlePath;
@@ -160,6 +162,7 @@
         description: vm.deployment.description,
 
         location: vm.deployment.location,
+        accountName: vm.deployment.accountName,
         accessKeyId: vm.deployment.accessKeyId,
         secretAccessKey: vm.deployment.secretAccessKey,
 

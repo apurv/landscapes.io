@@ -5,9 +5,9 @@
         .module('landscapes')
         .controller('ListDeployments', ListDeployments);
 
-  ListDeployments.$inject = ['$scope', '$state', 'DeploymentService', 'PermissionService', 'Authentication'];
+  ListDeployments.$inject = ['$scope', '$state', 'DeploymentService', 'PermissionService', 'CloudAccountService', 'Authentication'];
 
-  function ListDeployments($scope, $state, DeploymentService, PermissionService, Authentication) {
+  function ListDeployments($scope, $state, DeploymentService, PermissionService, CloudAccountService, Authentication) {
 
         // TO DO: poll AWS for CloudFormation events by isOpenIndex
     var vm = this;
@@ -20,6 +20,8 @@
     vm.headerColor = function (deployment) {
       if (deployment.awsErrors) {
         return 'panel-danger';
+      } else if (deployment.isDeleted) {
+        return 'panel-warning';
       } else if (deployment.open) {
         return 'panel-primary';
       } else {
@@ -45,6 +47,26 @@
                   }
                 });
     };
+
+    CloudAccountService.retrieve().then(data => {
+        vm.accountName = data[0].name
+    })
+
+    $scope.delete = function (stackName, region) {
+      DeploymentService.delete(stackName, region, vm.accountName).then(response => {
+          return response
+      }).catch(function (err) {
+          console.log(err)
+      })
+    }
+
+    $scope.purge = function (stackName) {
+        DeploymentService.purge(stackName).then(response => {
+            return response
+        }).catch(function (err) {
+            console.log(err)
+        })
+    }
 
     vm.loadDeployments();
 

@@ -43,7 +43,7 @@ module.exports = function (app) {
   // Upload routes
   app.post('/api/upload/image', upload.single('file'), landscapesPolicy.isCreateAllowed, Upload.postImage);
   app.post('/api/upload/template', upload.single('file'), landscapesPolicy.isCreateAllowed, Upload.postCloudFormationTemplate);
-  
+
   // app.route('/api/upload/image').all(landscapesPolicy.isCreateAllowed)
   //   .post(Upload.postImage);
   // app.route('/api/upload/template').all(landscapesPolicy.isCreateAllowed)
@@ -64,10 +64,16 @@ module.exports = function (app) {
   app.route('/api/deployments/:id').all(landscapesPolicy.isDeployAllowed)
     .put(deployments.update);
 
+  app.route('/api/deployments/:stackName').all(landscapesPolicy.isDeployAllowed)
+    .delete(deployments.purge);
+
+  app.route('/api/deployments/:stackName/:region/:account').all(landscapesPolicy.isDeployAllowed)
+    .delete(deployments.delete);
+
 
 
   /*
-  * Admin Routes 
+  * Admin Routes
   */
   //Global tags routes
   app.route('/api/globaltags').all(landscapesPolicy.isAdminAllowed)
