@@ -57,6 +57,15 @@ angular.module('landscapes')
             }).catch(err => {
                 console.log(err)
             })
+        },
+        describe: (stackName, region, accountName) => {
+            return $http.get('/api/deployments/describe/' + stackName + '/' + region + '/' + accountName).then(response => {
+                if (response.status === 200) {
+                    return response.data.Stacks
+                }
+            }).catch(err => {
+                console.log(err)
+            })
         }
       };
     });

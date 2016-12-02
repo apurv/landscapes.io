@@ -16,10 +16,19 @@
 
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title"><strong>{{landscape.name}}</strong></h3>                    
+                    <h3 class="panel-title">
+                        <strong>{{landscape.name}}</strong>
+                        <div class="pull-right">
+                            <span style="background: #edcf04;" class="badge">{{landscape.status.pending}}</span>
+                            <span style="background: #3ac733;" class="badge">{{landscape.status.running}}</span>
+                            <span style="background: #f53d3d;" class="badge">{{landscape.status.errored}}</span>
+                            <span style="background: #232426;" class="badge">{{landscape.status.deleted}}</span>
+                        </div>
+                    </h3>
+
                 </div>
                 <div class="panel-body">
-                    
+
 
                     <div class="media">
                         <!--hide hyperlink-->
@@ -38,7 +47,7 @@
                         <div style="position: absolute; right: 0px; bottom: 0px;" class="pull-right">
                             <button type="button" class="btn btn-default"
                                     ng-show="vm.currentUser.roles.indexOf('admin')!==-1"
-                                    ui-sref="landscapes.view({ landscapeId: landscape._id })">
+                                    ui-sref="landscapes.view({ landscapeId: landscape._id, tabset: 0 })">
                                 <span class="glyphicon glyphicon-share-alt"></span> View
                             </button>
                             <button type="button" class="btn btn-default"
@@ -56,4 +65,3 @@
 </div>
 
 <div ng-include="'/modules/landscapes/client/views/footer.html'"></div>
-

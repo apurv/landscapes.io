@@ -12,9 +12,11 @@
     var vm = this;
 
     vm.currentUser = Authentication.user;
+    vm.activeTabSet = parseInt($state.params.tabset)
     vm.hasPermission = PermissionService.hasPermission;
 
     landscape.$promise.then((data) => {
+
       vm.landscape = data
 
       vm.resourcesKeys = [];
