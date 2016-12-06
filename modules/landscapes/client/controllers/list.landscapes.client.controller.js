@@ -12,11 +12,14 @@
         console.log('LandscapesListController')
 
         var vm = this;
+        const runningStatus = ['CREATE_COMPLETE', 'ROLLBACK_COMPLETE', 'ROLLBACK_COMPLETE', 'DELETE_COMPLETE', 'UPDATE_COMPLETE', 'UPDATE_ROLLBACK_COMPLETE']
+        const pendingStatus = ['CREATE_IN_PROGRESS', 'ROLLBACK_IN_PROGRESS', 'DELETE_IN_PROGRESS', 'UPDATE_IN_PROGRESS', 'UPDATE_COMPLETE_CLEANUP_IN_PROGRESS', 'UPDATE_ROLLBACK_IN_PROGRESS', 'UPDATE_ROLLBACK_COMPLETE_CLEANUP_IN_PROGRESS', 'REVIEW_IN_PROGRESS']
 
         vm.statusArr = []
         vm.currentUser = Authentication.user;
         vm.hasPermission = PermissionService.hasPermission;
         vm.landscapes = LandscapesService.query();
+        vm.landscapesDetails = []
 
         function StatusModel() {
             this.pending = 0
@@ -54,8 +57,6 @@
                             reject(err)
                         }
 
-                        // forEach deployment if state is in progress then set interval
-
                         resolve(landscapes)
                     })
                 })
@@ -64,6 +65,8 @@
             return Promise.all(_promises)
 
         }).then(landscapes => {
+
+            vm.landscapesDetails = landscapes
 
             // count deleted/purged/errored landscapes
             landscapes.forEach((landscape, i) => {
@@ -79,65 +82,70 @@
             // gather status for other landscapes
             let _promises = []
 
-            let _promiseAll = landscapes.map((landscape, j) => {
+            let _promiseAll = landscapes.map((landscape, x) => {
                 if (landscape.length) {
-                    _promises[j] = landscape.map(stack => {
+                    _promises[x] = landscape.map(stack => {
                         if (!stack.isDeleted && !stack.awsErrors) {
                             return DeploymentService.describe(stack.stackName, stack.location, stack.accountName)
                         }
                         return []
                     })
-                    return Promise.all(_promises[j])
+                    return Promise.all(_promises[x])
                 }
                 return []
             })
 
             return Promise.all(_promiseAll)
 
-        }).then(stacksInfo => {
-            console.log('%c stackInfo ', 'background: #1c1c1c; color: deepskyblue', stacksInfo)
+        }).then(landscapesStatus => {
 
-            // count in-progress/running/error deployments
-            stacksInfo.forEach((deployments, i) => {
-                deployments.forEach(deployment => {
-                    console.log('%c deployment ', 'background: #1c1c1c; color: limegreen', deployment)
-                    if (deployment) {
-                        deployment.forEach(stack => {
-                            console.log('%c stack ', 'background: #1c1c1c; color: rgb(209, 29, 238)', stack)
+            // flatten deployments in landscapesStatus
+            landscapesStatus = landscapesStatus.map(stack => {
+                return _.compact(stack.map(dep => {
+                        return dep[0]
+                }))
+            })
 
-                            let runningArr = ['CREATE_COMPLETE', 'ROLLBACK_COMPLETE', 'ROLLBACK_COMPLETE', 'DELETE_COMPLETE', 'UPDATE_COMPLETE', 'UPDATE_ROLLBACK_COMPLETE']
+            // loop through each deployment and increment the running/pending statuses
+            landscapesStatus.forEach((ls, index) => {
+                ls.forEach(deployment => {
 
-                            if (runningArr.indexOf(stack.StackStatus) > -1) {
-                                if (vm.landscapes[i].isRunning) {
-                                    vm.landscapes[i].isRunning++
-                                } else {
-                                    vm.landscapes[i].isRunning = 1
-                                }
-                            }
+                    // HACK: Remove this
+                    deployment.StackStatus = 'CREATE_IN_PROGRESS'
 
-                        })
-                    } else if (vm.landscapes[i].isError) {
-                        vm.landscapes[i].isError += 1
-                    } else {
-                        vm.landscapes[i].isError = 1
-                        // console.log('%c vm.landscapes[i].landscapeId ', 'background: #1c1c1c; color: rgb(209, 29, 238)', vm.statusArr[vm.landscapes[i]._id])
-                        // vm.statusArr[vm.landscapes[i]._id] = 1
-                        // if (vm.statusArr[vm.landscapes[i]._id].error) {
-                        //     vm.statusArr[vm.landscapes[i]._id].error++
-                        // } else {
-                        //     vm.statusArr[vm.landscapes[i]._id] = {
-                        //         error: 1
-                        //     }
-                        // }
+                    if (runningStatus.indexOf(deployment.StackStatus) > -1) {
+                        vm.landscapes[index].status.running++
+                    } else if (pendingStatus.indexOf(deployment.StackStatus) > -1) {
+                        vm.landscapes[index].status.pending++
+
+                        // derive the index of the pending deployment and poll AWS until its resolved
+                        let _pendingIndex = _.findIndex(vm.landscapesDetails[index], { stackName: deployment.StackName })
+                        let _pendingDeployment = vm.landscapesDetails[index][_pendingIndex]
+                        poll(index, 5000, _pendingDeployment.stackName, _pendingDeployment.location, _pendingDeployment.accountName)
                     }
                 })
             })
 
-            console.log('%c statusArr ', 'background: #1c1c1c; color: rgb(209, 29, 238)', vm.statusArr)
 
         }).catch(err => {
             console.log(err)
         })
+
+
+        function poll(index, interval, stackName, location, accountName) {
+            return DeploymentService.describe(stackName, location, accountName).then(deployment => {
+                if (runningStatus.indexOf(deployment[0].StackStatus) > -1) {
+                    vm.landscapes[index].status.running++
+                    vm.landscapes[index].status.pending--
+                } else {
+                    setTimeout(() => {
+                        poll(index, stackName, location, accountName)
+                    }, interval)
+                }
+            }).catch(err => {
+                console.log(err)
+            })
+        }
 
 
 
