@@ -71,4 +71,4 @@ RUN bower install --quiet --allow-root --config.interactive=false
 
 COPY . /opt/landscapes
 
-CMD ["npm", "start"]
+CMD ["MONGO_SEED=true", "npm", "start"]
