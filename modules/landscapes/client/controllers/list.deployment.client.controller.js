@@ -48,12 +48,12 @@
                 });
     };
 
-    CloudAccountService.retrieve().then(data => {
+    CloudAccountService.retrieve().then(function (data) {
         vm.accountName = data[0].name
     })
 
     $scope.delete = function (stackName, region) {
-      DeploymentService.delete(stackName, region, vm.accountName).then(response => {
+      DeploymentService.delete(stackName, region, vm.accountName).then(function (response) {
           return response
       }).catch(function (err) {
           console.log(err)
@@ -61,7 +61,7 @@
     }
 
     $scope.purge = function (stackName) {
-        DeploymentService.purge(stackName).then(response => {
+        DeploymentService.purge(stackName).then(function (response) {
             return response
         }).catch(function (err) {
             console.log(err)

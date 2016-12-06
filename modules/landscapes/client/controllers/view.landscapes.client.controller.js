@@ -15,7 +15,7 @@
     vm.activeTabSet = parseInt($state.params.tabset)
     vm.hasPermission = PermissionService.hasPermission;
 
-    landscape.$promise.then((data) => {
+    landscape.$promise.then(function (data) {
 
       vm.landscape = data
 
