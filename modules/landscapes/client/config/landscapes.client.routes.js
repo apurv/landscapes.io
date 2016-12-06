@@ -13,7 +13,7 @@
         abstract: true,
         url: '/landscapes',
         template: '<ui-view/>'
-      }) 
+      })
       .state('landscapes.admin', {
         url: '/admin',
         templateUrl: 'modules/landscapes/client/views/admin-main.client.view.html',
@@ -30,7 +30,7 @@
         }
       })
       .state('landscapes.view', {
-        url: '/:landscapeId',
+        url: '/:landscapeId/:tabset',
         templateUrl: 'modules/landscapes/client/views/view-landscape.client.view.html',
         controller: 'LandscapesViewController',
         controllerAs: 'vm',

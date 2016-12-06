@@ -5,7 +5,7 @@
     </h2>
     <div class="col-md-3">
       <div class="pull-right">
-        <button type="button" class="btn btn-primary" ui-sref="landscapes.view({ landscapeId: vm.landscapeId })">
+        <button type="button" class="btn btn-primary" ui-sref="landscapes.view({ landscapeId: vm.landscapeId, tabset: 0 })">
           <span class="glyphicon glyphicon-ban-circle"></span> Cancel
         </button>
         <button class="btn btn-default" type="submit">
@@ -34,7 +34,7 @@
                   <label for="deploymentAccount" class="col-md-4 control-label">Account</label>
                   <div class="col-md-8">
                     <select id="deploymentAccount" name="account" class="form-control" ng-options="account.id as account.name for account in vm.accounts"
-                      ng-change="vm.changeAccount()" ng-model="vm.deployment.account">                       
+                      ng-change="vm.changeAccount()" ng-model="vm.deployment.account">
                     </select>
                   </div>
                 </div>

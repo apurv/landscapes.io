@@ -70,6 +70,9 @@ module.exports = function (app) {
   app.route('/api/deployments/:stackName/:region/:account').all(landscapesPolicy.isDeployAllowed)
     .delete(deployments.delete);
 
+  app.route('/api/deployments/describe/:stackName/:region/:account').all(landscapesPolicy.isDeployAllowed)
+    .get(deployments.describe);
+
 
 
   /*

@@ -12,7 +12,7 @@
     var vm = this;
     vm.currentUser = Authentication.user;
     vm.hasPermission = PermissionService.hasPermission;
-        
+
     landscape.$promise.then((data) => {
       vm.landscape = data
       vm.template = JSON.parse(vm.landscape.cloudFormationTemplate);
@@ -107,7 +107,7 @@
         })
                     .$promise
                     .then(function () {
-                      $state.go('landscapes.view', { landscapeId: vm.landscape._id });
+                      $state.go('landscapes.view', { landscapeId: vm.landscape._id, tabset: 0 });
                     })
                     .catch(function (err) {
                       err = err.data;
@@ -194,6 +194,3 @@
           };
         });
 })();
-
-
-

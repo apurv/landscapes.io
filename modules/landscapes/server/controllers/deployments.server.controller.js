@@ -255,6 +255,51 @@ exports.create = function(req, res) {
 };
 
 
+// GET /api/deployments/describe/<stackName>
+// Describe deployment for a given stackName
+exports.describe = function(req, res) {
+
+    winston.info('---> Describing Deployment')
+
+    let cloudformation = new AWS.CloudFormation()
+
+    return new Promise((resolve, reject) => {
+        Account.findOne({ name: req.params.account }, (err, account) => {
+            if (err) {
+                console.log(err)
+                reject(err)
+            }
+
+            cloudformation.config.update({
+                region: req.params.region,
+                accessKeyId: account.accessKeyId,
+                secretAccessKey: account.secretAccessKey
+            })
+
+            resolve(req.params.account)
+        })
+    }).then(accountName => {
+
+        let params = {
+            StackName: req.params.stackName
+        }
+
+        return new Promise((resolve, reject) => {
+            cloudformation.describeStacks(params, (err, data) => {
+                if (err) {
+                    console.log(err, err.stack)
+                    reject(err)
+                }
+                console.log(data)
+                res.send(data)
+            })
+        })
+    }).catch(err => {
+        console.log('ERROR:', err)
+    })
+}
+
+
 // DELETE /api/deployments/<stackName>
 // Purge deployment for a given stackName
 exports.purge = function(req, res) {
@@ -270,6 +315,8 @@ exports.purge = function(req, res) {
 
             res.send(result)
         })
+    }).catch(err => {
+        console.log('ERROR:', err)
     })
 }
 
@@ -279,9 +326,9 @@ exports.delete = function(req, res) {
 
     winston.info('---> Deleting Deployment')
 
-    var cloudformation = new AWS.CloudFormation()
+    let cloudformation = new AWS.CloudFormation()
 
-    var params = {
+    let params = {
         StackName: req.params.stackName
     }
 
@@ -298,11 +345,11 @@ exports.delete = function(req, res) {
                 secretAccessKey: account.secretAccessKey
             })
 
-            resolve(req.params.accountName)
+            resolve(req.params.account)
         })
     }).then(accountName => {
         return new Promise((resolve, reject) => {
-            cloudformation.deleteStack(params, function(err, data) {
+            cloudformation.deleteStack(params, (err, data) => {
                 if (err) {
                     console.log(err, err.stack)
                     reject(err)

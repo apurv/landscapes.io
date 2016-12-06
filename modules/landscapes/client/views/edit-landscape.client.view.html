@@ -5,7 +5,7 @@
       <h2 class="pull-left col-md-8"><span class="glyphicon glyphicon-edit"></span> Edit Landscape</h2>
       <div class="col-md-4">
         <div class="pull-right">
-          <button type="button" class="btn btn-primary" ui-sref="landscapes.view({ landscapeId: vm.landscape._id })">
+          <button type="button" class="btn btn-primary" ui-sref="landscapes.view({ landscapeId: vm.landscape._id, tabset: 0 })">
             <span class="glyphicon glyphicon-ban-circle"></span> Cancel
           </button>
           <button class="btn btn-danger" type="button" ng-show="vm.hasPermission(vm.currentUser, 'D', vm.landscape._id)" ng-click="vm.deleteLandscape(vm.landscape.name)">
