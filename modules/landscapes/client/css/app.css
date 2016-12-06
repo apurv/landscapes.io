@@ -230,3 +230,8 @@ textarea.awsTemplate
 {
     color: #555;
 }
+
+.panel-deleted > .panel-heading {
+    background-image: linear-gradient(to bottom, #4e4e4e 0%, #a5a5a5 100%);
+    color: #FFF;
+}

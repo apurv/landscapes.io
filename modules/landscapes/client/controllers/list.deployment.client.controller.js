@@ -21,11 +21,11 @@
       if (deployment.awsErrors) {
         return 'panel-danger';
       } else if (deployment.isDeleted) {
-        return 'panel-warning';
+        return 'panel-deleted';
       } else if (deployment.open) {
         return 'panel-primary';
       } else {
-        return 'panel-default';
+        return 'panel-success';
       }
     };
 

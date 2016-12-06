@@ -110,9 +110,6 @@
             landscapesStatus.forEach((ls, index) => {
                 ls.forEach(deployment => {
 
-                    // HACK: Remove this
-                    deployment.StackStatus = 'CREATE_IN_PROGRESS'
-
                     if (runningStatus.indexOf(deployment.StackStatus) > -1) {
                         vm.landscapes[index].status.running++
                     } else if (pendingStatus.indexOf(deployment.StackStatus) > -1) {
