@@ -70,7 +70,7 @@
 
             // count deleted/purged/errored landscapes
             landscapes.forEach(function (landscape, i) {
-                landscape.forEach( function (deployment) {
+                landscape.forEach(function (deployment) {
                     if (deployment && deployment.isDeleted) {
                         vm.landscapes[i].status.deleted++
                     } else if (deployment && deployment.awsErrors) {
