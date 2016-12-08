@@ -12,8 +12,8 @@
         console.log('LandscapesListController')
 
         var vm = this;
-        const runningStatus = ['CREATE_COMPLETE', 'ROLLBACK_COMPLETE', 'ROLLBACK_COMPLETE', 'DELETE_COMPLETE', 'UPDATE_COMPLETE', 'UPDATE_ROLLBACK_COMPLETE']
-        const pendingStatus = ['CREATE_IN_PROGRESS', 'ROLLBACK_IN_PROGRESS', 'DELETE_IN_PROGRESS', 'UPDATE_IN_PROGRESS', 'UPDATE_COMPLETE_CLEANUP_IN_PROGRESS', 'UPDATE_ROLLBACK_IN_PROGRESS', 'UPDATE_ROLLBACK_COMPLETE_CLEANUP_IN_PROGRESS', 'REVIEW_IN_PROGRESS']
+        var runningStatus = ['CREATE_COMPLETE', 'ROLLBACK_COMPLETE', 'ROLLBACK_COMPLETE', 'DELETE_COMPLETE', 'UPDATE_COMPLETE', 'UPDATE_ROLLBACK_COMPLETE']
+        var pendingStatus = ['CREATE_IN_PROGRESS', 'ROLLBACK_IN_PROGRESS', 'DELETE_IN_PROGRESS', 'UPDATE_IN_PROGRESS', 'UPDATE_COMPLETE_CLEANUP_IN_PROGRESS', 'UPDATE_ROLLBACK_IN_PROGRESS', 'UPDATE_ROLLBACK_COMPLETE_CLEANUP_IN_PROGRESS', 'REVIEW_IN_PROGRESS']
 
         vm.statusArr = []
         vm.currentUser = Authentication.user;
@@ -39,19 +39,19 @@
         }
 
         // promisify vm.landscapes to attain the deployments
-        vm.landscapes.$promise.then(response => {
+        vm.landscapes.$promise.then(function (response) {
 
             vm.landscapes = response
 
             // instantiate statuses
-            vm.landscapes.forEach(landscape => {
+            vm.landscapes.forEach(function (landscape) {
                 landscape.status = new StatusModel()
             })
 
             // create promise array to gather all deployments
-            let _promises = vm.landscapes.map((landscape, index) => {
-                return new Promise((resolve, reject) => {
-                    DeploymentService.retrieveForLandscape(vm.landscapes[index]._id, (err, landscapes) => {
+            var _promises = vm.landscapes.map(function (landscape, index) {
+                return new Promise(function (resolve, reject) {
+                    DeploymentService.retrieveForLandscape(vm.landscapes[index]._id, function(err, landscapes) {
                         if (err) {
                             console.log(err)
                             reject(err)
@@ -64,13 +64,13 @@
 
             return Promise.all(_promises)
 
-        }).then(landscapes => {
+        }).then(function (landscapes) {
 
             vm.landscapesDetails = landscapes
 
             // count deleted/purged/errored landscapes
-            landscapes.forEach((landscape, i) => {
-                landscape.forEach(deployment => {
+            landscapes.forEach(function (landscape, i) {
+                landscape.forEach(function (deployment) {
                     if (deployment && deployment.isDeleted) {
                         vm.landscapes[i].status.deleted++
                     } else if (deployment && deployment.awsErrors) {
@@ -80,11 +80,11 @@
             })
 
             // gather status for other landscapes
-            let _promises = []
+            var _promises = []
 
-            let _promiseAll = landscapes.map((landscape, x) => {
+            var _promiseAll = landscapes.map(function (landscape, x) {
                 if (landscape.length) {
-                    _promises[x] = landscape.map(stack => {
+                    _promises[x] = landscape.map(function (stack) {
                         if (!stack.isDeleted && !stack.awsErrors) {
                             return DeploymentService.describe(stack.stackName, stack.location, stack.accountName)
                         }
@@ -97,18 +97,18 @@
 
             return Promise.all(_promiseAll)
 
-        }).then(landscapesStatus => {
+        }).then(function (landscapesStatus) {
 
             // flatten deployments in landscapesStatus
-            landscapesStatus = landscapesStatus.map(stack => {
-                return _.compact(stack.map(dep => {
+            landscapesStatus = landscapesStatus.map(function (stack) {
+                return _.compact(stack.map(function (dep) {
                         return dep[0]
                 }))
             })
 
             // loop through each deployment and increment the running/pending statuses
-            landscapesStatus.forEach((ls, index) => {
-                ls.forEach(deployment => {
+            landscapesStatus.forEach(function (ls, index) {
+                ls.forEach(function (deployment) {
 
                     if (runningStatus.indexOf(deployment.StackStatus) > -1) {
                         vm.landscapes[index].status.running++
@@ -116,38 +116,33 @@
                         vm.landscapes[index].status.pending++
 
                         // derive the index of the pending deployment and poll AWS until its resolved
-                        let _pendingIndex = _.findIndex(vm.landscapesDetails[index], { stackName: deployment.StackName })
-                        let _pendingDeployment = vm.landscapesDetails[index][_pendingIndex]
+                        var _pendingIndex = _.findIndex(vm.landscapesDetails[index], { stackName: deployment.StackName })
+                        var _pendingDeployment = vm.landscapesDetails[index][_pendingIndex]
                         poll(index, 5000, _pendingDeployment.stackName, _pendingDeployment.location, _pendingDeployment.accountName)
                     }
                 })
             })
 
 
-        }).catch(err => {
+        }).catch(function (err) {
             console.log(err)
         })
 
 
         function poll(index, interval, stackName, location, accountName) {
-            return DeploymentService.describe(stackName, location, accountName).then(deployment => {
+            return DeploymentService.describe(stackName, location, accountName).then(function (deployment) {
                 if (runningStatus.indexOf(deployment[0].StackStatus) > -1) {
                     vm.landscapes[index].status.running++
                     vm.landscapes[index].status.pending--
                 } else {
-                    setTimeout(() => {
+                    setTimeout(function() {
                         poll(index, stackName, location, accountName)
                     }, interval)
                 }
-            }).catch(err => {
+            }).catch(function (err) {
                 console.log(err)
             })
         }
-
-
-
-
-
 
     }
 })();

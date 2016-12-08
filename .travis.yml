@@ -7,6 +7,7 @@ node_js:
   - 7
 matrix:
   allow_failures:
+    - node_js: 4
     - node_js: 7
 os:
   - linux
@@ -30,7 +31,7 @@ before_script:
   - snyk test
 after_script:
   - nsp check
-  - gulp test:coverage
+  # - gulp test:coverage
   - node_modules/.bin/lcov-result-merger 'coverage/**/lcov.info' | node_modules/coveralls/bin/coveralls.js
 notifications:
   webhooks:

@@ -13,7 +13,7 @@
     vm.currentUser = Authentication.user;
     vm.hasPermission = PermissionService.hasPermission;
 
-    landscape.$promise.then((data) => {
+    landscape.$promise.then(function (data) {
       vm.landscape = data
       vm.template = JSON.parse(vm.landscape.cloudFormationTemplate);
       vm.imgSrc = '/api/landscapes/' + landscape._id + '/image';

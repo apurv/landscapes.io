@@ -17,9 +17,9 @@
       if (toState.data && toState.data.roles && toState.data.roles.length > 0) {
         var allowed = false;
 
-        let roleNames = [];
+        var roleNames = [];
         if (Authentication.user && Authentication.user.roles !== undefined) {
-          roleNames = Authentication.user.roles.map((r) => { return r.name })
+          roleNames = Authentication.user.roles.map(function (r) { return r.name })
         }
 
         for (var i = 0, roles = toState.data.roles; i < roles.length; i++) {

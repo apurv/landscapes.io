@@ -20,7 +20,7 @@ angular.module('landscapes')
       };
 
       function _showAdvanced(account) {
-        let show = false;
+        var show = false;
         if(!account.rejectUnauthorizedSsl || account.endpoint || account.caBundlePath || account.signatureBlock) {
           show = true
         }

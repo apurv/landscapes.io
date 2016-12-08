@@ -40,30 +40,30 @@ angular.module('landscapes')
                       return cb(err);
                     });
         },
-        delete: (stackName, region, accountName) => {
-            return $http.delete('/api/deployments/' + stackName + '/' + region + '/' + accountName).then(response => {
+        delete: function (stackName, region, accountName) {
+            return $http.delete('/api/deployments/' + stackName + '/' + region + '/' + accountName).then(function (response) {
                 if (response.status === 200) {
                     return response
                 }
-            }).catch(err => {
+            }).catch(function (err) {
                 console.log(err)
             })
         },
-        purge: (stackName) => {
-            return $http.delete('/api/deployments/' + stackName).then(response => {
+        purge: function (stackName) {
+            return $http.delete('/api/deployments/' + stackName).then(function (response) {
                 if (response.status === 200) {
                     return response
                 }
-            }).catch(err => {
+            }).catch(function (err) {
                 console.log(err)
             })
         },
-        describe: (stackName, region, accountName) => {
-            return $http.get('/api/deployments/describe/' + stackName + '/' + region + '/' + accountName).then(response => {
+        describe: function (stackName, region, accountName) {
+            return $http.get('/api/deployments/describe/' + stackName + '/' + region + '/' + accountName).then(function (response) {
                 if (response.status === 200) {
                     return response.data.Stacks
                 }
-            }).catch(err => {
+            }).catch(function (err) {
                 console.log(err)
             })
         }
