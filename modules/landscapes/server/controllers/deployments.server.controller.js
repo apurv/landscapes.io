@@ -271,10 +271,20 @@ exports.describe = function(req, res) {
             }
 
             cloudformation.config.update({
-                region: req.params.region,
-                accessKeyId: account.accessKeyId,
-                secretAccessKey: account.secretAccessKey
+                region: req.params.region
             })
+
+            if (account && account.accessKeyId && account.secretAccessKey) {
+                winston.info('---> setting AWS security credentials');
+
+                cloudformation.config.update({
+                    accessKeyId: account.accessKeyId,
+                    secretAccessKey: account.secretAccessKey
+                })
+
+            } else {
+                winston.info(' ---> No AWS security credentials set - assuming Server IAM Role');
+            }
 
             resolve(req.params.account)
         })
@@ -340,10 +350,20 @@ exports.delete = function(req, res) {
             }
 
             cloudformation.config.update({
-                region: req.params.region,
-                accessKeyId: account.accessKeyId,
-                secretAccessKey: account.secretAccessKey
+                region: req.params.region
             })
+
+            if (account && account.accessKeyId && account.secretAccessKey) {
+                winston.info('---> setting AWS security credentials');
+
+                cloudformation.config.update({
+                    accessKeyId: account.accessKeyId,
+                    secretAccessKey: account.secretAccessKey
+                })
+
+            } else {
+                winston.info(' ---> No AWS security credentials set - assuming Server IAM Role');
+            }
 
             resolve(req.params.account)
         })
