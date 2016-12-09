@@ -274,7 +274,7 @@ exports.describe = function(req, res) {
                 region: req.params.region
             })
 
-            if (account.accessKeyId && account.secretAccessKey) {
+            if (account && account.accessKeyId && account.secretAccessKey) {
                 winston.info('---> setting AWS security credentials');
 
                 cloudformation.config.update({
@@ -353,7 +353,7 @@ exports.delete = function(req, res) {
                 region: req.params.region
             })
 
-            if (account.accessKeyId && account.secretAccessKey) {
+            if (account && account.accessKeyId && account.secretAccessKey) {
                 winston.info('---> setting AWS security credentials');
 
                 cloudformation.config.update({
