@@ -54,6 +54,7 @@
 
     $scope.delete = function (stackName, region) {
       DeploymentService.delete(stackName, region, vm.accountName).then(function (response) {
+          $state.reload()
           return response
       }).catch(function (err) {
           console.log(err)
@@ -62,6 +63,7 @@
 
     $scope.purge = function (stackName) {
         DeploymentService.purge(stackName).then(function (response) {
+            $state.reload()
             return response
         }).catch(function (err) {
             console.log(err)
