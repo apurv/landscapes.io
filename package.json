@@ -92,6 +92,7 @@
     "passport-ldapauth": "^0.6.0",
     "passport-local": "~1.0.0",
     "phantomjs-prebuilt": "~2.1.4",
+    "promise-retry": "^1.1.1",
     "secure-random": "^1.1.1",
     "serve-favicon": "~2.3.0",
     "socket.io": "^1.4.8",

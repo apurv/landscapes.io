@@ -6,6 +6,7 @@ var Landscape = mongoose.model('Landscape');
 var Deployment = mongoose.model('Deployment');
 var winston = require('winston');
 var async = require('async');
+var promiseRetry = require('promise-retry');
 var AWS = require('aws-sdk');
 const https = require('https');
 var path = require('path');
@@ -350,6 +351,19 @@ exports.delete = function(req, res) {
         StackName: req.params.stackName
     }
 
+    function deleteStack() {
+        return new Promise((resolve, reject) => {
+            cloudformation.deleteStack(params, (err, data) => {
+                if (err) {
+                    console.log(err, err.stack)
+                    reject(err)
+                }
+
+                resolve(data)
+            })
+        })
+    }
+
     return new Promise((resolve, reject) => {
         Account.findOne({ name: req.params.account }, (err, account) => {
             if (err) {
@@ -376,30 +390,37 @@ exports.delete = function(req, res) {
             resolve(req.params.account)
         })
     }).then(accountName => {
-        return new Promise((resolve, reject) => {
-            cloudformation.deleteStack(params, (err, data) => {
-                if (err) {
-                    console.log(err, err.stack)
-                    reject(err)
-                }
 
-                resolve(data)
-            })
-        })
-    }).then(response => {
-        return new Promise((resolve, reject) => {
-            Deployment.findOneAndUpdate({ stackName: req.params.stackName },
-                { $set: { isDeleted: true } }, { new: true }, (err, doc) => {
-                    if (err) {
-                        console.log(err)
-                        reject(err)
+        let _retryErr
+
+        promiseRetry((retry, number) => {
+            if (number < 5) {
+                return deleteStack().catch((err) => {
+                    if (err.code === 'UnknownEndpoint' || err.code === 'NetworkingError') {
+                        _retryErr = err
+                        retry(err)
                     }
-                    res.send(doc)
+
+                    throw err
+                })
+            }
+            throw _retryErr 
+        }).then(response => {
+            return new Promise((resolve, reject) => {
+                Deployment.findOneAndUpdate({ stackName: req.params.stackName },
+                    { $set: { isDeleted: true } }, { new: true }, (err, doc) => {
+                        if (err) {
+                            console.log(err)
+                            reject(err)
+                        }
+                        res.send(doc)
+                })
             })
+        }).catch(err => {
+            console.log('ERROR:', err)
+            res.send(err)
         })
-    }).catch(err => {
-        console.log('ERROR:', err)
-        res.send(err)
+
     })
 };
 
