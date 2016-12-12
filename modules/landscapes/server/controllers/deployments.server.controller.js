@@ -12,6 +12,14 @@ var path = require('path');
 var fs = require('fs');
 var OpenStack = require('./openstackdeploy.server.controller.js');
 
+// FIX: Attempts to resolve 'UnknownEndpoint' error experienced on GovCloud
+AWS.events.on('httpError', function() {
+    if (this.response.error && this.response.error.code === 'UnknownEndpoint') {
+        this.response.error.retryable = true;
+    } else if (this.response.error && this.response.error.code === 'NetworkingError') {
+        this.response.error.retryable = true;
+    }
+})
 
 function _setCABundle(pathToCertDotPemFile, rejectUnauthorized) {
     let filePath = path.join(process.cwd(), pathToCertDotPemFile);
