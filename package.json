@@ -12,7 +12,7 @@
     "test": "NODE_ENV=test nyc mocha test/.setup.js test/**/*.spec.js --recursive",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "prod": "NODE_ENV=production webpack -p --config webpack.production.config.js ",
-    "start": "NODE_ENV=dev concurrently --kill-others \"nodemon ./server/server.js --exec babel-node\" \"node server.hot.reload\""
+    "start": "NODE_ENV=dev concurrently --kill-others \"nodemon ./src/server/server.js --exec babel-node\" \"node server.hot.reload\""
   },
   "repository": {
     "type": "git",
