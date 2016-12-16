@@ -33,7 +33,7 @@
 
 ## Usage
 
-### Prerequisite
+### Prerequisites
 
 ##### Node JS version required is `>=6.5.1`
 ##### Configure ports and database URL for mongoDB in `.env`
@@ -65,7 +65,6 @@ npm run dev
 
 ### Bundle Production Build
 
-*General case:*
 ```bash
 npm run prod
 ```
