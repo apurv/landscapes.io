@@ -3,21 +3,41 @@ const precss = require('precss')
 const webpack = require('webpack')
 const autoprefixer = require('autoprefixer')
 
-const assetsDir = path.resolve(__dirname, 'public/assets')
-const nodeModulesDir = path.resolve(__dirname, 'node_modules')
+const ROOT_PATH = path.resolve(__dirname)
+const assetsDir = path.resolve(ROOT_PATH, 'public/assets')
+const nodeModulesDir = path.resolve(ROOT_PATH, 'node_modules')
 
 const config = {
-    entry: [path.resolve(__dirname, 'src/app/index.js')],
+    entry: [path.resolve(ROOT_PATH, 'src/app/index.js')],
     output: {
         path: assetsDir,
         filename: 'bundle.js'
+    },
+    resolve: {
+        extensions: [ '', '.js', '.jsx' ],
+        alias: {
+            components: path.resolve(ROOT_PATH, 'src/app/components'),
+            containers: path.resolve(ROOT_PATH, 'src/app/containers'),
+            views: path.resolve(ROOT_PATH, 'src/app/views'),
+            public: path.resolve(ROOT_PATH, 'public')
+        }
     },
     module: {
         loaders: [
             {
                 test: /\.jsx?$/,
                 loader: 'babel',
-                exclude: [ nodeModulesDir ]
+                exclude: [ nodeModulesDir ],
+                query: {
+                    "plugins": [
+                        [
+                            "import", {
+                                libraryName: "antd",
+                                style: "css"
+                            }
+                        ]
+                    ]
+                }
             }, {
                 test: /\.scss$/,
                 loader: 'style!css!postcss!sass'
@@ -30,21 +50,21 @@ const config = {
             }, {
                 test: /\.(eot|woff|woff2|ttf|svg|png|jpe?g|gif)(\?\S*)?$/,
                 loader: 'url?limit=100000@name=[name][ext]'
+            }, {
+                test: /\.svg$/,
+                loader: 'babel!svg-react'
             }
         ]
     },
     postcss: function() {
         return [
             precss,
-            autoprefixer({browsers: ['last 2 versions']})
+            autoprefixer({ browsers: ['last 2 versions'] })
         ]
     },
     plugins: [new webpack.optimize.OccurenceOrderPlugin(), getImplicitGlobals(), setNodeEnv()]
 }
 
-/*
-* here using hoisting so don't use `var NAME = function()...`
-*/
 function getImplicitGlobals() {
     return new webpack.ProvidePlugin({$: 'jquery', jQuery: 'jquery'})
 }

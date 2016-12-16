@@ -27,9 +27,9 @@ const navModel = {
       isRouteBtn: true
     },
     {
-      label:      'About',
-      link:       '/about',
-      view:       'about',
+      label:      'Landscapes',
+      link:       '/landscapes',
+      view:       'landscapes',
       isRouteBtn: true
     }
   ]

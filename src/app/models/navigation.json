@@ -39,9 +39,9 @@
       "hideWhenUserAuth": false
     },
     {
-      "label":      "About",
-      "link":       "/about",
-      "view":       "about",
+      "label":      "Landscapes",
+      "link":       "/landscapes",
+      "view":       "landscapes",
       "isRouteBtn": true,
       "alwaysShows": true,
       "showWhenUserAuth": true,

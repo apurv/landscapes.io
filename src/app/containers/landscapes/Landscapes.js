@@ -1,5 +1,5 @@
 import gql from 'graphql-tag'
-import { About } from '../../views'
+import { Landscapes } from '../../views'
 import { connect } from 'react-redux'
 import { graphql } from 'react-apollo'
 import { bindActionCreators } from 'redux'
@@ -25,7 +25,7 @@ const LandscapesWithQuery = graphql(LandscapeQuery, {
         landscapes,
         loading
     })
-})(About)
+})(Landscapes)
 
 
 /* -----------------------------------------
@@ -38,8 +38,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = (dispatch) => {
     return bindActionCreators({
-        enterAbout: viewsActions.enterAbout,
-        leaveAbout: viewsActions.leaveAbout
+        enterLandscapes: viewsActions.enterLandscapes,
+        leaveLandscapes: viewsActions.leaveLandscapes
     }, dispatch)
 }
 

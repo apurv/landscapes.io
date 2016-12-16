@@ -53,16 +53,16 @@ describe('redux - reducer "views"', () => {
   });
 
 
-  it('should set state according to ENTER_ABOUT_VIEW action', () => {
+  it('should set state according to ENTER_LANDSCAPES_VIEW action', () => {
     const now = moment().format(dateFormat);
     const action = {
-      type:         'ENTER_ABOUT_VIEW',
-      currentView:  'about',
+      type:         'ENTER_LANDSCAPES_VIEW',
+      currentView:  'landscapes',
       enterTime:    now,
       leaveTime:    null
     };
     const expectedState = {
-      currentView:  'about',
+      currentView:  'landscapes',
       enterTime:    now,
       leaveTime:    null
     };
@@ -71,21 +71,21 @@ describe('redux - reducer "views"', () => {
     /* eslint-enable no-undefined */
   });
 
-  it('should set state according to LEAVE_ABOUT_VIEW action', () => {
+  it('should set state according to LEAVE_LANDSCAPES_VIEW action', () => {
     const now = moment().format(dateFormat);
-    const actionLeaveAbout = {
-      type:         'LEAVE_ABOUT_VIEW',
-      currentView:  'about',
+    const actionLeaveLandscapes = {
+      type:         'LEAVE_LANDSCAPES_VIEW',
+      currentView:  'landscapes',
       enterTime:    null,
       leaveTime:    now
     };
     const expectedState = {
-      currentView:  'about',
+      currentView:  'landscapes',
       enterTime:    null,
       leaveTime:    now
     };
     /* eslint-disable no-undefined */
-    expect(views({currentView: 'about', enterTime: null}, actionLeaveAbout)).to.deep.equal(expectedState);
+    expect(views({currentView: 'landscapes', enterTime: null}, actionLeaveLandscapes)).to.deep.equal(expectedState);
     /* eslint-enable no-undefined */
   });
 });

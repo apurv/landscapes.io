@@ -3,8 +3,8 @@ import dirtyChai      from 'dirty-chai';
 import {
   enterHome,
   leaveHome,
-  enterAbout,
-  leaveAbout,
+  enterLandscapes,
+  leaveLandscapes,
   enterLogin,
   leaveLogin,
   enterRegister,
@@ -34,20 +34,20 @@ describe('redux - action creator "views"', () => {
   });
 
 
-  it('should return enterAbout action object', () => {
-    const enterAboutACTION = {
-      type:         'ENTER_ABOUT_VIEW',
-      currentView:  'about'
+  it('should return enterLandscapes action object', () => {
+    const enterLandscapesACTION = {
+      type:         'ENTER_LANDSCAPES_VIEW',
+      currentView:  'landscapes'
     };
-    expect(enterAbout()).to.deep.equal(enterAboutACTION);
+    expect(enterLandscapes()).to.deep.equal(enterLandscapesACTION);
   });
 
-  it('should return leaveAbout action object', () => {
-    const leaveAboutACTION = {
-      type:         'LEAVE_ABOUT_VIEW',
-      currentView:  'about'
+  it('should return leaveLandscapes action object', () => {
+    const leaveLandscapesACTION = {
+      type:         'LEAVE_LANDSCAPES_VIEW',
+      currentView:  'landscapes'
     };
-    expect(leaveAbout()).to.deep.equal(leaveAboutACTION);
+    expect(leaveLandscapes()).to.deep.equal(leaveLandscapesACTION);
   });
 
   it('should return enterLogin action object', () => {

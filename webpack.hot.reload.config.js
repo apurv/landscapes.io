@@ -3,14 +3,15 @@ const path = require('path')
 const autoprefixer = require('autoprefixer')
 const precss = require('precss')
 
-const assetsDir = path.resolve(__dirname, 'public/assets')
+const ROOT_PATH = path.resolve(__dirname)
+const assetsDir = path.resolve(ROOT_PATH, 'public/assets')
 
 const config = {
     devtool: 'eval',
     entry: [
         'webpack-dev-server/client?http://localhost:3000',
         'webpack/hot/only-dev-server',
-        path.resolve(__dirname, 'src/app/index.js')
+        path.resolve(ROOT_PATH, 'src/app/index.js')
     ],
     output: {
         path: assetsDir,
@@ -21,16 +22,17 @@ const config = {
         new webpack.HotModuleReplacementPlugin(), getImplicitGlobals(), setNodeEnv()
     ],
     postcss: function() {
-        return [precss, autoprefixer]
+        return [
+            // precss,
+            autoprefixer({ browsers: ['last 2 versions'] })
+        ]
     },
     module: {
         loaders: [
             {
                 test: /\.jsx?$/,
-                loaders: [
-                    'react-hot', 'babel'
-                ],
-                include: path.join(__dirname, 'src/app')
+                loaders: ['react-hot', 'babel'],
+                include: path.join(ROOT_PATH, 'src/app')
             }, {
                 test: /\.scss$/,
                 loader: 'style!css!postcss!sass'
@@ -43,13 +45,14 @@ const config = {
             }, {
                 test: /\.(eot|woff|woff2|ttf|svg|png|jpe?g|gif)(\?\S*)?$/,
                 loader: 'url?limit=100000@name=[name][ext]'
+            }, {
+                test: /\.svg$/,
+                loader: 'babel!svg-react'
             }
         ]
     }
 }
-/*
-* here using hoisting so don't use `var NAME = function()...`
-*/
+
 function getImplicitGlobals() {
     return new webpack.ProvidePlugin({$: 'jquery', jQuery: 'jquery'})
 }

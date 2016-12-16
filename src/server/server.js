@@ -15,6 +15,7 @@ const WS_PORT = 8090
 
 const graphQLServer = express().use('*', cors())
 
+mongoose.Promise = global.Promise
 mongoose.connect('mongodb://localhost/landscapes-dev')
 
 graphQLServer.use('/graphql', bodyParser.json(), graphqlExpress({

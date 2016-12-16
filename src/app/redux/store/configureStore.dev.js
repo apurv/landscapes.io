@@ -28,12 +28,12 @@ const reducer = combineReducers({
     routing: routerReducer
 })
 
-// export default = "redux store"
+// export default = redux store
 export default function configureStore(initialState) {
     const store = createStore(reducer, initialState, enhancer)
     module.hot.accept('../modules/reducers', () => store.replaceReducer(require('../modules/reducers').default))
     return store
 }
 
-// export "apollo client"
+// export apollo client
 export const client = apolloClient

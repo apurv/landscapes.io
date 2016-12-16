@@ -7,8 +7,8 @@ const dateFormat = 'DD/MM/YYYY HH:mm'
 // non protected views:
 const ENTER_HOME_VIEW = 'ENTER_HOME_VIEW'
 const LEAVE_HOME_VIEW = 'LEAVE_HOME_VIEW'
-const ENTER_ABOUT_VIEW = 'ENTER_ABOUT_VIEW'
-const LEAVE_ABOUT_VIEW = 'LEAVE_ABOUT_VIEW'
+const ENTER_LANDSCAPES_VIEW = 'ENTER_LANDSCAPES_VIEW'
+const LEAVE_LANDSCAPES_VIEW = 'LEAVE_LANDSCAPES_VIEW'
 const ENTER_LOGIN_VIEW = 'ENTER_LOGIN_VIEW'
 const LEAVE_LOGIN_VIEW = 'LEAVE_LOGIN_VIEW'
 const ENTER_REGISTER_VIEW = 'ENTER_REGISTER_VIEW'
@@ -35,7 +35,7 @@ export default (state = initialState, action) => {
         // non protected views:
         // /////////////////////
         case ENTER_HOME_VIEW:
-        case ENTER_ABOUT_VIEW:
+        case ENTER_LANDSCAPES_VIEW:
         case ENTER_LOGIN_VIEW:
         case ENTER_REGISTER_VIEW:
             // can't enter if you are already inside
@@ -49,7 +49,7 @@ export default (state = initialState, action) => {
             return state
 
         case LEAVE_HOME_VIEW:
-        case LEAVE_ABOUT_VIEW:
+        case LEAVE_LANDSCAPES_VIEW:
         case LEAVE_LOGIN_VIEW:
         case LEAVE_REGISTER_VIEW:
             // can't leave if you aren't already inside
@@ -105,15 +105,15 @@ export function leaveHome() {
     }
 }
 
-export function enterAbout() {
+export function enterLandscapes() {
     return {
-        type: ENTER_ABOUT_VIEW, currentView: 'about'
+        type: ENTER_LANDSCAPES_VIEW, currentView: 'landscapes'
     }
 }
 
-export function leaveAbout() {
+export function leaveLandscapes() {
     return {
-        type: LEAVE_ABOUT_VIEW, currentView: 'about'
+        type: LEAVE_LANDSCAPES_VIEW, currentView: 'landscapes'
     }
 }
 

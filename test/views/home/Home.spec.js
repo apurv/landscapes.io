@@ -38,7 +38,7 @@ describe('Home VIEW ', () => {
     expect(enterHomeAction).to.have.property('callCount', 1);
   });
 
-  it('should call leaveAbout action', () => {
+  it('should call leaveLandscapes action', () => {
     const leaveHomeAction = sinon.spy(); // called on componentDidMount
     const wrapper = mount(
       <Home

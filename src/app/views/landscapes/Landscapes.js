@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react'
 import cx from 'classnames'
 import shallowCompare from 'react-addons-shallow-compare'
 
-class About extends Component {
+class Landscapes extends Component {
 
     state = {
         animated: true,
@@ -10,8 +10,8 @@ class About extends Component {
     }
 
     componentDidMount() {
-        const { enterAbout } = this.props
-        enterAbout()
+        const { enterLandscapes } = this.props
+        enterLandscapes()
     }
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -19,8 +19,8 @@ class About extends Component {
     }
 
     componentWillUnmount() {
-        const { leaveAbout } = this.props
-        leaveAbout()
+        const { leaveLandscapes } = this.props
+        leaveLandscapes()
     }
 
     render() {
@@ -49,10 +49,10 @@ class About extends Component {
     }
 }
 
-About.propTypes = {
+Landscapes.propTypes = {
     currentView: PropTypes.string.isRequired,
-    enterAbout: PropTypes.func.isRequired,
-    leaveAbout: PropTypes.func.isRequired
+    enterLandscapes: PropTypes.func.isRequired,
+    leaveLandscapes: PropTypes.func.isRequired
 }
 
-export default About
+export default Landscapes

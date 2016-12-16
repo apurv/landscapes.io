@@ -9,19 +9,27 @@ import { graphql } from 'react-apollo'
   GraphQL - Apollo client
  ------------------------------------------*/
 
+// const CurrentUser = gql `
+//  query GetUser ($user: ID!) {
+//    getUser (id: $user) {
+//      id
+//      username
+//      createdAt
+//      modifiedAt
+//      lastLogin
+//    }
+//    getRole(id: $user) {
+//      id
+//      name
+//      createdAt
+//    }
+// }
+// `
+
 const CurrentUser = gql `
- query GetUser ($user: ID!) {
-   getUser (id: $user) {
-     id
-     username
-     createdAt
-     modifiedAt
-     lastLogin
-   }
-   getRole(id: $user) {
-     id
-     name
-     createdAt
+ query landscapes {
+   landscapes {
+       name
    }
 }
 `
@@ -34,21 +42,21 @@ const HomeWithQuery = graphql(CurrentUser, {
             user: 'VXNlcjox'
         }
     },
-    name: 'getCurrentUser',
-    props: ({ ownProps, getCurrentUser: { loading, getUser, getRole, refetch }}) => {
-        // // TODO: find a better solution to dispatch redux action on query result to set 'state.userAuth.isAuthenticated'
-        // setTimeout(
-        //   () => ownProps.checkUserAuth(), 0
-        // )
-        return {
-            userLoading: loading,
-            user: {
-                ...getUser,
-                ...getRole
-            },
-            refetchUser: refetch
-        }
-    }
+    // name: 'getCurrentUser',
+    // props: ({ ownProps, getCurrentUser: { loading, getUser, getRole, refetch }}) => {
+    //     // // TODO: find a better solution to dispatch redux action on query result to set 'state.userAuth.isAuthenticated'
+    //     // setTimeout(
+    //     //   () => ownProps.checkUserAuth(), 0
+    //     // )
+    //     return {
+    //         userLoading: loading,
+    //         user: {
+    //             ...getUser,
+    //             ...getRole
+    //         },
+    //         refetchUser: refetch
+    //     }
+    // }
 
 })(Home)
 
