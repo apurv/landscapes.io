@@ -8,7 +8,7 @@ const assetsDir = path.resolve(ROOT_PATH, 'public/assets')
 const nodeModulesDir = path.resolve(ROOT_PATH, 'node_modules')
 
 const config = {
-    entry: [path.resolve(ROOT_PATH, 'src/app/index.js')],
+    entry: [path.resolve(ROOT_PATH, 'app/index.js')],
     output: {
         path: assetsDir,
         filename: 'bundle.js'
@@ -16,9 +16,9 @@ const config = {
     resolve: {
         extensions: [ '', '.js', '.jsx' ],
         alias: {
-            components: path.resolve(ROOT_PATH, 'src/app/components'),
-            containers: path.resolve(ROOT_PATH, 'src/app/containers'),
-            views: path.resolve(ROOT_PATH, 'src/app/views'),
+            components: path.resolve(ROOT_PATH, 'app/components'),
+            containers: path.resolve(ROOT_PATH, 'app/containers'),
+            views: path.resolve(ROOT_PATH, 'app/views'),
             public: path.resolve(ROOT_PATH, 'public')
         }
     },
@@ -27,17 +27,7 @@ const config = {
             {
                 test: /\.jsx?$/,
                 loader: 'babel',
-                exclude: [ nodeModulesDir ],
-                query: {
-                    "plugins": [
-                        [
-                            "import", {
-                                libraryName: "antd",
-                                style: "css"
-                            }
-                        ]
-                    ]
-                }
+                exclude: [ nodeModulesDir ]
             }, {
                 test: /\.scss$/,
                 loader: 'style!css!postcss!sass'
@@ -72,7 +62,7 @@ function getImplicitGlobals() {
 function setNodeEnv() {
     return new webpack.DefinePlugin({
         'process.env': {
-            'NODE_ENV': JSON.stringify('dev')
+            'NODE_ENV': JSON.stringify('development')
         }
     })
 }

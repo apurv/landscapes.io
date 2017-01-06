@@ -11,7 +11,7 @@ import {
   leaveRegister,
   enterProtected,
   leaveProtected
-}                       from '../../../src/app/redux/modules/views';
+}                       from '../../../app/redux/modules/views';
 
 chai.use(dirtyChai);
 

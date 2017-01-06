@@ -5,6 +5,7 @@
         "stage-2"
     ],
     "plugins": [
-        "babel-plugin-inline-import"
+        "babel-plugin-inline-import",
+        ["import", { libraryName: "antd", style: "css" }]
     ]
 }

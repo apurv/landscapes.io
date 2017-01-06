@@ -1,14 +1,14 @@
-const webpack = require('webpack')
 const path = require('path')
-const autoprefixer = require('autoprefixer')
 const precss = require('precss')
+const webpack = require('webpack')
+const autoprefixer = require('autoprefixer')
 
 const ROOT_PATH = path.resolve(__dirname)
 const assetsDir = path.resolve(ROOT_PATH, 'dist/assets')
 const nodeModulesDir = path.resolve(ROOT_PATH, 'node_modules')
 
 const config = {
-    entry: [path.resolve(ROOT_PATH, 'src/app/index.js')],
+    entry: [path.resolve(ROOT_PATH, 'app/index.js')],
     output: {
         path: assetsDir,
         filename: 'bundle.js'
@@ -18,17 +18,7 @@ const config = {
             {
                 test: /\.jsx?$/,
                 exclude: [ nodeModulesDir ],
-                loader: 'babel',
-                query: {
-                    "plugins": [
-                        [
-                            "import", {
-                                libraryName: "antd",
-                                style: "css"
-                            }
-                        ]
-                    ]
-                }
+                loader: 'babel'
             }, {
                 test: /\.css$/,
                 loader: 'style!css!postcss'

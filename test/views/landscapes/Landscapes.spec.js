@@ -6,7 +6,7 @@ import {
 import chai, {expect}       from 'chai';
 import sinon                from 'sinon';
 import dirtyChai            from 'dirty-chai';
-import Landscapes                from '../../../src/app/views/landscapes/Landscapes';
+import Landscapes                from '../../../app/views/landscapes/Landscapes';
 
 chai.use(dirtyChai);
 

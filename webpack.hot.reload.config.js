@@ -1,7 +1,7 @@
-const webpack = require('webpack')
 const path = require('path')
-const autoprefixer = require('autoprefixer')
 const precss = require('precss')
+const webpack = require('webpack')
+const autoprefixer = require('autoprefixer')
 
 const ROOT_PATH = path.resolve(__dirname)
 const assetsDir = path.resolve(ROOT_PATH, 'public/assets')
@@ -11,7 +11,7 @@ const config = {
     entry: [
         'webpack-dev-server/client?http://localhost:3000',
         'webpack/hot/only-dev-server',
-        path.resolve(ROOT_PATH, 'src/app/index.js')
+        path.resolve(ROOT_PATH, 'app/index.js')
     ],
     output: {
         path: assetsDir,
@@ -32,7 +32,7 @@ const config = {
             {
                 test: /\.jsx?$/,
                 loaders: ['react-hot', 'babel'],
-                include: path.join(ROOT_PATH, 'src/app')
+                include: path.join(ROOT_PATH, 'app')
             }, {
                 test: /\.scss$/,
                 loader: 'style!css!postcss!sass'
@@ -60,7 +60,7 @@ function getImplicitGlobals() {
 function setNodeEnv() {
     return new webpack.DefinePlugin({
         'process.env': {
-            'NODE_ENV': JSON.stringify('dev')
+            'NODE_ENV': JSON.stringify('development')
         }
     })
 }

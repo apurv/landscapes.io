@@ -6,7 +6,7 @@ import {
 import chai, {expect}       from 'chai';
 import sinon                from 'sinon';
 import dirtyChai            from 'dirty-chai';
-import Login                from '../../../src/app/views/login/Login';
+import Login                from '../../../app/views/login/Login';
 
 chai.use(dirtyChai);
 
@@ -19,7 +19,7 @@ describe('Login VIEW ', () => {
 
     user: {username: ''},
     userIsAuthenticated: false,
-    mutationLoading: false,
+    loading: false,
     error: null,
     loginUser: () => {},
     onUserLoggedIn: () => {},
