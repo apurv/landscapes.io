@@ -18,7 +18,7 @@ let noReturnUrls = ['/authentication/signin', '/authentication/signup']
  */
 exports.signup = (req, res) => {
     // For security measurement we remove the roles from the req.body object
-    delete req.body.roles
+    delete req.body.role
 
     // Init user and add missing fields
     var user = new User(req.body)
@@ -89,6 +89,7 @@ exports.signin = (req, res, next) => {
                                 console.log(err)
                                 res.status(400).send(err)
                             } else {
+                                console.log('userWithRoles ------> ', userWithRoles)
                                 res.json(userWithRoles)
                             }
                         })

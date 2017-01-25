@@ -21,11 +21,11 @@ module.exports = function (app, db) {
   passport.deserializeUser(function (id, done) {
 
     // User.findOne({ _id: id }, '-salt -password')
-    //   .populate('roles', 'name description permissions')
+    //   .populate('role', 'name description permissions')
     //   .populate('groups', 'name description permissions landscapes')
     //   .exec(function (err, user) {
 
-    //   //  user.roles = user.roles.map((r) => { return r.name });
+    //   //  user.role = user.role.map((r) => { return r.name });
     //    console.log('passport.deserializeUser --> ', user)
     //    done(err, user);
     //   });

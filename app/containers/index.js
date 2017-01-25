@@ -6,6 +6,7 @@ import ConnectedRegister from './register/Register'
 
 // protected view containers
 import ConnectedProtected from './protected/Protected'
+import ConnectedPasswordChange from './password/Password'
 import ConnectedLandscapes from './landscapes/Landscapes'
 
 export {
@@ -14,6 +15,7 @@ export {
     ConnectedHome,
     ConnectedLogin,
     ConnectedRegister,
+    ConnectedPasswordChange,
     // protected view containers
     ConnectedProtected,
     ConnectedLandscapes

@@ -16,7 +16,7 @@ import {
     ConnectedLandscapes,
     ConnectedLogin,
     ConnectedRegister,
-
+    ConnectedPasswordChange,
     // protected views
     ConnectedProtected
 } from '../containers'
@@ -37,6 +37,7 @@ export const Routes = () => {
                         <Route path="/register" component={ConnectedRegister}/> {/* logout: just redirects to home (App will take care of removing the token) */}
                         <Route path="/logout" onEnter={logOutUser}/> {/* protected views */}
                         <Route path="/protected" component={ConnectedProtected} onEnter={requireAuth}/> {/* page not found */}
+                        <Route path="/changePassword" component={ConnectedPasswordChange} onEnter={requireAuth}/> {/* page not found */}
                         <Route path="*" component={PageNotFound}/>
                     </Route>
                 </Router>

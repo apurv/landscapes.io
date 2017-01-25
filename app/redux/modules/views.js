@@ -13,6 +13,8 @@ const ENTER_LOGIN_VIEW = 'ENTER_LOGIN_VIEW'
 const LEAVE_LOGIN_VIEW = 'LEAVE_LOGIN_VIEW'
 const ENTER_REGISTER_VIEW = 'ENTER_REGISTER_VIEW'
 const LEAVE_REGISTER_VIEW = 'LEAVE_REGISTER_VIEW'
+const ENTER_PASSWORD_CHANGE_VIEW = 'ENTER_PASSWORD_CHANGE_VIEW'
+const LEAVE_PASSWORD_CHANGE_VIEW = 'LEAVE_PASSWORD_CHANGE_VIEW'
 
 // protected views:
 const ENTER_PROTECTED_VIEW = 'ENTER_PROTECTED_VIEW'
@@ -62,6 +64,28 @@ export default (state = initialState, action) => {
             }
             return state
 
+        // /////////////////////
+        // ENTER_PASSWORD_CHANGE_VIEW views:
+        // /////////////////////
+        case ENTER_PASSWORD_CHANGE_VIEW:
+            if (state.currentView !== action.currentView) {
+                return {
+                    ...state,
+                    currentView: action.currentView,
+                    enterTime: currentTime
+                }
+            }
+            return state
+
+        case LEAVE_PASSWORD_CHANGE_VIEW:
+            if (state.currentView === action.currentView) {
+                return {
+                    ...state,
+                    currentView: action.currentView,
+                    leaveTime: currentTime
+                }
+            }
+            return state
         // /////////////////////
         // protected views:
         // /////////////////////
@@ -141,6 +165,17 @@ export function leaveRegister() {
     }
 }
 
+export function enterPasswordChange() {
+    return {
+        type: ENTER_PASSWORD_CHANGE_VIEW, currentView: 'password'
+    }
+}
+
+export function leavePasswordChange() {
+    return {
+        type: LEAVE_PASSWORD_CHANGE_VIEW, currentView: 'password'
+    }
+}
 export function enterProtected() {
     return {
         type: ENTER_PROTECTED_VIEW, currentView: 'protected'

@@ -37,7 +37,7 @@ var loginSuccess = function (userLdap, done) {
         displayName: userLdap.displayName,
         email: userLdap.mail,
         provider: 'ldap',
-        roles: ['admin']
+        role: 'admin'
       });
       user.save(function (err) {
         return done(err, user);
@@ -56,7 +56,7 @@ module.exports = function () {
       bindCredentials: config.ldap.bindCredentials,
       searchBase: config.ldap.searchBase,
       searchFilter: config.ldap.searchFilter,
-            // searchAttributes: config.ldap.searchAttributes            
+            // searchAttributes: config.ldap.searchAttributes
     },
     usernameField: 'username',
     passwordField: 'password'

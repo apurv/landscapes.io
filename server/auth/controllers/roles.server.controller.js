@@ -33,7 +33,7 @@ exports.retrieve = function (req, res) {
       async.eachSeries(roles, function(role, callback) {
         console.log('> > retrieving Users for Role "' + role.name + '"');
 
-        User.find({ roles: role._id }, '-salt -password',function (err, users) {
+        User.find({ role: role._id }, '-salt -password',function (err, users) {
           if (err) {
             callback(err);
           } else {
@@ -52,7 +52,7 @@ exports.retrieve = function (req, res) {
           winston.error(err);
           return res.send(500, err);
         } else {
-          return res.json(roles);
+          return res.json(role);
         }
       });
     }
@@ -78,7 +78,7 @@ exports.retrieveOne = function (req, res) {
     // Why async here - AH ?
   async.series([function (callback) {
     Role.findById(roleId, function (err, role) {
-      if (err) { 
+      if (err) {
         callback(err);
         return;
       }
@@ -88,11 +88,11 @@ exports.retrieveOne = function (req, res) {
       }
       winston.info(' ---> Role found: ' + role.name);
 
-      User.find({ roles: role._id }, '-salt -password', function (err, users) {
+      User.find({ role: role._id }, '-salt -password', function (err, users) {
         if (err){
           callback(err);
           return;
-        } 
+        }
 
         var userList = [];
         for (var i = 0; i < users.length; i++) {

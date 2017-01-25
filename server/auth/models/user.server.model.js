@@ -88,12 +88,10 @@ var UserSchema = new Schema({
   },
   providerData: {},
   additionalProvidersData: {},
-  roles: {
-    type: [{
+  role: {
       type: String,
-      enum: roleNames
-    }],
-    default: ['admin']
+      enum: roleNames,
+      default: 'admin'
   },
   permissions: {
     type: Array,

@@ -1,6 +1,9 @@
 import cx from 'classnames'
 import React, { Component, PropTypes } from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
+import { Form, Icon, Input, Button, Checkbox, Row } from 'antd'
+import { Link } from 'react-router'
+
 
 class Protected extends Component {
 
@@ -32,8 +35,11 @@ class Protected extends Component {
                     Here is a protected view!
                 </h1>
                 <h2 className='text-danger'>
-                    You've just logged in to be able to enter this view.
+                    "You've just logged in to be able to enter this view."
                 </h2>
+                <Link to={'/changePassword'}>
+                    <Button type="primary">Change Password</Button>
+                </Link>
             </div>
         )
     }

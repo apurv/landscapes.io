@@ -27,6 +27,10 @@ const LoginWithMutation = graphql(logUser, {
     name: 'logUserMutation',
     props: ({ ownProps, logUserMutation }) => ({
         loginUser(user) {
+            console.log('user', user)
+            console.log('logUserMutation', logUserMutation)
+            console.log('ownProps', ownProps)
+
             // TODO: Add JWT capability
             ownProps.onUserLoggedIn('testToken', user)
         }

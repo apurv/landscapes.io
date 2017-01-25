@@ -27,7 +27,7 @@ module.exports = {
   port: process.env.PORT || 3001,
   app: {
     title: defaultEnvConfig.app.title + ' - Test Environment'
-  },  
+  },
   mailer: {
     from: process.env.MAILER_FROM || 'MAILER_FROM',
     options: {
@@ -49,7 +49,7 @@ module.exports = {
         firstName: 'User',
         lastName: 'Local',
         displayName: 'User Local',
-        roles: ['user']
+        role: 'user'
       },
       seedAdmin: {
         username: process.env.MONGO_SEED_ADMIN_USERNAME || 'admin',
@@ -58,7 +58,7 @@ module.exports = {
         firstName: 'Admin',
         lastName: 'Local',
         displayName: 'Admin Local',
-        roles: ['user', 'admin']
+        role: 'admin'
       }
     }
   }

@@ -1,5 +1,7 @@
 import moment from 'moment'
 import { auth } from '../../services/auth'
+import { graphql } from 'react-apollo'
+import gql from 'graphql-tag'
 
 const dateFormat = 'DD/MM/YYYY HH:mm'
 
@@ -140,7 +142,7 @@ export function receivedUserLoggedIn(userToken = null, user = emptyUser, time = 
     auth.clearAllAppStorage() // clear previous token
     auth.setToken(userToken) // set token to default store = localStorage and to default token key = 'token'
     auth.setUserInfo(user)
-
+    console.log('USER HERE --->', user);
     return {
         type: RECEIVED_USER_LOGGED_IN,
         time,

@@ -107,6 +107,8 @@ class Login extends Component {
             }
         }).then(res => {
             loginUser(res.data)
+            console.log('res data', res.data)
+            // this.props.user = res.data
             router.push({ pathname: '/landscapes' })
         })
     }

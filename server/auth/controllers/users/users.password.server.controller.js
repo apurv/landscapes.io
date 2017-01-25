@@ -207,20 +207,28 @@ exports.reset = function (req, res, next) {
  */
 exports.changePassword = function (req, res, next) {
   // Init Variables
-  var passwordDetails = req.body;
+  var passwordDetails = req.body.passwordDetails;
+  console.log('passwordDetails', passwordDetails);
+  console.log('req.user,', req.body.user);
 
-  if (req.user) {
+  if (req.body.user) {
     if (passwordDetails.newPassword) {
-      User.findById(req.user.id, function (err, user) {
+      User.findById(req.body.user._id, function (err, user) {
+        console.log('err --->', err)
+        console.log('user --->', user)
+
         if (!err && user) {
           if (user.authenticate(passwordDetails.currentPassword)) {
+            console.log('User Authenticated');
             if (passwordDetails.newPassword === passwordDetails.verifyPassword) {
               user.password = passwordDetails.newPassword;
 
               user.save(function (err) {
+                console.log('save err--', err)
                 if (err) {
                   return res.status(400).send({
-                    message: errorHandler.getErrorMessage(err)
+                    // message: errorHandler.getErrorMessage(err)
+                    message: err.ValidationError
                   });
                 } else {
                   req.login(user, function (err) {

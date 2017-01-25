@@ -21,8 +21,8 @@ exports.read = function (req, res) {
 exports.addRole = function (req, res) {
   var user = req.model;
   if (req.body.roleId) {
-    //user.roles =[]; // TODO fix null first
-    user.roles.push(req.body.roleId);
+    //user.role =[]; // TODO fix null first
+    user.role = req.body.roleId;
   }
   user.save(function (err) {
     if (err) {
@@ -39,8 +39,8 @@ exports.addRole = function (req, res) {
 exports.removeRole = function (req, res) {
   var user = req.model;
   if (req.params.roleId) {
-    //user.roles =[]; // TODO fix null first
-    user.roles.pop(req.params.roleId);
+    //user.role =[]; // TODO fix null first
+    user.role = 'user';
   }
   user.save(function (err) {
     if (err) {
@@ -100,7 +100,7 @@ exports.update = function (req, res) {
   user.firstName = req.body.firstName;
   user.lastName = req.body.lastName;
   user.displayName = user.firstName + ' ' + user.lastName;
-  user.roles = req.body.roles;
+  user.role = req.body.role;
   // user.email = req.body.email;
 
   user.save(function (err) {
@@ -137,7 +137,7 @@ exports.delete = function (req, res) {
 exports.list = function (req, res) {
   User.find({}, '-salt -password -providerData').sort('-created')
     .populate('user', 'displayName')
-    // .populate('roles', 'name description permissions')
+    // .populate('role', 'name description permissions')
     // .populate('groups', 'name description permissions landscapes')
     .exec(function (err, users) {
       if (err) {
@@ -160,7 +160,7 @@ exports.save = function (req, res) {
 
   //logic to save one role as convience - may move out
   if (req.body.role) {
-    user.roles.push(req.body.role);
+    user.role = req.body.role;
   }
   user.provider = 'local';
 
@@ -192,7 +192,7 @@ exports.userByID = function (req, res, next, id) {
 
   User.findById(id, '-salt -password')
     .populate('user', 'displayName')
-    // .populate('roles', 'name description permissions')
+    // .populate('role', 'name description permissions')
     // .populate('groups', 'name description permissions landscapes')
     .exec(function (err, user) {
       if (err) {
