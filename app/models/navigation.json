@@ -7,7 +7,7 @@
       "link":       "/",
       "view":       "home",
       "isRouteBtn": true,
-      "alwaysShows": true,
+      "alwaysShows": false,
       "showWhenUserAuth": true,
       "hideWhenUserAuth": false
     },
@@ -43,16 +43,16 @@
       "link":       "/landscapes",
       "view":       "landscapes",
       "isRouteBtn": true,
-      "alwaysShows": true,
+      "alwaysShows": false,
       "showWhenUserAuth": true,
       "hideWhenUserAuth": false
     },
     {
-      "label":      "Protected",
-      "link":       "/protected",
-      "view":       "protected",
+      "label":      "Change Password",
+      "link":       "/changePassword",
+      "view":       "password",
       "isRouteBtn": true,
-      "alwaysShows": true,
+      "alwaysShows": false,
       "showWhenUserAuth": true,
       "hideWhenUserAuth": false
     }
