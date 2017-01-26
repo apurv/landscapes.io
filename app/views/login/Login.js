@@ -4,9 +4,10 @@ import React, { Component, PropTypes } from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { Form, Icon, Input, Button, Checkbox, Row } from 'antd'
 import './login.style.scss'
-const FormItem = Form.Item
 
 import { ErrorAlert } from '../../components'
+
+const FormItem = Form.Item
 
 class Login extends Component {
 
@@ -113,7 +114,7 @@ class Login extends Component {
         })
     }
 
-    closeError = (event) => {
+    closeError = event => {
         event.preventDefault()
         const { resetError } = this.props
         resetError()

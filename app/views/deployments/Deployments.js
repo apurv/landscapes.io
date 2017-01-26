@@ -1,11 +1,13 @@
 
 import cx from 'classnames'
-import { Card, Icon } from 'antd'
+import { Tabs, Icon } from 'antd'
 import { Loader } from '../../components'
 import React, { Component, PropTypes } from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 
-class Landscapes extends Component {
+const TabPane = Tabs.TabPane
+
+class Deployments extends Component {
 
     state = {
         animated: true,
@@ -30,6 +32,10 @@ class Landscapes extends Component {
         const { animated, viewEntersAnim } = this.state
         const { loading, landscapes } = this.props
 
+        // if (this.props.landscapes) {
+        //     console.log('%c landscapes ', 'background: #1c1c1c; color: deeppink', landscapes)
+        // }
+
         if (loading) {
             return (
                 <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
@@ -44,25 +50,14 @@ class Landscapes extends Component {
                 <a onClick={this.handlesCreateLandscapeClick}>
                     <Icon style={{ fontSize: '20px' }} type='plus'/>
                 </a>
-
-                <ul>
-                    {
-                        landscapes.map((landscape, i) =>
-                        <Card key={i} title={landscape.name} style={{ width: 300, margin: '20px', float: 'left' }}
-                            extra={
-                                <div>
-                                    <a onClick={this.handlesEditLandscapeClick.bind(this, landscape)}>
-                                        <Icon style={{ fontSize: '20px' }} type='edit'/>
-                                    </a>
-                                    <a onClick={this.handlesLandscapeClick.bind(this, landscape)}>
-                                        <Icon style={{ fontSize: '20px' }} type='loading'/>
-                                    </a>
-                                </div>
-                            }>
-                            <p>{landscape.description}</p>
-                        </Card>)
-                    }
-                </ul>
+                <h2>Deployments</h2>
+                <Tabs defaultActiveKey="1">
+                    <TabPane tab="Template" key="1">Content of Tab Pane 1</TabPane>
+                    <TabPane tab="Resources" key="2">Content of Tab Pane 2</TabPane>
+                    <TabPane tab="Parameters" key="3">Content of Tab Pane 3</TabPane>
+                    <TabPane tab="Mappings" key="4">Content of Tab Pane 3</TabPane>
+                    <TabPane tab="Deployments" key="5">Content of Tab Pane 3</TabPane>
+                </Tabs>
             </div>
         )
     }
@@ -72,25 +67,20 @@ class Landscapes extends Component {
         router.push({ pathname: '/landscapes/create' })
     }
 
-    handlesEditLandscapeClick = (landscape, event) => {
+    handlesLandscapeClick = event => {
         const { router } = this.context
-        router.push({ pathname: '/landscapes/edit/' + landscape._id })
-    }
-
-    handlesLandscapeClick = (landscape, event) => {
-        const { router } = this.context
-        router.push({ pathname: '/landscape/' + landscape._id })
+        router.push({ pathname: '/protected' })
     }
 }
 
-Landscapes.propTypes = {
+Deployments.propTypes = {
     currentView: PropTypes.string.isRequired,
     enterLandscapes: PropTypes.func.isRequired,
     leaveLandscapes: PropTypes.func.isRequired
 }
 
-Landscapes.contextTypes = {
+Deployments.contextTypes = {
     router: PropTypes.object
 }
 
-export default Landscapes
+export default Deployments

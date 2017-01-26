@@ -5,8 +5,10 @@
  */
 
 import _ from 'lodash'
+import fs from 'fs'
 import path from 'path'
 import cors from 'cors'
+import YAML from 'yamljs'
 import lusca from 'lusca'
 import morgan from 'morgan'
 import helmet from 'helmet'
@@ -105,6 +107,80 @@ module.exports.initMiddleware = app => {
 
     // Request body parsing middleware should be above methodOverride
     app.use(bodyParser.urlencoded({extended: true}))
+
+    var multer = require('multer')
+    var upload = multer({ dest: 'uploads/' })
+
+    app.post('/api/upload/template', upload.single('file'), (req, res) => {
+
+        var user = req.user || {
+            name: 'anonymous'
+        }
+
+        if (!req.file) {
+            return res.status(500).send('No Files Uploaded')
+        }
+
+        function tryParseJSON(jsonString) {
+            console.log(' ---> validating JSON')
+            try {
+                var o = JSON.parse(jsonString)
+                if (o && typeof o === 'object' && o !== null) {
+                    return o
+                }
+            } catch (e) {}
+
+            return false
+        }
+
+        function tryParseYAML(yamlString) {
+            console.log(' ---> validating YAML')
+            try {
+                var o = YAML.parse(yamlString)
+                if (o && typeof o === 'object' && o !== null) {
+                    console.log('YAML', o)
+                    return o
+                }
+            } catch (e) {}
+
+            return false
+        }
+
+        function deleteFile(filePath, callback) {
+            console.log(' ---> deleting file')
+
+            fs.unlink(filePath, err => {
+                if (err) {
+                    callback(err)
+                } else {
+                    console.log('file deleted --> ' + filePath)
+                    callback(null)
+                }
+            })
+        }
+
+        var f = req.file
+
+        var template = fs.readFileSync(f.path, 'utf-8')
+
+        console.log('template', template)
+
+        if (tryParseJSON(template)) {
+            deleteFile(f.path, err => {
+                res.send(template)
+            })
+        } else if (tryParseYAML(template)) {
+            deleteFile(f.path, err => {
+                res.send(YAML.parse(template))
+            })
+        } else {
+            deleteFile(f.path, err => {
+                res.send(400, {
+                    msg: 'File \"' + f.name + '\"' + ' does not contain a valid AWS CloudFormation Template.'
+                })
+            })
+        }
+    })
 
     app.use('/uploads', express.static('uploads'))
     app.use(bodyParser.json())

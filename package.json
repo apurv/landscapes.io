@@ -129,6 +129,7 @@
     "redux-thunk": "^2.0.1",
     "socket.io": "^1.7.2",
     "subscriptions-transport-ws": "^0.3.1",
-    "whatwg-fetch": "^1.0.0"
+    "whatwg-fetch": "^1.0.0",
+    "yamljs": "^0.2.8"
   }
 }

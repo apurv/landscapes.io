@@ -9,7 +9,7 @@ const landscapeSchema = new Schema({
     createdBy: { type: Schema.ObjectId, ref: 'User' },
     name: { type: String, required: true },
     version: { type: String, required: true },
-    imageUri: { type: String, required: true },
+    imageUri: { type: String },
     img: { data: Buffer, contentType: String },
     cloudFormationTemplate: { type: String, required: true },
     infoLink: String,

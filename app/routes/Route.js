@@ -13,12 +13,16 @@ import {
 
     // non protected views
     ConnectedHome,
-    ConnectedLandscapes,
     ConnectedLogin,
     ConnectedRegister,
     ConnectedPasswordChange,
     // protected views
-    ConnectedProtected
+    ConnectedProtected,
+    ConnectedDeployments,
+    ConnectedLandscapes,
+    ConnectedCreateLandscape,
+    ConnectedEditLandscape,
+    ConnectedLandscapeDetails
 } from '../containers'
 
 const store = configureStore()
@@ -32,6 +36,10 @@ export const Routes = () => {
                     <Route path="/" component={App}>
                         {/* non protected views */}
                         <IndexRoute component={ConnectedHome}/>
+                        <Route path="/deployments/*" component={ConnectedDeployments} onEnter={requireAuth}/>
+                        <Route path="/landscape/:id" component={ConnectedLandscapeDetails} onEnter={requireAuth}/>
+                        <Route path="/landscapes/create" component={ConnectedCreateLandscape} onEnter={requireAuth}/>
+                        <Route path="/landscapes/edit/:id" component={ConnectedEditLandscape} onEnter={requireAuth}/>
                         <Route path="/landscapes" component={ConnectedLandscapes} onEnter={requireAuth}/>
                         <Route path="/login" component={ConnectedLogin}/>
                         <Route path="/register" component={ConnectedRegister}/> {/* logout: just redirects to home (App will take care of removing the token) */}

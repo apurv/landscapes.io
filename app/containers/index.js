@@ -8,6 +8,10 @@ import ConnectedRegister from './register/Register'
 import ConnectedProtected from './protected/Protected'
 import ConnectedPasswordChange from './password/Password'
 import ConnectedLandscapes from './landscapes/Landscapes'
+import ConnectedDeployments from './deployments/Deployments'
+import ConnectedCreateLandscape from './landscapes/CreateLandscape'
+import ConnectedEditLandscape from './landscapes/EditLandscape'
+import ConnectedLandscapeDetails from './landscapes/LandscapeDetails'
 
 export {
     // non protected view containers
@@ -18,5 +22,9 @@ export {
     ConnectedPasswordChange,
     // protected view containers
     ConnectedProtected,
-    ConnectedLandscapes
+    ConnectedDeployments,
+    ConnectedLandscapes,
+    ConnectedCreateLandscape,
+    ConnectedEditLandscape,
+    ConnectedLandscapeDetails
 }
