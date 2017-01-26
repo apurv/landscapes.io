@@ -48,6 +48,15 @@
       "hideWhenUserAuth": false
     },
     {
+      "label":      "Settings",
+      "link":       "/accounts",
+      "view":       "accounts",
+      "isRouteBtn": true,
+      "alwaysShows": false,
+      "showWhenUserAuth": true,
+      "hideWhenUserAuth": false
+    },
+    {
       "label":      "Change Password",
       "link":       "/changePassword",
       "view":       "password",

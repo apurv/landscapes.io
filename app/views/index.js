@@ -6,10 +6,15 @@ import Register     from './register/Register'
 import Password     from './password/Password'
 // protected views:
 import Protected    from './protected/Protected'
+
+import Landscapes        from './landscapes/Landscapes'
 import CreateLandscape        from './landscapes/CreateLandscape'
 import EditLandscape        from './landscapes/EditLandscape'
 import LandscapeDetails        from './landscapes/LandscapeDetails'
-import Landscapes        from './landscapes/Landscapes'
+
+import Accounts        from './accounts/Accounts'
+import CreateAccount        from './accounts/CreateAccount'
+
 import Deployments        from './deployments/Deployments'
 
 export {
@@ -21,9 +26,13 @@ export {
   Password,
   // protected views:
   Protected,
+  Landscapes,
   CreateLandscape,
   EditLandscape,
   LandscapeDetails,
-  Landscapes,
+
+  Accounts,
+  CreateAccount,
+
   Deployments
 }
