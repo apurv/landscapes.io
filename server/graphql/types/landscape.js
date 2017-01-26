@@ -1,4 +1,4 @@
-// post.js
+// landscape.js
 import User from './user'
 
 const Landscape = `

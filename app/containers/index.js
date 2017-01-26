@@ -9,6 +9,8 @@ import ConnectedProtected from './protected/Protected'
 import ConnectedPasswordChange from './password/Password'
 import ConnectedLandscapes from './landscapes/Landscapes'
 import ConnectedDeployments from './deployments/Deployments'
+import ConnectedAccounts from './accounts/Accounts'
+import ConnectedCreateAccount from './accounts/CreateAccount'
 import ConnectedCreateLandscape from './landscapes/CreateLandscape'
 import ConnectedEditLandscape from './landscapes/EditLandscape'
 import ConnectedLandscapeDetails from './landscapes/LandscapeDetails'
@@ -23,6 +25,8 @@ export {
     // protected view containers
     ConnectedProtected,
     ConnectedDeployments,
+    ConnectedAccounts,
+    ConnectedCreateAccount,
     ConnectedLandscapes,
     ConnectedCreateLandscape,
     ConnectedEditLandscape,

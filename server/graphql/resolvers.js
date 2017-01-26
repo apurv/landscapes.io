@@ -4,6 +4,7 @@ import { pubsub } from './subscriptions'
 
 // model imports
 const Landscape = require('./models/landscape')
+const Account = require('./models/account')
 
 const resolveFunctions = {
     Query: {
@@ -19,10 +20,8 @@ const resolveFunctions = {
             console.log('login resolver')
         },
         createLandscape(_, { landscape }) {
-            console.log('inside resolver to create landscape', landscape)
 
             console.log(' ---> creating Landscape')
-
             let newLandscape = new Landscape(landscape)
 
             newLandscape.save(err => {
@@ -31,7 +30,37 @@ const resolveFunctions = {
                     return err
                 } else {
                     console.log(' ---> created: ' + newLandscape._id)
-                    // res.json(newLandscape)
+                    return newLandscape
+                }
+            })
+        },
+        editLandscape(_, { landscape }) {
+
+            console.log(' ---> editing Landscape')
+            let editedLandscape = new Landscape(landscape)
+
+            editedLandscape.save(err => {
+                if (err) {
+                    console.log(err)
+                    return err
+                } else {
+                    console.log(' ---> created: ' + editedLandscape._id)
+                    return editedLandscape
+                }
+            })
+        },
+        createAccount(_, { account }) {
+
+            console.log(' ---> creating Account')
+            let newAccount = new Account(account)
+
+            newAccount.save(err => {
+                if (err) {
+                    console.log(err)
+                    return err
+                } else {
+                    console.log(' ---> created: ' + newAccount._id)
+                    return newAccount
                 }
             })
         }

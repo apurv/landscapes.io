@@ -9,7 +9,7 @@ import { Loader } from '../../components'
 const FormItem = Form.Item
 const Dragger = Upload.Dragger
 
-class CreateLandscape extends Component {
+class EditLandscape extends Component {
 
     state = {
         animated: true,
@@ -26,7 +26,7 @@ class CreateLandscape extends Component {
         for (let key in currentLandscape) {
             test[key] = {
                 value: currentLandscape[key],
-                errors: [new Error('forbid ha')]
+                errors: []
             }
         }
 
@@ -104,7 +104,7 @@ class CreateLandscape extends Component {
 
         return (
             <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
-                <h5>Create Landscape</h5><br/><br/>
+                <h5>Edit Landscape</h5><br/><br/>
                 <Row type='flex' className={cx({ 'screen-height': true, 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
                     <Form style={{ width: '100%' }} onSubmit={this.handleSubmit}>
                         <FormItem
@@ -194,8 +194,8 @@ class CreateLandscape extends Component {
 
 
                         <FormItem wrapperCol={{ span: 12, offset: 6 }}>
-                            <Button type='primary' htmlType='submit' disabled={loading} onClick={this.handlesCreateClick}>
-                                Create
+                            <Button type='primary' htmlType='submit' disabled={loading} onClick={this.handlesSaveClick}>
+                                Save
                             </Button>
                         </FormItem>
                     </Form>
@@ -221,16 +221,16 @@ class CreateLandscape extends Component {
         this.setState({ password: event.target.value })
     }
 
-    handlesCreateClick = event => {
+    handlesSaveClick = event => {
 
         event.preventDefault()
 
-        let landscapeToCreate = this.props.form.getFieldsValue()
-        landscapeToCreate.imageUri = this.state.imageUri || ''
-        landscapeToCreate.cloudFormationTemplate = this.state.cloudFormationTemplate || ''
+        let landscapeToSave = this.props.form.getFieldsValue()
+        landscapeToSave.imageUri = this.state.imageUri || ''
+        landscapeToSave.cloudFormationTemplate = this.state.cloudFormationTemplate || ''
 
         this.props.mutate({
-            variables: { landscape: landscapeToCreate }
+            variables: { landscape: landscapeToSave }
          }).then(({ data }) => {
             console.log('got data', data)
         }).catch((error) => {
@@ -246,14 +246,14 @@ class CreateLandscape extends Component {
     }
 }
 
-CreateLandscape.propTypes = {
+EditLandscape.propTypes = {
     currentView: PropTypes.string.isRequired,
     enterLandscapes: PropTypes.func.isRequired,
     leaveLandscapes: PropTypes.func.isRequired
 }
 
-CreateLandscape.contextTypes = {
+EditLandscape.contextTypes = {
     router: PropTypes.object
 }
 
-export default Form.create()(CreateLandscape)
+export default Form.create()(EditLandscape)
