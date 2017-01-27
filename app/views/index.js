@@ -11,7 +11,16 @@ import EditLandscape        from './landscapes/EditLandscape'
 import LandscapeDetails        from './landscapes/LandscapeDetails'
 import Landscapes        from './landscapes/Landscapes'
 import Groups        from './groups/Groups'
+
+import Users        from './users/Users'
+import CreateUser        from './users/CreateUser'
+
 import CreateGroup        from './groups/CreateGroup'
+import EditGroup        from './groups/EditGroup'
+
+import Accounts        from './accounts/Accounts'
+import CreateAccount        from './accounts/CreateAccount'
+
 import Deployments        from './deployments/Deployments'
 
 export {
@@ -23,11 +32,20 @@ export {
   Password,
   // protected views:
   Protected,
+  Landscapes,
   CreateLandscape,
   EditLandscape,
   LandscapeDetails,
-  Landscapes,
   Groups,
+  
+  Users,
+  CreateUser,
+
   CreateGroup,
+  EditGroup,
+
+  Accounts,
+  CreateAccount,
+
   Deployments
 }

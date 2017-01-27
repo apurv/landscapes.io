@@ -2,209 +2,319 @@
 import cx from 'classnames'
 import React, { Component, PropTypes } from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Form, Select, Input, Switch, Radio, Slider, Button, Upload, Icon, Row, message } from 'antd'
+import { Form, Card, Select, Input, Switch, Radio, Slider, Button, Upload, Icon, Row, message, Checkbox, Tabs, Table } from 'antd'
 
 import { Loader } from '../../components'
+const CheckboxGroup = Checkbox.Group;
+
+const plainOptions = [{label:'Create', value: 'c'}, {label:'Read', value: 'r', disabled: true}, {label:'Update', value: 'u'}, {label:'Delete', value: 'd'}, {label:'Execute', value: 'x'}];
+const defaultCheckedList = ['r'];
+const allChecked = ['c', 'r', 'u', 'd', 'x']
+
+
+const landscapeColumns = [{
+  title: 'Name',
+  dataIndex: 'name',
+  render: text => <a href="#">{text}</a>,
+}, {
+  title: 'Description',
+  dataIndex: 'description',
+}];
+
+const columns = [{
+  title: 'Name',
+  dataIndex: 'name',
+  render: text => <a href="#">{text}</a>,
+}, {
+  title: 'Age',
+  dataIndex: 'age',
+}, {
+  title: 'Address',
+  dataIndex: 'address',
+}];
+const data = [];
+for (let i = 0; i < 46; i++) {
+  data.push({
+    key: i,
+    name: `Edward King ${i}`,
+    age: 32,
+    address: `London, Park Lane no. ${i}`,
+  });
+}
+
+const rowSelection = {
+  onChange: (selectedRowKeys, selectedRows) => {
+    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+  },
+  onSelect: (record, selected, selectedRows) => {
+    console.log(record, selected, selectedRows);
+  },
+  onSelectAll: (selected, selectedRows, changeRows) => {
+    console.log(selected, selectedRows, changeRows);
+  },
+  getCheckboxProps: record => ({
+    disabled: record.name === 'Disabled User',    // Column configuration not to be checked
+  }),
+};
+const pagination = {
+  total: data.length,
+  showSizeChanger: true,
+  onShowSizeChange: (current, pageSize) => {
+    console.log('Current: ', current, '; PageSize: ', pageSize);
+  },
+  onChange: (current) => {
+    console.log('Current: ', current);
+  },
+};
 
 const FormItem = Form.Item
 const Dragger = Upload.Dragger
+const TabPane = Tabs.TabPane;
 
-class CreateGroup extends Component {
+class EditGroup extends Component {
 
-    state = {
-        animated: true,
-        viewEntersAnim: true
-    }
+      state = {
+          animated: true,
+          viewEntersAnim: true,
+          checkedList: defaultCheckedList,
+          indeterminate: true,
+          checkAll: false
+      }
 
-    componentDidMount() {
-        const { enterGroups, groups, params } = this.props
+      componentDidMount() {
+          const { enterGroups, groups, params } = this.props
 
-        let currentGroup = groups.find(ls => { return ls._id === params.id })
+          let currentGroup = groups.find(ls => { return ls._id === params.id })
 
-        let test = {}
+          let test = {}
 
-        for (let key in currentGroup) {
-            test[key] = {
-                value: currentGroup[key],
-                errors: [new Error('forbid ha')]
-            }
-        }
+          for (let key in currentGroup) {
+              test[key] = {
+                  value: currentGroup[key],
+                  errors: []
+              }
+          }
 
-        this.props.form.setFields(test)
+          console.log('currentGroup', currentGroup)
+          this.props.form.setFields(test)
+          this.setState({ checkedList: currentGroup.permissions, currentGroup: currentGroup })
+          enterGroups()
+      }
 
-        enterGroups()
-    }
+      shouldComponentUpdate(nextProps, nextState) {
+          return shallowCompare(this, nextProps, nextState)
+      }
 
-    shouldComponentUpdate(nextProps, nextState) {
-        return shallowCompare(this, nextProps, nextState)
-    }
+      componentWillUnmount() {
+          const { leaveGroups } = this.props
+          leaveGroups()
+      }
 
-    componentWillUnmount() {
-        const { leaveGroups } = this.props
-        leaveGroups()
-    }
+      render() {
 
-    render() {
+          let self = this
+          const { animated, viewEntersAnim } = this.state
+          const { loading, groups, landscapes } = this.props
+          const { getFieldDecorator } = this.props.form
 
-        let self = this
-        const { animated, viewEntersAnim } = this.state
-        const { loading, groups, params } = this.props
-        const { setFieldsValue, getFieldDecorator } = this.props.form
+          console.log('GROUPS', groups)
+          console.log('landscapes', landscapes)
+          const formItemLayout = {
+              labelCol: { span: 8 },
+              wrapperCol: { span: 12 }
+          }
 
-        let currentGroup = groups.find(ls => { return ls._id === params.id })
-        console.log('%c currentGroup ', 'background: #1c1c1c; color: rgb(209, 29, 238)', currentGroup)
+          const rowSelection = {
+            onChange: (selectedRowKeys, selectedRows) => {
+              this.setState({ selectedRows: selectedRows})
+              console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+            },
+            onSelect: (record, selected, selectedRows) => {
+              console.log(record, selected, selectedRows);
+            },
+            onSelectAll: (selected, selectedRows, changeRows) => {
+              console.log(selected, selectedRows, changeRows);
+            },
+            getCheckboxProps: record => ({
+              disabled: record.name === 'Disabled User',    // Column configuration not to be checked
+            }),
+          };
 
 
-        const formItemLayout = {
-            labelCol: { span: 8 },
-            wrapperCol: { span: 12 }
-        }
+          if(landscapes){
+            console.log('this.state.currentGroup', this.state.currentGroup)
 
-        const uploadProps = {
-            action: 'http://localhost:8080/api/upload/template',
-            listType: 'picture',
-            defaultFileList: [{
-                uid: -1,
-                name: 'default.png',
-                status: 'done',
-                url: 'http://icons.iconarchive.com/icons/uiconstock/socialmedia/512/AWS-icon.png',
-                thumbUrl: 'http://icons.iconarchive.com/icons/uiconstock/socialmedia/512/AWS-icon.png'
-            }]
-        }
+            var selection = this.state.currentGroup.landscapes.map((landscape, index) =>{
+              console.log('LANDSCAPE: ', landscape)
+                  let foundLandscape = landscapes.find(ls => {
+                    console.log('LANDSCAPE FOUND: ', ls)
+                    if(ls._id === landscape){
+                      console.log('found')
+                      return ls
+                    }
+                  })
 
-        const dragProps = {
-            name: 'file',
-            multiple: false,
-            showUploadList: false,
-            action: 'http://localhost:8080/api/upload/template',
-            onChange(info) {
-                const status = info.file.status
+                    console.log('foundLandscape ---', foundLandscape)
+                    return {key: landscape, id: landscape, name: foundLandscape.name}
+            })
+            console.log('landscapes', landscapes)
+            var landscapeIds = landscapes.map((landscape, index) =>{
+              return {key: landscape._id, id: landscape._id, name: landscape.name, description: landscape.description}
+            })
+          }
 
-                if (status !== 'uploading') {
-                    console.log(info.file, info.fileList)
-                }
-                if (status === 'done') {
-                    message.success(`${info.file.name} file uploaded successfully.`)
-                    self.setState({
-                        cloudFormationTemplate: JSON.stringify(info.file.response, null, 4)
-                    })
-                } else if (status === 'error') {
-                    message.error(`${info.file.name} file upload failed.`)
-                }
-            }
-        }
 
-        if (loading) {
-            return (
-                <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
-                    <Loader/>
-                </div>
-            )
-        }
+          if (loading) {
+              return (
+                  <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
+                      <Loader/>
+                  </div>
+              )
+          }
 
-        return (
-          <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
-              <h5>Create Group</h5><br/><br/>
-              <Row type='flex' className={cx({ 'screen-height': true, 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
+          return (
+              <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
+                  <h5>Create Group</h5><br/><br/>
                   <Form style={{ width: '100%' }} onSubmit={this.handleSubmit}>
-                      <FormItem
-                          {...formItemLayout}
-                          label='Name'
-                      >
-                          {getFieldDecorator('name', {
-                              rules: [{ required: true, message: 'Please input name of the group' }],
-                          })(
-                              <Input placeholder='Group Name' />
-                          )}
-                      </FormItem>
+                  <Tabs defaultActiveKey="1" onChange={this.callback}>
+                    <TabPane tab="Group" key="1">
+                            <FormItem
+                                {...formItemLayout}
+                                label='Name'
+                            >
+                                {getFieldDecorator('name', {
+                                    rules: [{ required: true, message: 'Please input name of the group' }],
+                                })(
+                                    <Input placeholder='Group Name' />
+                                )}
+                            </FormItem>
 
-                      <FormItem
-                          {...formItemLayout}
-                          label='Description'
-                      >
-                          {getFieldDecorator('description', {})(
-                              <Input type="textarea" rows={4} placeholder='Description' />
-                          )}
-                      </FormItem>
-                      <FormItem
-                          {...formItemLayout}
-                          label='Permissions'
-                      >
+                            <FormItem
+                                {...formItemLayout}
+                                label='Description'
+                            >
+                                {getFieldDecorator('description', {})(
+                                    <Input type="textarea" rows={4} placeholder='Description' />
+                                )}
+                            </FormItem>
+                            <FormItem
+                                {...formItemLayout}
+                                label='Permissions'
+                            >
 
-                        <div style={{ borderBottom: '1px solid #E9E9E9' }}>
-                          <Checkbox
-                            indeterminate={this.state.indeterminate}
-                            onChange={this.onCheckAllChange}
-                            checked={this.state.checkAll}
-                          >
-                            Check all
-                          </Checkbox>
-                        </div>
-                        <br />
-                        <CheckboxGroup options={plainOptions} value={this.state.checkedList} onChange={this.onCheckedChange} />
-                        </FormItem>
+                              <div style={{ borderBottom: '1px solid #E9E9E9' }}>
+                                <Checkbox
+                                  indeterminate={this.state.indeterminate}
+                                  onChange={this.onCheckAllChange}
+                                  checked={this.state.checkAll}
+                                >
+                                  Check all
+                                </Checkbox>
+                              </div>
+                              <br />
+                              <CheckboxGroup options={plainOptions} value={this.state.checkedList} onChange={this.onCheckedChange} />
+                              </FormItem>
+                            <FormItem wrapperCol={{ span: 12, offset: 6 }}>
+                                <Button type='primary' htmlType='submit' disabled={loading} onClick={this.handlesCreateClick}>
+                                    Create
+                                </Button>
+                            </FormItem>
 
-                      <FormItem wrapperCol={{ span: 12, offset: 6 }}>
-                          <Button type='primary' htmlType='submit' disabled={loading} onClick={this.handlesCreateClick}>
-                              Confirm Edit
-                          </Button>
-                      </FormItem>
+
+                    </TabPane>
+                    <TabPane tab="Users" key="2">
+                      <Table rowSelection={rowSelection} columns={columns} dataSource={data} pagination={pagination}/>
+                    </TabPane>
+                    <TabPane tab="Landscapes" key="3">
+                      <Table rowSelection={rowSelection} columns={landscapeColumns} dataSource={landscapeIds} pagination={pagination}/>
+                    </TabPane>
+                  </Tabs>
                   </Form>
-              </Row>
-          </div>
-        )
-    }
+              </div>
+          )
+      }
 
-    handlesGroupClick = event => {
-        const { router } = this.context
-        router.push({ pathname: '/protected' })
-    }
+      handlesGroupClick = event => {
+          const { router } = this.context
+          router.push({ pathname: '/protected' })
+      }
 
-    handlesOnEmailChange = event => {
-        event.preventDefault()
-        // should add some validator before setState in real use cases
-        this.setState({ username: event.target.value })
-    }
+      handlesOnEmailChange = event => {
+          event.preventDefault()
+          // should add some validator before setState in real use cases
+          this.setState({ username: event.target.value })
+      }
 
-    handlesOnPasswordChange = event => {
-        event.preventDefault()
-        // should add some validator before setState in real use cases
-        this.setState({ password: event.target.value })
-    }
+      handlesOnPasswordChange = event => {
+          event.preventDefault()
+          // should add some validator before setState in real use cases
+          this.setState({ password: event.target.value })
+      }
 
-    handlesCreateClick = event => {
+      handlesCreateClick = event => {
+          const { router } = this.context
 
-        event.preventDefault()
+          event.preventDefault()
 
-        let groupToCreate = this.props.form.getFieldsValue()
-        groupToCreate.imageUri = this.state.imageUri || ''
-        groupToCreate.cloudFormationTemplate = this.state.cloudFormationTemplate || ''
+          let groupToCreate = this.props.form.getFieldsValue()
+          groupToCreate.permissions = this.state.checkedList
+          groupToCreate.users = []
+          console.log('creating group -', groupToCreate)
+          console.log('this.props -', this.props)
+          this.props.CreateGroupWithMutation({
+              variables: { group: groupToCreate }
+           }).then(({ data }) => {
+              console.log('got data', data)
+              message.config({
+                top: 5,
+                duration: 5,
+              });
 
-        this.props.mutate({
-            variables: { group: groupToCreate }
-         }).then(({ data }) => {
-            console.log('got data', data)
-        }).catch((error) => {
-            console.log('there was an error sending the query', error)
-        })
+              message.success('Group was successfully created.');
+              router.push({ pathname: '/groups' })
+          }).catch((error) => {
+              message.fail('An error occurred while creating group.');
 
-    }
+              console.log('there was an error sending the query', error)
+          })
 
-    closeError = (event) => {
-        event.preventDefault()
-        const { resetError } = this.props
-        resetError()
-    }
+      }
+
+      closeError = (event) => {
+          event.preventDefault()
+          const { resetError } = this.props
+          resetError()
+      }
+      onCheckedChange = (checkedList) =>{
+        this.setState({
+          checkedList,
+          indeterminate: !!checkedList.length && (checkedList.length < plainOptions.length),
+          checkAll: checkedList.length === plainOptions.length,
+        });
+        console.log(this.state)
+      }
+      onCheckAllChange = (e) => {
+        this.setState({
+          checkedList: e.target.checked ? allChecked : ['r'],
+          indeterminate: false,
+          checkAll: e.target.checked,
+        });
+        console.log(this.state)
+      }
+
+      callback = (key) => {
+        console.log(key);
+      }
 }
 
-CreateGroup.propTypes = {
+EditGroup.propTypes = {
     currentView: PropTypes.string.isRequired,
     enterGroups: PropTypes.func.isRequired,
     leaveGroups: PropTypes.func.isRequired
 }
 
-CreateGroup.contextTypes = {
+EditGroup.contextTypes = {
     router: PropTypes.object
 }
 
-export default Form.create()(CreateGroup)
+export default Form.create()(EditGroup)

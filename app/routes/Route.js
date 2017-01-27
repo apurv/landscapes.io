@@ -19,8 +19,16 @@ import {
     // protected views
     ConnectedProtected,
     ConnectedDeployments,
+
+    ConnectedUsers,
+    ConnectedCreateUser,
+
     ConnectedGroups,
     ConnectedCreateGroup,
+    ConnectedEditGroup,
+
+    ConnectedAccounts,
+    ConnectedCreateAccount,
     ConnectedLandscapes,
     ConnectedCreateLandscape,
     ConnectedEditLandscape,
@@ -38,13 +46,21 @@ export const Routes = () => {
                     <Route path="/" component={App}>
                         {/* non protected views */}
                         <IndexRoute component={ConnectedHome}/>
+                        {/* deployment views */}
                         <Route path="/deployments/*" component={ConnectedDeployments} onEnter={requireAuth}/>
+                        {/* account views */}
+                        <Route path="/accounts" component={ConnectedAccounts} onEnter={requireAuth}/>
+                        <Route path="/account/:create" component={ConnectedCreateAccount} onEnter={requireAuth}/>
+                        {/* landscape views */}
+                        <Route path="/landscapes" component={ConnectedLandscapes} onEnter={requireAuth}/>
                         <Route path="/landscape/:id" component={ConnectedLandscapeDetails} onEnter={requireAuth}/>
                         <Route path="/landscapes/create" component={ConnectedCreateLandscape} onEnter={requireAuth}/>
                         <Route path="/landscapes/edit/:id" component={ConnectedEditLandscape} onEnter={requireAuth}/>
-                        <Route path="/landscapes" component={ConnectedLandscapes} onEnter={requireAuth}/>
+                        <Route path="/users" component={ConnectedUsers} onEnter={requireAuth}/>
+                        <Route path="/users/create" component={ConnectedCreateUser} onEnter={requireAuth}/>
                         <Route path="/groups" component={ConnectedGroups} onEnter={requireAuth}/>
                         <Route path="/groups/create" component={ConnectedCreateGroup} onEnter={requireAuth}/>
+                        <Route path="/groups/edit/:id" component={ConnectedEditGroup} onEnter={requireAuth}/>
                         <Route path="/login" component={ConnectedLogin}/>
                         <Route path="/register" component={ConnectedRegister}/> {/* logout: just redirects to home (App will take care of removing the token) */}
                         <Route path="/logout" onEnter={logOutUser}/> {/* protected views */}

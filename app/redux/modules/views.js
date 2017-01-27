@@ -9,6 +9,8 @@ const ENTER_HOME_VIEW = 'ENTER_HOME_VIEW'
 const LEAVE_HOME_VIEW = 'LEAVE_HOME_VIEW'
 const ENTER_LANDSCAPES_VIEW = 'ENTER_LANDSCAPES_VIEW'
 const LEAVE_LANDSCAPES_VIEW = 'LEAVE_LANDSCAPES_VIEW'
+const ENTER_USERS_VIEW = 'ENTER_USERS_VIEW'
+const LEAVE_USERS_VIEW = 'LEAVE_USERS_VIEW'
 const ENTER_GROUPS_VIEW = 'ENTER_GROUPS_VIEW'
 const LEAVE_GROUPS_VIEW = 'LEAVE_GROUPS_VIEW'
 const ENTER_LOGIN_VIEW = 'ENTER_LOGIN_VIEW'
@@ -40,6 +42,7 @@ export default (state = initialState, action) => {
         // /////////////////////
         case ENTER_HOME_VIEW:
         case ENTER_LANDSCAPES_VIEW:
+        case ENTER_USERS_VIEW:
         case ENTER_GROUPS_VIEW:
         case ENTER_LOGIN_VIEW:
         case ENTER_REGISTER_VIEW:
@@ -55,6 +58,7 @@ export default (state = initialState, action) => {
 
         case LEAVE_HOME_VIEW:
         case LEAVE_LANDSCAPES_VIEW:
+        case LEAVE_USERS_VIEW:
         case LEAVE_GROUPS_VIEW:
         case LEAVE_LOGIN_VIEW:
         case LEAVE_REGISTER_VIEW:
@@ -142,6 +146,16 @@ export function enterLandscapes() {
 export function leaveLandscapes() {
     return {
         type: LEAVE_LANDSCAPES_VIEW, currentView: 'landscapes'
+    }
+}
+export function enterUsers() {
+    return {
+        type: ENTER_USERS_VIEW, currentView: 'users'
+    }
+}
+export function leaveUsers() {
+    return {
+        type: LEAVE_USERS_VIEW, currentView: 'users'
     }
 }
 export function enterGroups() {

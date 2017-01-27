@@ -1,5 +1,5 @@
 import gql from 'graphql-tag'
-import { Groups } from '../../views'
+import { CreateAccount } from '../../views'
 import { connect } from 'react-redux'
 import { graphql } from 'react-apollo'
 import { bindActionCreators } from 'redux'
@@ -9,29 +9,15 @@ import * as viewsActions from '../../redux/modules/views'
   GraphQL - Apollo client
  ------------------------------------------*/
 
-const GroupQuery = gql `
-    query getGroups {
-        groups {
-            _id,
-            name,
-            description,
-            landscapes,
-            permissions
+const createAccountMutation = gql `
+    mutation createAccount($account: AccountInput!) {
+        createAccount(account: $account) {
+            name
         }
     }
- `
- // infoLinkText,
- // img,
- // createdBy
+`
 
-// 1- add queries:
-const GroupsWithQuery = graphql(GroupQuery, {
-    props: ({ data: { loading, groups } }) => ({
-        groups,
-        loading
-    })
-})(Groups)
-
+const CreateAccountWithMutation = graphql(createAccountMutation)(CreateAccount)
 
 /* -----------------------------------------
   Redux
@@ -43,9 +29,9 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = (dispatch) => {
     return bindActionCreators({
-        enterGroups: viewsActions.enterGroups,
-        leaveGroups: viewsActions.leaveGroups
+        enterLandscapes: viewsActions.enterLandscapes,
+        leaveLandscapes: viewsActions.leaveLandscapes
     }, dispatch)
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(GroupsWithQuery)
+export default connect(mapStateToProps, mapDispatchToProps)(CreateAccountWithMutation)

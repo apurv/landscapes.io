@@ -43,20 +43,6 @@ for (let i = 0; i < 46; i++) {
   });
 }
 
-const rowSelection = {
-  onChange: (selectedRowKeys, selectedRows) => {
-    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-  },
-  onSelect: (record, selected, selectedRows) => {
-    console.log(record, selected, selectedRows);
-  },
-  onSelectAll: (selected, selectedRows, changeRows) => {
-    console.log(selected, selectedRows, changeRows);
-  },
-  getCheckboxProps: record => ({
-    disabled: record.name === 'Disabled User',    // Column configuration not to be checked
-  }),
-};
 const pagination = {
   total: data.length,
   showSizeChanger: true,
@@ -104,11 +90,35 @@ class CreateGroup extends Component {
         const { loading, groups, landscapes } = this.props
         const { getFieldDecorator } = this.props.form
 
+
         console.log('GROUPS', groups)
         console.log('landscapes', landscapes)
         const formItemLayout = {
             labelCol: { span: 8 },
             wrapperCol: { span: 12 }
+        }
+
+        const rowSelection = {
+          onChange: (selectedRowKeys, selectedRows) => {
+            this.setState({ selectedRows: selectedRows})
+            console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+          },
+          onSelect: (record, selected, selectedRows) => {
+            console.log(record, selected, selectedRows);
+          },
+          onSelectAll: (selected, selectedRows, changeRows) => {
+            console.log(selected, selectedRows, changeRows);
+          },
+          getCheckboxProps: record => ({
+            disabled: record.name === 'Disabled User',    // Column configuration not to be checked
+          }),
+        };
+
+        if(landscapes){
+          console.log('landscapes', landscapes)
+          var landscapeIds = landscapes.map((index, landscape) =>{
+            return {key: landscape._id, id: landscape._id, name: landscape.name, description: landscape.description}
+          })
         }
 
         if (loading) {
@@ -170,26 +180,10 @@ class CreateGroup extends Component {
 
                   </TabPane>
                   <TabPane tab="Users" key="2">
-
-                  <Table rowSelection={rowSelection} columns={columns} dataSource={data} pagination={pagination}/>
-
+                    <Table rowSelection={rowSelection} columns={columns} dataSource={data} pagination={pagination}/>
                   </TabPane>
                   <TabPane tab="Landscapes" key="3">
-                  <Table rowSelection={rowSelection} columns={landscapeColumns} dataSource={landscapes} pagination={pagination}/>
-
-                  <ul>
-                      {
-                          landscapes.map((group, i) =>
-                          <Card key={i} title={landscape.name} style={{ width: 300, margin: '20px', float: 'left' }}
-                              extra={
-                                  <div>
-
-                                  </div>
-                              }>
-                              <p>{landscape.description}</p>
-                          </Card>)
-                      }
-                  </ul>
+                    <Table rowSelection={rowSelection} columns={landscapeColumns} dataSource={landscapes} pagination={pagination}/>
                   </TabPane>
                 </Tabs>
                 </Form>
@@ -222,9 +216,14 @@ class CreateGroup extends Component {
         let groupToCreate = this.props.form.getFieldsValue()
         groupToCreate.permissions = this.state.checkedList
         groupToCreate.users = []
+        // groupToCreate.landscapes = this.state.selectedRows;
+        console.log('this.state.selectedRows', this.state.selectedRows)
+        groupToCreate.landscapes = this.state.selectedRows.map((row, i) =>{
+          return row._id
+        });
         console.log('creating group -', groupToCreate)
         console.log('this.props -', this.props)
-        this.props.mutate({
+        this.props.CreateGroupWithMutation({
             variables: { group: groupToCreate }
          }).then(({ data }) => {
             console.log('got data', data)

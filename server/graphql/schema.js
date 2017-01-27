@@ -3,23 +3,35 @@ import { makeExecutableSchema } from 'graphql-tools'
 import resolvers from './resolvers'
 
 import User from './types/user.js'
+import Account from './types/account.js'
 import Landscape from './types/landscape.js'
 import Group from './types/group.js'
 import Subscription from './types/subscriptions.js'
-// parentLandscapeId: { type: Schema.ObjectId, ref: 'Landscape' },
-// createdAt: { type: Date, default: Date.now },
-// createdBy: { type: Schema.ObjectId, ref: 'User' },
-// img: { data: Buffer, contentType: String },
+
 const userObject = `
     type userObject {
         userId: String!,
         isAdmin: Boolean!
     }
 `
+
 const Query = `
     input LoginInput {
         username: String
         password: String
+    }
+
+    input AccountInput {
+        name: String
+        createdAt: String
+        endpoint: String
+        caBundlePath: String
+        rejectUnauthorizedSsl: Boolean
+        signatureBlock: String
+        region: String
+        isOtherRegion: Boolean
+        accessKeyId: String
+        secretAccessKey: String
     }
 
     input LandscapeInput {
@@ -44,8 +56,10 @@ const Query = `
     }
 
     type Query {
-        landscapes: [Landscape],
         groups: [Group]
+        accounts: [Account]
+        landscapes: [Landscape]
+        users: [User]
     }
 `
 
@@ -54,10 +68,13 @@ const Mutation = `
         loginUser ( user: LoginInput! ): User
         createLandscape ( landscape: LandscapeInput! ): Landscape
         createGroup ( group: GroupInput! ): Group
+        editGroup ( group: GroupInput! ): Group
+        editLandscape ( landscape: LandscapeInput! ): Landscape
+        createAccount ( account: AccountInput! ): Account
     }
 `
 
 export default makeExecutableSchema({
-    typeDefs: [ Query, User, Group, Mutation, Landscape, userObject, Subscription ],
+    typeDefs: [ Query, User, Group, Mutation, Landscape, Account, Subscription ],
     resolvers,
 })

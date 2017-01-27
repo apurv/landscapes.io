@@ -3,6 +3,9 @@ import { find, filter } from 'lodash'
 import { pubsub } from './subscriptions'
 const Landscape = require('./models/landscape')
 const Group = require('./models/group')
+const Account = require('./models/account')
+const User = require('./models/user')
+
 
 const resolveFunctions = {
     Query: {
@@ -20,6 +23,14 @@ const resolveFunctions = {
                 return groups
             })
             // return groups.retrieve()
+        },
+        users() {
+            return User.find().sort('-created').populate('user', 'displayName').exec((err, groups) => {
+                console.log('groups ---', groups)
+                if (err) return err
+                return groups
+            })
+            // return groups.retrieve()
         }
     },
     Mutation: {
@@ -27,10 +38,8 @@ const resolveFunctions = {
             console.log('login resolver')
         },
         createLandscape(_, { landscape }) {
-            console.log('inside resolver to create landscape', landscape)
 
             console.log(' ---> creating Landscape')
-
             let newLandscape = new Landscape(landscape)
 
             newLandscape.save(err => {
@@ -39,7 +48,37 @@ const resolveFunctions = {
                     return err
                 } else {
                     console.log(' ---> created: ' + newLandscape._id)
-                    // res.json(newLandscape)
+                    return newLandscape
+                }
+            })
+        },
+        editLandscape(_, { landscape }) {
+
+            console.log(' ---> editing Landscape')
+            let editedLandscape = new Landscape(landscape)
+
+            editedLandscape.save(err => {
+                if (err) {
+                    console.log(err)
+                    return err
+                } else {
+                    console.log(' ---> created: ' + editedLandscape._id)
+                    return editedLandscape
+                }
+            })
+        },
+        createAccount(_, { account }) {
+
+            console.log(' ---> creating Account')
+            let newAccount = new Account(account)
+
+            newAccount.save(err => {
+                if (err) {
+                    console.log(err)
+                    return err
+                } else {
+                    console.log(' ---> created: ' + newAccount._id)
+                    return newAccount
                 }
             })
         }
@@ -71,9 +110,9 @@ const resolveFunctions = {
         }
     },
     User: {
-        posts(author) {
-            return filter(posts, { authorId: author.id })
-        }
+        // posts(author) {
+        //     return filter(posts, { authorId: author.id })
+        // }
     },
     Landscape: {
         // author(post) {

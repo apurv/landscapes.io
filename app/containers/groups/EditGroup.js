@@ -8,28 +8,60 @@ import * as viewsActions from '../../redux/modules/views'
 /* -----------------------------------------
   GraphQL - Apollo client
  ------------------------------------------*/
+ const editGroupMutation = gql `
+     mutation createGroup($group: GroupInput!) {
+         createGroup(group: $group) {
+             name
+         }
+     }
+ `
+
+ // const CreateGroupWithMutation = graphql(editGroupMutation)(CreateGroup)
+
 
  const GroupQuery = gql `
      query getGroups {
          groups {
-           _id,
-           users,
-           landscapes,
-           permissions,
-           createdAt,
-           name,
-           description,
+             _id,
+             name,
+             description,
+             landscapes,
+             permissions
          }
      }
   `
 
+ const LandscapeQuery = gql `
+     query getLandscapes {
+       landscapes {
+           _id,
+           name,
+           version,
+           imageUri,
+           infoLink,
+           createdAt,
+           description,
+           cloudFormationTemplate
+       }
+     }
+  `
  // 1- add queries:
- const EditGroupWithQuery = graphql(GroupQuery, {
+ const GroupsWithQuery = graphql(GroupQuery, {
      props: ({ data: { loading, groups } }) => ({
          groups,
          loading
      })
- })(EditGroup)
+ })
+ (graphql(LandscapeQuery, {
+     props: ({ data: { loading, landscapes } }) => ({
+         landscapes,
+         loading
+     })
+   }
+ )
+ (
+   graphql(editGroupMutation, {name: 'EditGroupWithMutation'})
+ (EditGroup)))
 
 /* -----------------------------------------
   Redux
@@ -46,4 +78,4 @@ const mapDispatchToProps = (dispatch) => {
     }, dispatch)
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(EditGroupWithQuery)
+export default connect(mapStateToProps, mapDispatchToProps)(GroupsWithQuery)

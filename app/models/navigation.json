@@ -39,9 +39,27 @@
       "hideWhenUserAuth": false
     },
     {
+      "label":      "Users",
+      "link":       "/users",
+      "view":       "users",
+      "isRouteBtn": true,
+      "alwaysShows": false,
+      "showWhenUserAuth": true,
+      "hideWhenUserAuth": false
+    },
+    {
       "label":      "Landscapes",
       "link":       "/landscapes",
       "view":       "landscapes",
+      "isRouteBtn": true,
+      "alwaysShows": false,
+      "showWhenUserAuth": true,
+      "hideWhenUserAuth": false
+    },
+    {
+      "label":      "Settings",
+      "link":       "/accounts",
+      "view":       "accounts",
       "isRouteBtn": true,
       "alwaysShows": false,
       "showWhenUserAuth": true,

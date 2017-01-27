@@ -1,5 +1,5 @@
 import gql from 'graphql-tag'
-import { Groups } from '../../views'
+import { Accounts } from '../../views'
 import { connect } from 'react-redux'
 import { graphql } from 'react-apollo'
 import { bindActionCreators } from 'redux'
@@ -9,28 +9,31 @@ import * as viewsActions from '../../redux/modules/views'
   GraphQL - Apollo client
  ------------------------------------------*/
 
-const GroupQuery = gql `
-    query getGroups {
-        groups {
-            _id,
+const AccountsQuery = gql `
+    query getAccounts {
+        accounts {
             name,
-            description,
-            landscapes,
-            permissions
+            region,
+            createdAt,
+            endpoint,
+            caBundlePath,
+            rejectUnauthorizedSsl,
+            signatureBlock,
+            isOtherRegion,
+            accessKeyId,
+            secretAccessKey
         }
     }
  `
- // infoLinkText,
- // img,
  // createdBy
 
 // 1- add queries:
-const GroupsWithQuery = graphql(GroupQuery, {
-    props: ({ data: { loading, groups } }) => ({
-        groups,
+const AccountsWithQuery = graphql(AccountsQuery, {
+    props: ({ data: { loading, accounts } }) => ({
+        accounts,
         loading
     })
-})(Groups)
+})(Accounts)
 
 
 /* -----------------------------------------
@@ -43,9 +46,9 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = (dispatch) => {
     return bindActionCreators({
-        enterGroups: viewsActions.enterGroups,
-        leaveGroups: viewsActions.leaveGroups
+        enterLandscapes: viewsActions.enterLandscapes,
+        leaveLandscapes: viewsActions.leaveLandscapes
     }, dispatch)
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(GroupsWithQuery)
+export default connect(mapStateToProps, mapDispatchToProps)(AccountsWithQuery)
