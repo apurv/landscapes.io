@@ -21,6 +21,15 @@ const Query = `
         password: String
     }
 
+    input UserInput {
+        _id: String
+        username: String
+        email: String
+        password: String
+        firstName: String
+        lastName: String
+    }
+
     input AccountInput {
         _id: String
         __typename: String
@@ -70,6 +79,7 @@ const Query = `
 const Mutation = `
     type Mutation {
         loginUser ( user: LoginInput! ): User
+        createUser ( user: UserInput! ): User
         createGroup ( group: GroupInput! ): Group
         editGroup ( group: GroupInput! ): Group
         createAccount ( account: AccountInput! ): Account

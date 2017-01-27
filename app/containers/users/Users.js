@@ -12,7 +12,7 @@ import * as viewsActions from '../../redux/modules/views'
 const UserQuery = gql `
     query getUsers {
         users {
-            id,
+            _id,
             username,
             email,
             firstName,

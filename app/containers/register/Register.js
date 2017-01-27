@@ -26,7 +26,7 @@ mutation CreateUser ($user: CreateUserInput!) {
 }
 `;
 // 1- add mutation "CreateUser":
-const RegisterWithCreatUserMutation = graphql(
+const RegisterWithCreateUserMutation = graphql(
   CreateUser,
   {
     name: 'createUserMutation',
@@ -100,4 +100,4 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(RegisterWithCreatUserMutation);
+)(RegisterWithCreateUserMutation);

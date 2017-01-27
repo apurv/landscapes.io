@@ -4,7 +4,7 @@ import { pubsub } from './subscriptions'
 const Landscape = require('./models/landscape')
 const Group = require('./models/group')
 const Account = require('./models/account')
-const User = require('./models/user')
+const User = require('../auth/models/user.server.model')
 
 
 const resolveFunctions = {
@@ -55,6 +55,21 @@ const resolveFunctions = {
                 } else {
                     console.log(' ---> created: ', newLandscape._id)
                     return newLandscape
+                }
+            })
+        },
+        createUser(_, { user }) {
+
+            console.log(' ---> creating User')
+            let newUser = new User(user)
+
+            newUser.save(err => {
+                if (err) {
+                    console.log(err)
+                    return err
+                } else {
+                    console.log(' ---> created: ', newUser._id)
+                    return newUser
                 }
             })
         },

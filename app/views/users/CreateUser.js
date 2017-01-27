@@ -58,28 +58,28 @@ class CreateUser extends Component {
                                 {...formItemLayout}
                                 label='Username'
                             >
-                                    <Input placeholder='Username' />
+                                    <Input onChange={this.handlesOnUsernameChange}  placeholder='Username' />
                             </FormItem>
 
                             <FormItem
                                 {...formItemLayout}
                                 label='Email'
                             >
-                                    <Input placeholder='user@email.com' />
+                                    <Input onChange={this.handlesOnEmailChange} placeholder='user@email.com' />
                             </FormItem>
 
                             <FormItem
                                 {...formItemLayout}
-                                label='firstName'
+                                label='First Name'
                             >
-                                    <Input placeholder='First Name' />
+                                    <Input onChange={this.handlesOnFirstNameChange} placeholder='First Name' />
                             </FormItem>
 
                             <FormItem
                                 {...formItemLayout}
-                                label='lastName'
+                                label='Last Name'
                             >
-                                    <Input placeholder='Last Name' />
+                                    <Input onChange={this.handlesOnLastNameChange} placeholder='Last Name' />
                             </FormItem>
 
                             <FormItem
@@ -87,7 +87,7 @@ class CreateUser extends Component {
                                 label='New Password'
 
                             >
-                                    <Input type="password" placeholder='New Password' />
+                                    <Input type="password" onChange={this.handlesOnPasswordChange} placeholder='New Password' />
                             </FormItem>
 
 
@@ -111,7 +111,7 @@ class CreateUser extends Component {
         handlesOnEmailChange = event => {
             event.preventDefault()
             // should add some validator before setState in real use cases
-            this.setState({ username: event.target.value })
+            this.setState({ email: event.target.value })
         }
 
         handlesOnPasswordChange = event => {
@@ -119,20 +119,49 @@ class CreateUser extends Component {
             // should add some validator before setState in real use cases
             this.setState({ password: event.target.value })
         }
+        handlesOnUsernameChange = event => {
+            event.preventDefault()
+            // should add some validator before setState in real use cases
+            this.setState({ username: event.target.value })
+        }
+        handlesOnFirstNameChange = event => {
+            event.preventDefault()
+            // should add some validator before setState in real use cases
+            this.setState({ firstName: event.target.value })
+        }
+        handlesOnLastNameChange = event => {
+            event.preventDefault()
+            // should add some validator before setState in real use cases
+            this.setState({ lastName: event.target.value })
+        }
 
         handlesCreateClick = event => {
 
             event.preventDefault()
 
-            let userToCreate = this.props.form.getFieldsValue()
-            userToCreate.imageUri = this.state.imageUri || ''
-            userToCreate.cloudFormationTemplate = this.state.cloudFormationTemplate || ''
-
-            this.props.mutate({
+            // let userToCreate = this.props.form.getFieldsValue()
+            let userToCreate = {
+              username: this.state.username,
+              email: this.state.email,
+              password: this.state.password,
+              firstName: this.state.firstName,
+              lastName: this.state.lastName
+            };
+            console.log('creating user -', userToCreate)
+            console.log('this.props -', this.props)
+            this.props.CreateUserMutation({
                 variables: { user: userToCreate }
              }).then(({ data }) => {
                 console.log('got data', data)
+                message.config({
+                  top: 5,
+                  duration: 5,
+                });
+
+                message.success('User was successfully created.');
+                router.push({ pathname: '/users' })
             }).catch((error) => {
+                message.fail('An error occurred while creating group.');
                 console.log('there was an error sending the query', error)
             })
 

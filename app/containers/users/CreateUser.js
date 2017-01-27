@@ -9,10 +9,27 @@ import * as viewsActions from '../../redux/modules/views'
   GraphQL - Apollo client
  ------------------------------------------*/
 
+
+ const CreateNewUser = gql `
+     mutation CreateNewUser($user: UserInput!) {
+         createUser(user: $user) {
+             username
+             password
+             email
+             firstName
+             lastName
+         }
+     }
+ `
+
+ // 1- add queries:
+
+ // 2- add mutation "logUser":
+
 const UserQuery = gql `
     query getUsers {
         users {
-          id,
+          _id,
           username,
           email,
           firstName,
@@ -26,12 +43,14 @@ const UserQuery = gql `
  // createdBy
 
 // 1- add queries:
-const GroupsWithQuery = graphql(UserQuery, {
+const GroupsWithQueryAndMutation = graphql(UserQuery, {
     props: ({ data: { loading, users } }) => ({
         users,
         loading
     })
-})(CreateUser)
+})(graphql(CreateNewUser, {
+    name: 'CreateUserMutation'})
+(CreateUser))
 
 
 /* -----------------------------------------
@@ -49,4 +68,4 @@ const mapDispatchToProps = (dispatch) => {
     }, dispatch)
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(GroupsWithQuery)
+export default connect(mapStateToProps, mapDispatchToProps)(GroupsWithQueryAndMutation)
