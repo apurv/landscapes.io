@@ -30,9 +30,9 @@
       "hideWhenUserAuth": true
     },
     {
-      "label":      "Logout",
-      "link":       "/logout",
-      "view":       "logout",
+      "label":      "Groups",
+      "link":       "/groups",
+      "view":       "groups",
       "isRouteBtn": true,
       "alwaysShows": false,
       "showWhenUserAuth": true,
@@ -51,6 +51,15 @@
       "label":      "Change Password",
       "link":       "/changePassword",
       "view":       "password",
+      "isRouteBtn": true,
+      "alwaysShows": false,
+      "showWhenUserAuth": true,
+      "hideWhenUserAuth": false
+    },
+    {
+      "label":      "Logout",
+      "link":       "/logout",
+      "view":       "logout",
       "isRouteBtn": true,
       "alwaysShows": false,
       "showWhenUserAuth": true,

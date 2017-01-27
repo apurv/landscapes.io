@@ -90,6 +90,7 @@
     "animate.css": "^3.5.1",
     "antd": "^2.5.2",
     "apollo-client": "^0.5.20",
+    "axios": "^0.15.3",
     "babel-polyfill": "^6.7.4",
     "body-parser": "^1.15.2",
     "bootstrap": "^3.3.6",

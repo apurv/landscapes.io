@@ -1,9 +1,8 @@
 import passport from 'passport'
 import { find, filter } from 'lodash'
 import { pubsub } from './subscriptions'
-
-// model imports
 const Landscape = require('./models/landscape')
+const Group = require('./models/group')
 
 const resolveFunctions = {
     Query: {
@@ -12,6 +11,15 @@ const resolveFunctions = {
                 if (err) return err
                 return landscapes
             })
+        }
+        ,
+        groups() {
+            return Group.find().sort('-created').populate('user', 'displayName').exec((err, groups) => {
+                console.log('groups ---', groups)
+                if (err) return err
+                return groups
+            })
+            // return groups.retrieve()
         }
     },
     Mutation: {
@@ -32,6 +40,27 @@ const resolveFunctions = {
                 } else {
                     console.log(' ---> created: ' + newLandscape._id)
                     // res.json(newLandscape)
+                }
+            })
+        }
+        ,
+        createGroup(_, { group }) {
+            console.log('inside resolver to create group', group)
+
+            console.log(' ---> creating group')
+
+            let newGroup = new Group(group)
+
+            newGroup.save(err => {
+                if (err) {
+                    console.log(err)
+                    return err
+                } else {
+                    console.log(' ---> created: ' + newGroup._id)
+                    return Group.find(newGroup._id).sort('-created').populate('user', 'displayName').exec((err, landscapes) => {
+                        if (err) return err
+                        return landscapes
+                    })
                 }
             })
         }

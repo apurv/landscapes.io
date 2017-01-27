@@ -109,6 +109,73 @@ function reportError(reject) {
   };
 }
 
+function seedGroup(group){
+    return new Promise(function (resolve, reject) {
+      var Group = mongoose.model('Group');
+
+      if (group.name === seedOptions.seedGroup.name && process.env.NODE_ENV === 'production') {
+        checkGroupNotExists(group)
+          .then(saveGroup(group))
+          .then(reportSuccess(group.name))
+          .then(function () {
+            console.log('GROUP MADE: ', group.name)
+            resolve();
+          })
+          .catch(function (err) {
+            console.log('GROUP REJECTED: ', group.name)
+            reject(err);
+          });
+      } else {
+        // removeUser(user)
+        checkGroupNotExists(group)
+          .then(saveGroup(group))
+          .then(reportSuccess(group.name))
+          .then(function () {
+            console.log('GROUP MADE: ', group.name)
+            resolve();
+          })
+          .catch(function (err) {
+            console.log('GROUP REJECTED: ', group.name)
+            reject(err);
+          });
+      }
+    });
+}
+
+function saveGroup(group) {
+  return function () {
+    return new Promise(function (resolve, reject) {
+      // Then save the group
+      group.save(function (err, thegroup) {
+        if (err) {
+          console.log(err)
+          reject(new Error('Failed to add local ' + group.name));
+        } else {
+          resolve(thegroup);
+        }
+      });
+    });
+  };
+}
+
+function checkGroupNotExists(group) {
+  return new Promise(function (resolve, reject) {
+    var Group = mongoose.model('Group');
+    Group.find({ name: group.name }, function (err, groups) {
+      if (err) {
+        reject(new Error('Failed to find local group ' + group.name));
+      }
+
+      if (groups.length === 0) {
+        resolve();
+      } else {
+        // reject(new Error('Failed due to local account already exists: ' + user.username));
+        reject('Seeding halted because local group already exists: ' + group.name);
+      }
+    });
+  });
+}
+
 // function seedRoles(roles) {
 //   const Role = mongoose.model('Role');
 
@@ -121,7 +188,7 @@ function reportError(reject) {
 //           // create role if not exist
 //           role.save(function (err, theRole) {
 //             if (err) { console.log(err); reject(err); }
-//             else {              
+//             else {
 //               resolve(theRole);
 //             }
 //           });
@@ -135,7 +202,7 @@ function reportError(reject) {
 // }
 
 module.exports.start = function start(options) {
-  
+console.log('Database seeding: CREATING EVERYTHINGx')
   // Initialize the default seed options
   seedOptions = _.clone(config.seedDB.options, true);
 
@@ -154,15 +221,18 @@ module.exports.start = function start(options) {
   }
 
   var User = mongoose.model('User');
+  var Group = mongoose.model('Group');
   return new Promise(function (resolve, reject) {
 
     var userAccount = new User(seedOptions.seedUser);
     var adminAccount = new User(seedOptions.seedAdmin);
+    var testGroup = new Group(seedOptions.seedGroup);
 
     // If production only seed admin if it does not exist
     if (process.env.NODE_ENV === 'production') {
       User.generateRandomPassphrase()
         .then(seedTheUser(adminAccount))
+        .then(seedGroup(testGroup))
         .then(function () {
           resolve();
         })
@@ -174,6 +244,7 @@ module.exports.start = function start(options) {
         .then(seedTheUser(userAccount))
         .then(User.generateRandomPassphrase)
         .then(seedTheUser(adminAccount))
+        .then(seedGroup(testGroup))
         .then(function () {
           resolve();
         })
