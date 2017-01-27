@@ -1,0 +1,52 @@
+import gql from 'graphql-tag'
+import { Users } from '../../views'
+import { connect } from 'react-redux'
+import { graphql } from 'react-apollo'
+import { bindActionCreators } from 'redux'
+import * as viewsActions from '../../redux/modules/views'
+
+/* -----------------------------------------
+  GraphQL - Apollo client
+ ------------------------------------------*/
+
+const UserQuery = gql `
+    query getUsers {
+        users {
+            id,
+            username,
+            email,
+            firstName,
+            lastName,
+            role
+        }
+    }
+ `
+ // infoLinkText,
+ // img,
+ // createdBy
+
+// 1- add queries:
+const GroupsWithQuery = graphql(UserQuery, {
+    props: ({ data: { loading, users } }) => ({
+        users,
+        loading
+    })
+})(Users)
+
+
+/* -----------------------------------------
+  Redux
+ ------------------------------------------*/
+
+const mapStateToProps = state => {
+    return { currentView: state.views.currentView }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return bindActionCreators({
+        enterUsers: viewsActions.enterUsers,
+        leaveUsers: viewsActions.leaveUsers
+    }, dispatch)
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(GroupsWithQuery)

@@ -1,17 +1,3 @@
-// Copyright 2014 OpenWhere, Inc.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 'use strict';
 var winston = require('winston'),
   mongoose = require('mongoose'),
@@ -29,31 +15,31 @@ exports.retrieve = function (req, res) {
       return res.send(500, err);
     } else {
       winston.info(' ---> Groups retrieved: ' + groups.length);
-      async.eachSeries(groups, function(group, callback) {
-        console.log('\t\t retrieving Users for Group "' + group.name + '"');
-
-        User.find({ groups: group._id },'-salt -password', function (err, users) {
-          if (err) {
-            callback(err);
-          } else {
-            console.log('\t\t Users retrieved for Group "' + group.name + '": ' + users.length);
-            var userList = [];
-            for(var count = 0; count < users.length; count++) {
-              userList.push(users[count].userInfo);
-            }
-            group.users = userList;
-          }
-        });
-        callback();
-
-      }, function(err) {
-        if (err) {
-          winston.error(err);
-          return res.send(500, err);
-        } else {
+      // async.eachSeries(groups, function(group, callback) {
+      //   console.log('\t\t retrieving Users for Group "' + group.name + '"');
+      //
+      //   User.find({ groups: group._id },'-salt -password', function (err, users) {
+      //     if (err) {
+      //       callback(err);
+      //     } else {
+      //       console.log('\t\t Users retrieved for Group "' + group.name + '": ' + users.length);
+      //       var userList = [];
+      //       for(var count = 0; count < users.length; count++) {
+      //         userList.push(users[count].userInfo);
+      //       }
+      //       group.users = userList;
+      //     }
+      //   });
+      //   callback();
+      //
+      // }, function(err) {
+      //   if (err) {
+      //     winston.error(err);
+      //     return res.send(500, err);
+      // } else {
           return res.json(groups);
-        }
-      });
+        // }
+      // });
     }
   });
 };

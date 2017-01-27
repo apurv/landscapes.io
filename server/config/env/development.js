@@ -49,7 +49,7 @@ module.exports = {
                 firstName: 'User',
                 lastName: 'Local',
                 displayName: 'User Local',
-                roles: ['user']
+                role: 'user'
             },
             seedAdmin: {
                 username: process.env.MONGO_SEED_ADMIN_USERNAME || 'admin',
@@ -58,7 +58,16 @@ module.exports = {
                 firstName: 'Admin',
                 lastName: 'Local',
                 displayName: 'Admin Local',
-                roles: ['user', 'admin']
+                role: 'admin'
+            },
+            seedGroup: {
+                id: 'intialGroupCRUDX',
+                provider: 'local',
+                permissions: ['c', 'r', 'u', 'd', 'x'],
+                name: 'CRUDX Group',
+                landscapes: [],
+                users: [],
+                description: 'This is a seeded CRUD-X Group'
             }
         }
     }

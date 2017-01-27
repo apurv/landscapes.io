@@ -5,16 +5,16 @@ import resolvers from './resolvers'
 import User from './types/user.js'
 import Account from './types/account.js'
 import Landscape from './types/landscape.js'
+import Group from './types/group.js'
 import Subscription from './types/subscriptions.js'
 
-// user
-// parentLandscapeId: { type: Schema.ObjectId, ref: 'Landscape' },
-// createdAt: { type: Date, default: Date.now },
-// createdBy: { type: Schema.ObjectId, ref: 'User' },
-// img: { data: Buffer, contentType: String },
+const userObject = `
+    type userObject {
+        userId: String!,
+        isAdmin: Boolean!
+    }
+`
 
-// Account
-// createdBy: User
 const Query = `
     input LoginInput {
         username: String
@@ -49,15 +49,29 @@ const Query = `
         cloudFormationTemplate: String
     }
 
+    input GroupInput {
+      landscapes: [String]
+      users: [String]
+      permissions: [String]
+
+      name: String
+      description: String
+
+    }
+
     type Query {
+        groups: [Group]
         accounts: [Account]
         landscapes: [Landscape]
+        users: [User]
     }
 `
 
 const Mutation = `
     type Mutation {
         loginUser ( user: LoginInput! ): User
+        createGroup ( group: GroupInput! ): Group
+        editGroup ( group: GroupInput! ): Group
         createAccount ( account: AccountInput! ): Account
         updateAccount ( account: AccountInput! ): Account
         deleteAccount ( account: AccountInput! ): Account
@@ -68,6 +82,6 @@ const Mutation = `
 `
 
 export default makeExecutableSchema({
-    typeDefs: [ Query, User, Mutation, Landscape, Account, Subscription ],
+    typeDefs: [ Query, User, Group, Mutation, Landscape, Account, Subscription ],
     resolvers,
 })

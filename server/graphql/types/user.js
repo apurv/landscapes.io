@@ -3,12 +3,13 @@ import Landscape from './landscape'
 
 const User = `
     type User {
-        id: Int # the ! means that every author object _must_ have an id
+        id: String # the ! means that every author object _must_ have an id
         username: String!
+        email: String!
         password: String!
         firstName: String
         lastName: String
-        posts: [Landscape] # the list of Landscapes by this author
+        role: String!
     }
 `
 

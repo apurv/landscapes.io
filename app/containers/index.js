@@ -8,6 +8,11 @@ import ConnectedRegister from './register/Register'
 import ConnectedProtected from './protected/Protected'
 import ConnectedPasswordChange from './password/Password'
 import ConnectedLandscapes from './landscapes/Landscapes'
+import ConnectedGroups from './groups/Groups'
+import ConnectedUsers from './users/Users'
+import ConnectedCreateUser from './users/CreateUser'
+import ConnectedCreateGroup from './groups/CreateGroup'
+import ConnectedEditGroup from './groups/EditGroup'
 import ConnectedDeployments from './deployments/Deployments'
 import ConnectedAccounts from './accounts/Accounts'
 import ConnectedCreateAccount from './accounts/CreateAccount'
@@ -20,6 +25,8 @@ export {
     App,
     ConnectedHome,
     ConnectedLogin,
+    ConnectedCreateGroup,
+    ConnectedEditGroup,
     ConnectedRegister,
     ConnectedPasswordChange,
     // protected view containers
@@ -28,6 +35,11 @@ export {
     ConnectedAccounts,
     ConnectedCreateAccount,
     ConnectedLandscapes,
+    ConnectedGroups,
+
+    ConnectedUsers,
+    ConnectedCreateUser,
+
     ConnectedCreateLandscape,
     ConnectedEditLandscape,
     ConnectedLandscapeDetails

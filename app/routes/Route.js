@@ -19,6 +19,14 @@ import {
     // protected views
     ConnectedProtected,
     ConnectedDeployments,
+
+    ConnectedUsers,
+    ConnectedCreateUser,
+
+    ConnectedGroups,
+    ConnectedCreateGroup,
+    ConnectedEditGroup,
+
     ConnectedAccounts,
     ConnectedCreateAccount,
     ConnectedLandscapes,
@@ -48,7 +56,11 @@ export const Routes = () => {
                         <Route path="/landscape/:id" component={ConnectedLandscapeDetails} onEnter={requireAuth}/>
                         <Route path="/landscapes/create" component={ConnectedCreateLandscape} onEnter={requireAuth}/>
                         <Route path="/landscapes/edit/:id" component={ConnectedEditLandscape} onEnter={requireAuth}/>
-                        {/* misc views */}
+                        <Route path="/users" component={ConnectedUsers} onEnter={requireAuth}/>
+                        <Route path="/users/create" component={ConnectedCreateUser} onEnter={requireAuth}/>
+                        <Route path="/groups" component={ConnectedGroups} onEnter={requireAuth}/>
+                        <Route path="/groups/create" component={ConnectedCreateGroup} onEnter={requireAuth}/>
+                        <Route path="/groups/edit/:id" component={ConnectedEditGroup} onEnter={requireAuth}/>
                         <Route path="/login" component={ConnectedLogin}/>
                         <Route path="/register" component={ConnectedRegister}/> {/* logout: just redirects to home (App will take care of removing the token) */}
                         <Route path="/logout" onEnter={logOutUser}/> {/* protected views */}

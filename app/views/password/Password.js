@@ -1,6 +1,6 @@
 import cx from 'classnames'
 import axios from 'axios'
-import { Form, Icon, Input, Button, Checkbox, Row } from 'antd'
+import { Form, Icon, Input, Button, Checkbox, Row, message } from 'antd'
 import { Link } from 'react-router'
 import React, { Component, PropTypes } from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
@@ -13,7 +13,6 @@ import { auth } from '../../services/auth'
 
 
 class Password extends Component {
-
     state = {
         animated: true,
         viewEntersAnim: true,
@@ -65,6 +64,7 @@ class Password extends Component {
                             </Button>
                         </FormItem>
                     </Form>
+
                 </Row>
             </div>
         )
@@ -116,9 +116,19 @@ class Password extends Component {
 
         }).then(res => {
             console.log('res --->', res)
-            router.push({ pathname: '/landscapes' })
+            message.config({
+              top: 5,
+              duration: 5,
+            });
+
+            message.success('Your password has been successfully changed.');
+            this.setState({ oldPassword: '' })
+            this.setState({ newPassword: '' })
+            this.setState({ verifyPassword: '' })
+            // router.push({ pathname: '/landscapes' })
         }).catch(err => {
-            console.log('ERROR: ', err.message )
+            message.error('Password Change Fail.  Please Try Again.');
+            console.log('ERROR: ', err )
         })
     }
 }
