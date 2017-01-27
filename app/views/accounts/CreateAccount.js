@@ -2,11 +2,13 @@
 import cx from 'classnames'
 import React, { Component, PropTypes } from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Form, Menu, Dropdown, Input, Switch, Button, Icon, Row, message } from 'antd'
+import { Form, Select, Switch, Collapse, Input, Button, Icon, Row, message } from 'antd'
 
+import './accounts.style.scss'
 import { Loader } from '../../components'
 
 const FormItem = Form.Item
+const Panel = Collapse.Panel
 
 class CreateAccount extends Component {
 
@@ -34,25 +36,24 @@ class CreateAccount extends Component {
         let self = this
         const { animated, viewEntersAnim } = this.state
         const { loading, accounts } = this.props
-        const { getFieldDecorator } = this.props.form
+        const { getFieldsValue, getFieldDecorator } = this.props.form
 
         const formItemLayout = {
             labelCol: { span: 8 },
             wrapperCol: { span: 12 }
         }
 
-        const menu = (
-            <Menu>
-                <Menu.Item key="0">
-                    <a href="http://www.google.com/">1st menu item</a>
-                </Menu.Item>
-                <Menu.Item key="1">
-                    <a href="http://www.google.com/">2nd menu item</a>
-                </Menu.Item>
-                <Menu.Divider />
-                <Menu.Item key="3">3d menu item</Menu.Item>
-            </Menu>
-        )
+        const menuItems = [
+            { name: 'Gov Cloud', value: 'us-gov-west-1' },
+            { name: 'US East (Northern Virginia) Region', value: 'us-east-1' },
+            { name: 'US West (Northern California) Region', value: 'us-west-1' },
+            { name: 'US West (Oregon) Region', value: 'us-west-2' },
+            { name: 'EU (Ireland) Region', value: 'eu-west-1' },
+            { name: 'Asia Pacific (Singapore) Region', value: 'ap-southeast-1' },
+            { name: 'Asia Pacific (Sydney) Region', value: 'ap-southeast-2' },
+            { name: 'Asia Pacific (Tokyo) Region', value: 'ap-northeast-1' },
+            { name: 'South America (Sao Paulo) Region', value: 'sa-east-1' }
+        ]
 
         if (loading) {
             return (
@@ -64,7 +65,7 @@ class CreateAccount extends Component {
 
         return (
             <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
-                <h5>Create Landscape</h5><br/><br/>
+                <h5>Create Account</h5><br/><br/>
                 <Row type='flex' className={cx({ 'screen-height': true, 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
                     <Form style={{ width: '100%' }} onSubmit={this.handleSubmit}>
                         <FormItem {...formItemLayout} label='Name'>
@@ -76,51 +77,82 @@ class CreateAccount extends Component {
                         </FormItem>
 
                         <FormItem {...formItemLayout} label='Default Region'>
-                            {getFieldDecorator('version', {
-                                rules: [{ required: true, message: 'Please input version of the landscape' }],
+                            {getFieldDecorator('region', {
+                                rules: [{ required: true, message: 'Please select a region' }],
                             })(
-                                <Dropdown overlay={menu} trigger={['click']}>
-                                    <a className="ant-dropdown-link" href="#">
-                                        Click me <Icon type="down" />
-                                    </a>
-                                </Dropdown>
+                                <Select placeholder='Select a default region' disabled={getFieldsValue().isOtherRegion}>
+                                    {
+                                        menuItems.map((item, index) => {
+                                            return (
+                                                <Option key={index} value={item.value}>{item.name}</Option>
+                                            )
+                                        })
+                                    }
+                                </Select>
                             )}
+                        </FormItem>
+
+                        <FormItem {...formItemLayout} label='Other Region?'>
+                            {
+                                getFieldsValue().isOtherRegion
+                                ?
+                                    getFieldDecorator('region', {})(
+                                        <div>
+                                            <Switch defaultChecked={getFieldsValue().isOtherRegion} onChange={this.handlesOtherRegionClick} />
+                                            <Input placeholder='Enter Region'/>
+                                        </div>
+                                    )
+                                :
+                                    getFieldDecorator('isOtherRegion', {})(
+                                        <Switch defaultChecked={false} onChange={this.handlesOtherRegionClick} />
+                                    )
+                            }
                         </FormItem>
 
                         <FormItem {...formItemLayout} label='Access Key ID'>
                             {getFieldDecorator('accessKeyId', {
                                 rules: [{ required: true, message: 'Please input the access key ID' }],
                             })(
-                                <Input placeholder='Access Key ID' />
+                                <Input placeholder='Access Key ID'/>
                             )}
                         </FormItem>
 
                         <FormItem {...formItemLayout} label='Secret Access Key'>
                             {getFieldDecorator('secretAccessKey', {})(
-                                <Input type="textarea" rows={4} placeholder='Secret Access Key' />
+                                <Input type='textarea' rows={4} placeholder='Secret Access Key' />
                             )}
                         </FormItem>
 
-                        <FormItem {...formItemLayout} label='Endpoint'>
-                            {getFieldDecorator('endpoint', {})(
-                                <Input placeholder='Endpoint' />
-                            )}
-                        </FormItem>
+                        <Collapse bordered={false} defaultActiveKey={['0']}>
+                            <Panel header='Advanced' key='1' icon={<Icon type="down-circle-o" />}>
+                                <FormItem {...formItemLayout} label='Endpoint'>
+                                    {getFieldDecorator('endpoint', {})(
+                                        <Input placeholder='Endpoint' />
+                                    )}
+                                </FormItem>
 
-                        <FormItem {...formItemLayout} label='CA Bundle'>
-                            {getFieldDecorator('caBundlePath', {})(
-                                <Input placeholder='CA Bundle' />
-                            )}
-                        </FormItem>
+                                <FormItem {...formItemLayout} label='CA Bundle'>
+                                    {getFieldDecorator('caBundlePath', {})(
+                                        <Input placeholder='CA Bundle' />
+                                    )}
+                                </FormItem>
 
-                        <FormItem {...formItemLayout} label='Signature Block'>
-                            {getFieldDecorator('signatureBlock', {})(
-                                <Input type="textarea" rows={4} placeholder='Signature Block' />
-                            )}
-                        </FormItem>
+                                <FormItem {...formItemLayout} label='SSL'>
+                                    {getFieldDecorator('rejectUnauthorizedSsl', {})(
+                                        <Switch defaultChecked={false} />
+                                    )}
+                                </FormItem>
 
-                        <FormItem wrapperCol={{ span: 12, offset: 6 }}>
-                            <Button type='primary' htmlType='submit' disabled={loading} onClick={this.handlesCreateClick}>
+                                <FormItem {...formItemLayout} label='Signature Block'>
+                                    {getFieldDecorator('signatureBlock', {})(
+                                        <Input type='textarea' rows={4} placeholder='Signature Block' />
+                                    )}
+                                </FormItem>
+                            </Panel>
+                        </Collapse>
+
+                        <FormItem wrapperCol={{ span: 12, offset: 12 }}>
+                            <Button type='primary' id='create-button' htmlType='submit' disabled={loading} onClick={this.handlesCreateClick}>
                                 Create
                             </Button>
                         </FormItem>
@@ -130,9 +162,10 @@ class CreateAccount extends Component {
         )
     }
 
-    handlesLandscapeClick = event => {
-        const { router } = this.context
-        router.push({ pathname: '/protected' })
+    handlesOtherRegionClick = event => {
+        const { setFieldsValue, getFieldsValue } = this.props.form
+        setFieldsValue({ region: getFieldsValue().region })
+        console.log('%c getFieldsValue ', 'background: #1c1c1c; color: rgb(209, 29, 238)', getFieldsValue())
     }
 
     handlesOnEmailChange = event => {
@@ -149,16 +182,16 @@ class CreateAccount extends Component {
 
     handlesCreateClick = event => {
 
+        const { mutate } = this.props
+        const { getFieldsValue } = this.props.form
+        let accountToCreate = getFieldsValue()
+
         event.preventDefault()
 
-        let landscapeToCreate = this.props.form.getFieldsValue()
-        landscapeToCreate.imageUri = this.state.imageUri || ''
-        landscapeToCreate.cloudFormationTemplate = this.state.cloudFormationTemplate || ''
-
-        this.props.mutate({
-            variables: { landscape: landscapeToCreate }
+        mutate({
+            variables: { account: accountToCreate }
          }).then(({ data }) => {
-            console.log('got data', data)
+            console.log('created', data)
         }).catch((error) => {
             console.log('there was an error sending the query', error)
         })

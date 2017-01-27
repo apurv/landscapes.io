@@ -13,6 +13,12 @@ const resolveFunctions = {
                 if (err) return err
                 return landscapes
             })
+        },
+        accounts() {
+            return Account.find().sort('-created').exec((err, accounts) => {
+                if (err) return err
+                return accounts
+            })
         }
     },
     Mutation: {
@@ -29,23 +35,36 @@ const resolveFunctions = {
                     console.log(err)
                     return err
                 } else {
-                    console.log(' ---> created: ' + newLandscape._id)
+                    console.log(' ---> created: ', newLandscape._id)
                     return newLandscape
                 }
             })
         },
-        editLandscape(_, { landscape }) {
+        updateLandscape(_, { landscape }) {
 
-            console.log(' ---> editing Landscape')
-            let editedLandscape = new Landscape(landscape)
+            console.log(' ---> updating Landscape')
 
-            editedLandscape.save(err => {
+            Landscape.findOneAndUpdate({ _id: landscape._id }, landscape, { new: true }, (err, doc) => {
                 if (err) {
                     console.log(err)
                     return err
                 } else {
-                    console.log(' ---> created: ' + editedLandscape._id)
-                    return editedLandscape
+                    console.log(' ---> updated: ', doc)
+                    return doc
+                }
+            })
+        },
+        deleteLandscape(_, { landscape }) {
+
+            console.log(' ---> deleting Landscape')
+
+            Landscape.findByIdAndRemove(landscape._id, (err, doc) => {
+                if (err) {
+                    console.log('error', err)
+                    return err
+                } else {
+                    console.log(' ---> Account deleted: ', doc)
+                    return doc
                 }
             })
         },
@@ -59,8 +78,36 @@ const resolveFunctions = {
                     console.log(err)
                     return err
                 } else {
-                    console.log(' ---> created: ' + newAccount._id)
+                    console.log(' ---> created: ', newAccount._id)
                     return newAccount
+                }
+            })
+        },
+        updateAccount(_, { account }) {
+
+            console.log(' ---> updating Account')
+
+            Account.findOneAndUpdate({ _id: account._id }, account, { new: true }, (err, doc) => {
+                if (err) {
+                    console.log(err)
+                    return err
+                } else {
+                    console.log(' ---> updated: ', doc)
+                    return doc
+                }
+            })
+        },
+        deleteAccount(_, { account }) {
+
+            console.log(' ---> deleting Account')
+
+            Account.findByIdAndRemove(account._id, (err, doc) => {
+                if (err) {
+                    console.log('error', err)
+                    return err
+                } else {
+                    console.log(' ---> Account deleted: ', doc)
+                    return doc
                 }
             })
         }

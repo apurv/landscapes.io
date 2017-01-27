@@ -4,6 +4,7 @@ import React, { Component, PropTypes } from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { Form, Select, Input, Switch, Radio, Slider, Button, Upload, Icon, Row, message } from 'antd'
 
+import './landscapes.style.scss'
 import { Loader } from '../../components'
 
 const FormItem = Form.Item
@@ -35,7 +36,7 @@ class CreateLandscape extends Component {
         let self = this
         const { animated, viewEntersAnim } = this.state
         const { loading, landscapes } = this.props
-        const { getFieldDecorator } = this.props.form
+        const { setFieldsValue, getFieldValue, getFieldDecorator } = this.props.form
 
         const formItemLayout = {
             labelCol: { span: 8 },
@@ -43,15 +44,18 @@ class CreateLandscape extends Component {
         }
 
         const uploadProps = {
-            action: 'http://localhost:8080/api/upload/template',
             listType: 'picture',
-            defaultFileList: [{
-                uid: -1,
-                name: 'default.png',
-                status: 'done',
-                url: 'http://icons.iconarchive.com/icons/uiconstock/socialmedia/512/AWS-icon.png',
-                thumbUrl: 'http://icons.iconarchive.com/icons/uiconstock/socialmedia/512/AWS-icon.png'
-            }]
+            customRequest: content => {
+                let reader = new FileReader()
+                reader.readAsDataURL(content.file)
+                reader.onload = () => {
+                    setFieldsValue({ imageUri: reader.result })
+                    setFieldsValue({ filename: content.file.name })
+                }
+                reader.onerror = error => {
+                    console.log('Error: ', error)
+                }
+            }
         }
 
         const dragProps = {
@@ -144,9 +148,28 @@ class CreateLandscape extends Component {
                         >
                             {getFieldDecorator('imageUri', {})(
                                 <Upload {...uploadProps}>
-                                    <Button type="ghost">
-                                        <Icon type="upload" /> Upload
+                                    <Button type='ghost'>
+                                        <Icon type='upload' /> Upload
                                     </Button>
+                                    {
+                                        getFieldValue('imageUri')
+                                        ?
+                                            <div className='ant-upload-list ant-upload-list-picture'>
+                                                <div className='ant-upload-list-item ant-upload-list-item-done'>
+                                                    <div className='ant-upload-list-item-info'>
+                                                        <a className='ant-upload-list-item-thumbnail' href={getFieldValue('imageUri')} target='_blank' rel='noopener noreferrer'>
+                                                            <img src={getFieldValue('imageUri')}/>
+                                                        </a>
+                                                        <a href={getFieldValue('imageUri')} target='_blank' rel='noopener noreferrer' className='ant-upload-list-item-name'>
+                                                            {getFieldValue('filename')}
+                                                        </a>
+                                                        <i title='Remove file' className='anticon anticon-cross'></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        :
+                                            <span></span>
+                                    }
                                 </Upload>
                             )}
                         </FormItem>
@@ -175,8 +198,8 @@ class CreateLandscape extends Component {
                         }
 
 
-                        <FormItem wrapperCol={{ span: 12, offset: 6 }}>
-                            <Button type='primary' htmlType='submit' disabled={loading} onClick={this.handlesCreateClick}>
+                        <FormItem wrapperCol={{ span: 12, offset: 12 }}>
+                            <Button type='primary' id='create-button' size='large' htmlType='submit' disabled={loading} onClick={this.handlesCreateClick}>
                                 Create
                             </Button>
                         </FormItem>

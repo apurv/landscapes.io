@@ -42,7 +42,7 @@ export const Routes = () => {
                         <Route path="/deployments/*" component={ConnectedDeployments} onEnter={requireAuth}/>
                         {/* account views */}
                         <Route path="/accounts" component={ConnectedAccounts} onEnter={requireAuth}/>
-                        <Route path="/account/:create" component={ConnectedCreateAccount} onEnter={requireAuth}/>
+                        <Route path="/accounts/create" component={ConnectedCreateAccount} onEnter={requireAuth}/>
                         {/* landscape views */}
                         <Route path="/landscapes" component={ConnectedLandscapes} onEnter={requireAuth}/>
                         <Route path="/landscape/:id" component={ConnectedLandscapeDetails} onEnter={requireAuth}/>

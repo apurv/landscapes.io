@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 import { Accounts } from '../../views'
 import { connect } from 'react-redux'
-import { graphql } from 'react-apollo'
+import { graphql, compose } from 'react-apollo'
 import { bindActionCreators } from 'redux'
 import * as viewsActions from '../../redux/modules/views'
 
@@ -12,6 +12,7 @@ import * as viewsActions from '../../redux/modules/views'
 const AccountsQuery = gql `
     query getAccounts {
         accounts {
+            _id,
             name,
             region,
             createdAt,
@@ -27,13 +28,24 @@ const AccountsQuery = gql `
  `
  // createdBy
 
-// 1- add queries:
 const AccountsWithQuery = graphql(AccountsQuery, {
     props: ({ data: { loading, accounts } }) => ({
         accounts,
         loading
     })
-})(Accounts)
+})
+
+const deleteAccountMutation = gql `
+    mutation deleteAccount($account: AccountInput!) {
+        deleteAccount(account: $account) {
+            name
+        }
+    }
+`
+const composedRequest = compose(
+    AccountsWithQuery,
+    graphql(deleteAccountMutation)
+)(Accounts)
 
 
 /* -----------------------------------------
@@ -51,4 +63,4 @@ const mapDispatchToProps = (dispatch) => {
     }, dispatch)
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AccountsWithQuery)
+export default connect(mapStateToProps, mapDispatchToProps)(composedRequest)

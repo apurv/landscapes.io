@@ -3,3 +3,13 @@
     margin: 20px;
     width: 300;
 }
+
+#create-button,
+#update-button {
+    padding: 5px 50px 5px;
+    font-size: 20px;
+}
+
+.ant-upload-list-item-uploading {
+    display: none;
+}

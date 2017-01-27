@@ -4,6 +4,7 @@ import React, { Component, PropTypes } from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { Form, Select, Input, Switch, Radio, Slider, Button, Upload, Icon, Row, message } from 'antd'
 
+import './landscapes.style.scss'
 import { Loader } from '../../components'
 
 const FormItem = Form.Item
@@ -193,9 +194,9 @@ class EditLandscape extends Component {
                         }
 
 
-                        <FormItem wrapperCol={{ span: 12, offset: 6 }}>
-                            <Button type='primary' htmlType='submit' disabled={loading} onClick={this.handlesSaveClick}>
-                                Save
+                        <FormItem wrapperCol={{ span: 12, offset: 12 }}>
+                            <Button type='primary' id='update-button' htmlType='submit' disabled={loading} onClick={this.handlesUpdateClick}>
+                                Update
                             </Button>
                         </FormItem>
                     </Form>
@@ -209,28 +210,18 @@ class EditLandscape extends Component {
         router.push({ pathname: '/protected' })
     }
 
-    handlesOnEmailChange = event => {
-        event.preventDefault()
-        // should add some validator before setState in real use cases
-        this.setState({ username: event.target.value })
-    }
+    handlesUpdateClick = event => {
 
-    handlesOnPasswordChange = event => {
-        event.preventDefault()
-        // should add some validator before setState in real use cases
-        this.setState({ password: event.target.value })
-    }
-
-    handlesSaveClick = event => {
+        const { mutate } = this.props
 
         event.preventDefault()
 
-        let landscapeToSave = this.props.form.getFieldsValue()
-        landscapeToSave.imageUri = this.state.imageUri || ''
-        landscapeToSave.cloudFormationTemplate = this.state.cloudFormationTemplate || ''
+        let landscapeToUpdate = this.props.form.getFieldsValue()
+        landscapeToUpdate.imageUri = this.state.imageUri || ''
+        landscapeToUpdate.cloudFormationTemplate = this.state.cloudFormationTemplate || ''
 
-        this.props.mutate({
-            variables: { landscape: landscapeToSave }
+        mutate({
+            variables: { landscape: landscapeToUpdate }
          }).then(({ data }) => {
             console.log('got data', data)
         }).catch((error) => {

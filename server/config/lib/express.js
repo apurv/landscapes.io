@@ -111,6 +111,7 @@ module.exports.initMiddleware = app => {
     var multer = require('multer')
     var upload = multer({ dest: 'uploads/' })
 
+    // TODO: Move to its own folder
     app.post('/api/upload/template', upload.single('file'), (req, res) => {
 
         var user = req.user || {
@@ -162,8 +163,6 @@ module.exports.initMiddleware = app => {
         var f = req.file
 
         var template = fs.readFileSync(f.path, 'utf-8')
-
-        console.log('template', template)
 
         if (tryParseJSON(template)) {
             deleteFile(f.path, err => {

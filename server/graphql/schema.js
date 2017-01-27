@@ -22,6 +22,8 @@ const Query = `
     }
 
     input AccountInput {
+        _id: String
+        __typename: String
         name: String
         createdAt: String
         endpoint: String
@@ -35,6 +37,8 @@ const Query = `
     }
 
     input LandscapeInput {
+        _id: String
+        __typename: String
         name: String
         version: String
         imageUri: String
@@ -54,9 +58,12 @@ const Query = `
 const Mutation = `
     type Mutation {
         loginUser ( user: LoginInput! ): User
-        createLandscape ( landscape: LandscapeInput! ): Landscape
-        editLandscape ( landscape: LandscapeInput! ): Landscape
         createAccount ( account: AccountInput! ): Account
+        updateAccount ( account: AccountInput! ): Account
+        deleteAccount ( account: AccountInput! ): Account
+        createLandscape ( landscape: LandscapeInput! ): Landscape
+        updateLandscape ( landscape: LandscapeInput! ): Landscape
+        deleteLandscape ( landscape: LandscapeInput! ): Landscape
     }
 `
 

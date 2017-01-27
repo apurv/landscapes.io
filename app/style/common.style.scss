@@ -1,5 +1,19 @@
 @import "./app.var.style";
 
+@font-face {
+    font-family: 'Nunito';
+    src: url('./fonts/Nunito-Regular.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Nunito Semibold';
+    src: url('./fonts/Nunito-SemiBold.ttf') format('truetype');
+}
+
+#root {
+    font-family: 'Nunito', sans-serif;
+}
+
 .containersCustom {
     padding-left: $CONTAINER_CUSTOM_PADDING_LEFT;
     padding-right: $CONTAINER_CUSTOM_PADDING_RIGHT;
