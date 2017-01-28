@@ -8,14 +8,12 @@ import Landscape from './types/landscape.js'
 import Group from './types/group.js'
 import Subscription from './types/subscriptions.js'
 
-const userObject = `
-    type userObject {
-        userId: String!,
-        isAdmin: Boolean!
-    }
-`
 
 const Query = `
+      input userInput {
+          userId: String
+          isAdmin: Boolean
+      }
     input LoginInput {
         username: String
         password: String
@@ -59,8 +57,9 @@ const Query = `
     }
 
     input GroupInput {
+      _id: String
       landscapes: [String]
-      users: [String]
+      users: [userInput]
       permissions: [String]
 
       name: String
@@ -80,7 +79,11 @@ const Mutation = `
     type Mutation {
         loginUser ( user: LoginInput! ): User
         createUser ( user: UserInput! ): User
+        updateUser ( user: UserInput! ): User
+        deleteUser ( user: UserInput! ): User
         createGroup ( group: GroupInput! ): Group
+        updateGroup ( group: GroupInput! ): Group
+        deleteGroup ( group: GroupInput! ): Group
         editGroup ( group: GroupInput! ): Group
         createAccount ( account: AccountInput! ): Account
         updateAccount ( account: AccountInput! ): Account

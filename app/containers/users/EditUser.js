@@ -1,5 +1,5 @@
 import gql from 'graphql-tag'
-import { Users } from '../../views'
+import { EditUser } from '../../views'
 import { connect } from 'react-redux'
 import { graphql } from 'react-apollo'
 import { bindActionCreators } from 'redux'
@@ -9,9 +9,9 @@ import * as viewsActions from '../../redux/modules/views'
   GraphQL - Apollo client
  ------------------------------------------*/
  const editUserMutation = gql `
-     mutation createUser($user: UserInput!) {
-         createUser(user: $user) {
-             name
+     mutation updateUser($user: UserInput!) {
+         updateUser(user: $user) {
+             username
          }
      }
  `
@@ -61,31 +61,30 @@ import * as viewsActions from '../../redux/modules/views'
        }
      }
   `
-
-// 1- add queries:
-const UsersWithQuery = graphql(GroupQuery, {
-    props: ({ data: { loading, groups } }) => ({
-        groups,
-        loading
-    })
-})
-(graphql(LandscapeQuery, {
-    props: ({ data: { loading, landscapes } }) => ({
-        landscapes,
-        loading
-    })
-  }
-)
-(graphql(UserQuery, {
-    props: ({ data: { loading, users } }) => ({
-        users,
-        loading
-    })
-  }
-)
-(
-  graphql(editUserMutation, {name: 'EditUserWithMutation'})
-(Users))))
+ // 1- add queries:
+ const UsersWithQuery = graphql(GroupQuery, {
+     props: ({ data: { loading, groups } }) => ({
+         groups,
+         loading
+     })
+ })
+ (graphql(LandscapeQuery, {
+     props: ({ data: { loading, landscapes } }) => ({
+         landscapes,
+         loading
+     })
+   }
+ )
+ (graphql(UserQuery, {
+     props: ({ data: { loading, users } }) => ({
+         users,
+         loading
+     })
+   }
+ )
+ (
+   graphql(editUserMutation, {name: 'EditUserWithMutation'})
+ (EditUser))))
 
 /* -----------------------------------------
   Redux

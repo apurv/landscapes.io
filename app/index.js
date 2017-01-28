@@ -2,6 +2,7 @@ import React                from 'react'
 import ReactDOM             from 'react-dom'
 import injectTpEventPlugin  from 'react-tap-event-plugin'
 import { Routes }           from './routes/Route'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 import 'babel-polyfill'
 import 'animate.css'

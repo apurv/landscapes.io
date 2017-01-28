@@ -10,49 +10,83 @@ import * as viewsActions from '../../redux/modules/views'
  ------------------------------------------*/
 
 
- const CreateNewUser = gql `
-     mutation CreateNewUser($user: UserInput!) {
+ const createUserMutation = gql `
+     mutation createUser($user: UserInput!) {
          createUser(user: $user) {
              username
-             password
-             email
-             firstName
-             lastName
          }
      }
  `
 
+ // const CreateUserWithMutation = graphql(editUserMutation)(CreateUser)
+ const UserQuery = gql `
+     query getUsers {
+         users {
+             _id,
+             username,
+             email,
+             firstName,
+             lastName,
+             password,
+             role
+         }
+     }
+  `
+
+ const GroupQuery = gql `
+     query getUsers {
+         groups {
+             _id,
+             name,
+             users{
+               isAdmin,
+               userId
+             },
+             description,
+             landscapes,
+             permissions
+         }
+     }
+  `
+
+ const LandscapeQuery = gql `
+     query getLandscapes {
+       landscapes {
+           _id,
+           name,
+           version,
+           imageUri,
+           infoLink,
+           createdAt,
+           description,
+           cloudFormationTemplate
+       }
+     }
+  `
  // 1- add queries:
-
- // 2- add mutation "logUser":
-
-const UserQuery = gql `
-    query getUsers {
-        users {
-          _id,
-          username,
-          email,
-          firstName,
-          lastName,
-          role
-        }
-    }
- `
- // infoLinkText,
- // img,
- // createdBy
-
-// 1- add queries:
-const GroupsWithQueryAndMutation = graphql(UserQuery, {
-    props: ({ data: { loading, users } }) => ({
-        users,
-        loading
-    })
-})(graphql(CreateNewUser, {
-    name: 'CreateUserMutation'})
-(CreateUser))
-
-
+ const UsersWithQuery = graphql(GroupQuery, {
+     props: ({ data: { loading, groups } }) => ({
+         groups,
+         loading
+     })
+ })
+ (graphql(LandscapeQuery, {
+     props: ({ data: { loading, landscapes } }) => ({
+         landscapes,
+         loading
+     })
+   }
+ )
+ (graphql(UserQuery, {
+     props: ({ data: { loading, users } }) => ({
+         users,
+         loading
+     })
+   }
+ )
+ (
+   graphql(createUserMutation, {name: 'CreateUserMutation'})
+ (CreateUser))))
 /* -----------------------------------------
   Redux
  ------------------------------------------*/
@@ -68,4 +102,4 @@ const mapDispatchToProps = (dispatch) => {
     }, dispatch)
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(GroupsWithQueryAndMutation)
+export default connect(mapStateToProps, mapDispatchToProps)(UsersWithQuery)

@@ -14,6 +14,8 @@ import Groups        from './groups/Groups'
 
 import Users        from './users/Users'
 import CreateUser        from './users/CreateUser'
+import EditUser        from './users/EditUser'
+import UserDetails        from './users/UserDetails'
 
 import CreateGroup        from './groups/CreateGroup'
 import EditGroup        from './groups/EditGroup'
@@ -37,9 +39,11 @@ export {
   EditLandscape,
   LandscapeDetails,
   Groups,
-  
+
   Users,
   CreateUser,
+  EditUser,
+  UserDetails,
 
   CreateGroup,
   EditGroup,

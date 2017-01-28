@@ -1,6 +1,13 @@
 import cx from 'classnames'
 import axios from 'axios'
-import { Form, Icon, Input, Button, Checkbox, Row, message } from 'antd'
+import { Form, Icon, Button, Checkbox, Row, message } from 'antd'
+
+import TextField from 'material-ui/TextField';
+import Slider from 'material-ui/Slider';
+import getMuiTheme from 'material-ui/styles/getMuiTheme'
+import FlatButton from 'material-ui/FlatButton';
+import RaisedButton from 'material-ui/RaisedButton';
+
 import { Link } from 'react-router'
 import React, { Component, PropTypes } from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
@@ -20,6 +27,19 @@ class Password extends Component {
         newPassword: '',
         verifyPassword: ''
     }
+
+    static childContextTypes =
+      {
+          muiTheme: React.PropTypes.object
+      }
+
+      getChildContext()
+      {
+          return {
+              muiTheme: getMuiTheme()
+          }
+      }
+
 
     componentDidMount() {
       console.log('THIS PROPS ----->', this.props)
@@ -44,24 +64,22 @@ class Password extends Component {
         return (
             // <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
             <div>
-                <h1 className='text-danger'>
+                <h5 className='text-danger'>
                     Change Password
-                </h1>
+                </h5>
                 <Row type='flex' justify='center' align='top' className={cx({ 'screen-height': true, 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
                     <Form onSubmit={this.handleSubmit} className='login-form'>
                         <FormItem>
-                            <Input onChange={this.handlesOldPasswordChange} addonBefore="Old Password" id="oldPassword" type='password' placeholder='Old Password' />
+                            <TextField onChange={this.handlesOldPasswordChange} id="oldPassword" type='password' placeholder='Old Password' />
                         </FormItem>
                         <FormItem>
-                            <Input onChange={this.handlesOnNewPasswordChange} addonBefore="New Password" id="newPassword" type='password' placeholder='New Password' />
+                            <TextField onChange={this.handlesOnNewPasswordChange} id="newPassword" type='password' placeholder='New Password' />
                         </FormItem>
                         <FormItem>
-                            <Input onChange={this.handlesOnVerifyPasswordChange} addonBefore="Verify Password" id="verifyPassword"  type='password' placeholder='Verify Password' />
+                            <TextField onChange={this.handlesOnVerifyPasswordChange} id="verifyPassword"  type='password' placeholder='Verify Password' />
                         </FormItem>
                         <FormItem>
-                            <Button type='primary' htmlType='submit' className='login-form-button' disabled={loading} onClick={this.handlesOnPasswordChange}>
-                                Change Password
-                            </Button>
+                            <RaisedButton primary={true} className='login-form-button' disabled={loading} onClick={this.handlesOnPasswordChange} label="Change Password" />
                         </FormItem>
                     </Form>
 

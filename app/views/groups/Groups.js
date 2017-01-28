@@ -1,6 +1,9 @@
 
 import cx from 'classnames'
-import { Card, Icon } from 'antd'
+import { Icon } from 'antd'
+import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
+import getMuiTheme from 'material-ui/styles/getMuiTheme'
+import FlatButton from 'material-ui/FlatButton';
 import { Loader } from '../../components'
 import React, { Component, PropTypes } from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
@@ -11,6 +14,18 @@ class Groups extends Component {
         animated: true,
         viewEntersAnim: true
     }
+
+    static childContextTypes =
+      {
+          muiTheme: React.PropTypes.object
+      }
+
+      getChildContext()
+      {
+          return {
+              muiTheme: getMuiTheme()
+          }
+      }
 
     componentDidMount() {
         const { enterGroups } = this.props
@@ -46,20 +61,28 @@ class Groups extends Component {
 
                 <ul>
                     {
-                        groups.map((group, i) =>
-                        <Card key={i} title={group.name} style={{ width: 300, margin: '20px', float: 'left' }}
-                            extra={
-                                <div>
-                                    <a onClick={this.handlesEditGroupClick.bind(this, group)}>
-                                        <Icon style={{ fontSize: '20px' }} type='edit'/>
-                                    </a>
-                                    <a onClick={this.handlesGroupClick.bind(this, group)}>
-                                        <Icon style={{ fontSize: '20px', marginLeft: 15 }} type='select'/>
-                                    </a>
-                                </div>
-                            }>
-                            <p>{group.description}</p>
-                        </Card>)
+                      groups.map((group, i) =>
+                      <Card key={i} style={{ width: 300, margin: '20px', float: 'left' }}>
+                          <CardHeader
+                            title={group.name}
+                          />
+                          <CardText>
+                                {group.description}
+                          </CardText>
+                          <CardActions>
+                            <FlatButton onClick={this.handlesEditGroupClick.bind(this, group)}>
+                              <a onClick={this.handlesEditGroupClick.bind(this, group)}>
+                                <Icon style={{ fontSize: '20px' }} type='edit'/>
+                              </a>
+                            </FlatButton>
+                            <FlatButton onClick={this.handlesGroupClick.bind(this, group)}>
+                              <a onClick={this.handlesGroupClick.bind(this, group)}>
+                                <Icon style={{ fontSize: '20px' }} type='select'/>
+                              </a>
+                            </FlatButton>
+                          </CardActions>
+                      </Card>
+                      )
                     }
                 </ul>
             </div>

@@ -11,6 +11,8 @@ import ConnectedLandscapes from './landscapes/Landscapes'
 import ConnectedGroups from './groups/Groups'
 import ConnectedUsers from './users/Users'
 import ConnectedCreateUser from './users/CreateUser'
+import ConnectedEditUser from './users/EditUser'
+import ConnectedUserDetails from './users/UserDetails'
 import ConnectedCreateGroup from './groups/CreateGroup'
 import ConnectedEditGroup from './groups/EditGroup'
 import ConnectedDeployments from './deployments/Deployments'
@@ -39,6 +41,8 @@ export {
 
     ConnectedUsers,
     ConnectedCreateUser,
+    ConnectedEditUser,
+    ConnectedUserDetails,
 
     ConnectedCreateLandscape,
     ConnectedEditLandscape,

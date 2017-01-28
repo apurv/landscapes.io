@@ -73,6 +73,33 @@ const resolveFunctions = {
                 }
             })
         },
+        updateUser(_, { user }) {
+
+          console.log(' ---> updating user')
+
+          User.findOneAndUpdate({ _id: user._id }, user, { new: true }, (err, doc) => {
+              if (err) {
+                  console.log(err)
+                  return err
+              } else {
+                  console.log(' ---> updated: ', doc)
+                  return doc
+              }
+          })
+        },
+        deleteUser(_, { user }) {
+            console.log(' ---> deleting Group')
+
+            User.findByIdAndRemove(user._id, (err, doc) => {
+                if (err) {
+                    console.log('error', err)
+                    return err
+                } else {
+                    console.log(' ---> Account deleted: ', doc)
+                    return doc
+                }
+            })
+        },
         updateLandscape(_, { landscape }) {
 
             console.log(' ---> updating Landscape')
@@ -162,6 +189,32 @@ const resolveFunctions = {
                         if (err) return err
                         return landscapes
                     })
+                }
+            })
+        },
+        updateGroup(_, { group }) {
+          console.log(' ---> updating group')
+
+          Group.findOneAndUpdate({ _id: group._id }, group, { new: true }, (err, doc) => {
+              if (err) {
+                  console.log(err)
+                  return err
+              } else {
+                  console.log(' ---> updated: ', doc)
+                  return doc
+              }
+          })
+        },
+        deleteGroup(_, { group }) {
+            console.log(' ---> deleting Group')
+
+            Group.findByIdAndRemove(group._id, (err, doc) => {
+                if (err) {
+                    console.log('error', err)
+                    return err
+                } else {
+                    console.log(' ---> Account deleted: ', doc)
+                    return doc
                 }
             })
         }

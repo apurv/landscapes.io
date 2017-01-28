@@ -9,15 +9,26 @@ import * as viewsActions from '../../redux/modules/views'
   GraphQL - Apollo client
  ------------------------------------------*/
  const editGroupMutation = gql `
-     mutation createGroup($group: GroupInput!) {
-         createGroup(group: $group) {
+     mutation updateGroup($group: GroupInput!) {
+         updateGroup(group: $group) {
              name
          }
      }
  `
 
  // const CreateGroupWithMutation = graphql(editGroupMutation)(CreateGroup)
-
+ const UserQuery = gql `
+     query getUsers {
+         users {
+             _id,
+             username,
+             email,
+             firstName,
+             lastName,
+             role
+         }
+     }
+  `
 
  const GroupQuery = gql `
      query getGroups {
@@ -59,9 +70,16 @@ import * as viewsActions from '../../redux/modules/views'
      })
    }
  )
+ (graphql(UserQuery, {
+     props: ({ data: { loading, users } }) => ({
+         users,
+         loading
+     })
+   }
+ )
  (
    graphql(editGroupMutation, {name: 'EditGroupWithMutation'})
- (EditGroup)))
+ (EditGroup))))
 
 /* -----------------------------------------
   Redux

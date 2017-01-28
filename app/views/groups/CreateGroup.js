@@ -2,7 +2,17 @@
 import cx from 'classnames'
 import React, { Component, PropTypes } from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Form, Card, Select, Input, Switch, Radio, Slider, Button, Upload, Icon, Row, message, Checkbox, Tabs, Table } from 'antd'
+import { Form, Select, Switch, Radio, Button, Upload, Icon, Row, message } from 'antd'
+
+import { Checkbox, RaisedButton} from 'material-ui'
+import {Table, TableBody, TableFooter, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
+import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
+import {Tabs, Tab} from 'material-ui/Tabs';
+import TextField from 'material-ui/TextField';
+
+import Slider from 'material-ui/Slider';
+import getMuiTheme from 'material-ui/styles/getMuiTheme'
+import FlatButton from 'material-ui/FlatButton';
 
 import { Loader } from '../../components'
 
@@ -10,7 +20,7 @@ const CheckboxGroup = Checkbox.Group;
 
 const plainOptions = [{label:'Create', value: 'c'}, {label:'Read', value: 'r', disabled: true}, {label:'Update', value: 'u'}, {label:'Delete', value: 'd'}, {label:'Execute', value: 'x'}];
 const defaultCheckedList = ['r'];
-const allChecked = ['c', 'r', 'u', 'd', 'x']
+const allChecked = ['c', 'r', 'u', 'd', 'x'];
 
 
 const landscapeColumns = [{
@@ -66,8 +76,36 @@ class CreateGroup extends Component {
         viewEntersAnim: true,
         checkedList: defaultCheckedList,
         indeterminate: true,
-        checkAll: false
+        checkAll: false,
+          permissionC: false,
+          permissionU: false,
+          permissionD: false,
+          permissionX: false,
+
+          fixedHeader: true,
+          fixedFooter: true,
+          stripedRows: true,
+          showRowHover: true,
+          selectable: true,
+          multiSelectable: true,
+          enableSelectAll: true,
+          deselectOnClickaway: true,
+          showCheckboxes: true,
+          height:'300'
     }
+
+    static childContextTypes =
+      {
+          muiTheme: React.PropTypes.object
+      }
+
+      getChildContext()
+      {
+          return {
+              muiTheme: getMuiTheme()
+          }
+      }
+
 
     componentDidMount() {
         const { enterGroups } = this.props
@@ -87,12 +125,13 @@ class CreateGroup extends Component {
 
         let self = this
         const { animated, viewEntersAnim } = this.state
-        const { loading, groups, landscapes } = this.props
+        const { loading, groups, landscapes, users } = this.props
         const { getFieldDecorator } = this.props.form
 
 
         console.log('GROUPS', groups)
         console.log('landscapes', landscapes)
+        console.log('users', users)
         const formItemLayout = {
             labelCol: { span: 8 },
             wrapperCol: { span: 12 }
@@ -131,10 +170,10 @@ class CreateGroup extends Component {
 
         return (
             <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
-                <h5>Create Group</h5><br/><br/>
+                <h4>Create Group</h4><br/>
                 <Form style={{ width: '100%' }} onSubmit={this.handleSubmit}>
-                <Tabs defaultActiveKey="1" onChange={this.callback}>
-                  <TabPane tab="Group" key="1">
+                <Tabs >
+                  <Tab label="Group" key="1">
                           <FormItem
                               {...formItemLayout}
                               label='Name'
@@ -142,7 +181,7 @@ class CreateGroup extends Component {
                               {getFieldDecorator('name', {
                                   rules: [{ required: true, message: 'Please input name of the group' }],
                               })(
-                                  <Input placeholder='Group Name' />
+                                  <TextField placeholder='Group Name' />
                               )}
                           </FormItem>
 
@@ -151,7 +190,7 @@ class CreateGroup extends Component {
                               label='Description'
                           >
                               {getFieldDecorator('description', {})(
-                                  <Input type="textarea" rows={4} placeholder='Description' />
+                                  <TextField multiLine={true} rows={2} rowsMax={4} hintText='Description' />
                               )}
                           </FormItem>
                           <FormItem
@@ -160,31 +199,107 @@ class CreateGroup extends Component {
                           >
 
                             <div style={{ borderBottom: '1px solid #E9E9E9' }}>
-                              <Checkbox
-                                indeterminate={this.state.indeterminate}
-                                onChange={this.onCheckAllChange}
-                                checked={this.state.checkAll}
-                              >
-                                Check all
-                              </Checkbox>
+                              <Checkbox label="Check All" onCheck={this.handlesOnCheck} checked={this.state.checkAll}/>
                             </div>
                             <br />
-                            <CheckboxGroup options={plainOptions} value={this.state.checkedList} onChange={this.onCheckedChange} />
+                            <Checkbox label="Create" checked={this.state.permissionC} onCheck={this.handlesPermissionClickC}/>
+                            <Checkbox label="Read" disabled={true} checked={true} />
+                            <Checkbox label="Update" checked={this.state.permissionU} onCheck={this.handlesPermissionClickU}/>
+                            <Checkbox label="Delete" checked={this.state.permissionD} onCheck={this.handlesPermissionClickD}/>
+                            <Checkbox label="Execute" checked={this.state.permissionX} onCheck={this.handlesPermissionClickX}/>
                             </FormItem>
                           <FormItem wrapperCol={{ span: 12, offset: 6 }}>
-                              <Button type='primary' htmlType='submit' disabled={loading} onClick={this.handlesCreateClick}>
-                                  Create
-                              </Button>
+                              <RaisedButton primary={true} disabled={loading} label="Create" onClick={this.handlesCreateClick} />
                           </FormItem>
 
 
-                  </TabPane>
-                  <TabPane tab="Users" key="2">
-                    <Table rowSelection={rowSelection} columns={columns} dataSource={data} pagination={pagination}/>
-                  </TabPane>
-                  <TabPane tab="Landscapes" key="3">
-                    <Table rowSelection={rowSelection} columns={landscapeColumns} dataSource={landscapes} pagination={pagination}/>
-                  </TabPane>
+                  </Tab>
+                  <Tab label="Users" key="2">
+                  <Table
+                            height={this.state.height}
+                            fixedHeader={this.state.fixedHeader}
+                            fixedFooter={this.state.fixedFooter}
+                            selectable={this.state.selectable}
+                            multiSelectable={this.state.multiSelectable}
+                          >
+                            <TableHeader
+                              displaySelectAll={this.state.showCheckboxes}
+                              adjustForCheckbox={this.state.showCheckboxes}
+                              enableSelectAll={this.state.enableSelectAll}
+                            >
+                              <TableRow>
+                                <TableHeaderColumn tooltip="Email">Email</TableHeaderColumn>
+                                <TableHeaderColumn tooltip="Username">Username</TableHeaderColumn>
+                                <TableHeaderColumn tooltip="Role">Role</TableHeaderColumn>
+                              </TableRow>
+                            </TableHeader>
+                            <TableBody
+                              displayRowCheckbox={this.state.showCheckboxes}
+                              deselectOnClickaway={this.state.deselectOnClickaway}
+                              showRowHover={this.state.showRowHover}
+                              stripedRows={this.state.stripedRows}
+                            >
+                              {users.map( (row, index) => (
+                                <TableRow key={index} selected={row.selected}>
+                                  <TableRowColumn>{row.email}</TableRowColumn>
+                                  <TableRowColumn>{row.username}</TableRowColumn>
+                                  <TableRowColumn>{row.role}</TableRowColumn>
+                                </TableRow>
+                                ))}
+                            </TableBody>
+                            <TableFooter
+                              adjustForCheckbox={this.state.showCheckboxes}
+                            >
+                              <TableRow>
+                                <TableRowColumn>Email</TableRowColumn>
+                                <TableRowColumn>Username</TableRowColumn>
+                                <TableRowColumn>Role</TableRowColumn>
+                              </TableRow>
+                            </TableFooter>
+                          </Table>
+
+                  </Tab>
+                  <Tab label="Landscapes" key="3">
+                  <Table
+                            height={this.state.height}
+                            fixedHeader={this.state.fixedHeader}
+                            fixedFooter={this.state.fixedFooter}
+                            selectable={this.state.selectable}
+                            multiSelectable={this.state.multiSelectable}
+                          >
+                            <TableHeader
+                              displaySelectAll={this.state.showCheckboxes}
+                              adjustForCheckbox={this.state.showCheckboxes}
+                              enableSelectAll={this.state.enableSelectAll}
+                            >
+                              <TableRow>
+                                <TableHeaderColumn tooltip="Name">Name</TableHeaderColumn>
+                                <TableHeaderColumn tooltip="Description">Description</TableHeaderColumn>
+                              </TableRow>
+                            </TableHeader>
+                            <TableBody
+                              displayRowCheckbox={this.state.showCheckboxes}
+                              deselectOnClickaway={this.state.deselectOnClickaway}
+                              showRowHover={this.state.showRowHover}
+                              stripedRows={this.state.stripedRows}
+                            >
+                              {landscapes.map( (row, index) => (
+                                <TableRow key={index} selected={row.selected}>
+                                  <TableRowColumn>{row.name}</TableRowColumn>
+                                  <TableRowColumn>{row.description}</TableRowColumn>
+                                </TableRow>
+                                ))}
+                            </TableBody>
+                            <TableFooter
+                              adjustForCheckbox={this.state.showCheckboxes}
+                            >
+                              <TableRow>
+                                <TableRowColumn>Name</TableRowColumn>
+                                <TableRowColumn>Description</TableRowColumn>
+                              </TableRow>
+                            </TableFooter>
+                          </Table>
+                  </Tab>
                 </Tabs>
                 </Form>
             </div>
@@ -195,6 +310,63 @@ class CreateGroup extends Component {
         const { router } = this.context
         router.push({ pathname: '/protected' })
     }
+    handlesPermissionClickC = event => {
+        this.setState({permissionC: !this.state.permissionC})
+    }
+    handlesPermissionClickU = event => {
+        this.setState({permissionU: !this.state.permissionU})
+    }
+    handlesPermissionClickD = event => {
+        this.setState({permissionD: !this.state.permissionD})
+    }
+    handlesPermissionClickX = event => {
+        this.setState({permissionX: !this.state.permissionX})
+    }
+
+    handlesOnCheck = event => {
+        var isChecked = this.state.checkAll;
+        console.log(isChecked)
+        if(isChecked){
+          this.setState({
+              permissionC: false,
+              permissionU: false,
+              permissionD: false,
+              permissionX: false,
+            checkAll: false
+          })
+        }
+        else{
+          this.setState({
+              permissionC: true,
+              permissionU: true,
+              permissionD: true,
+              permissionX: true,
+              checkAll: true
+          })
+        }
+    }
+
+    handlesCreatePermission = () => {
+        var permissions = [];
+        if(this.state.permissionC){
+          permissions.push('c')
+        }
+
+        permissions.push('r')
+
+        if(this.state.permissionU){
+          permissions.push('u')
+        }
+        if(this.state.permissionD){
+          permissions.push('d')
+        }
+        if(this.state.permissionX){
+          permissions.push('x')
+        }
+        console.log('permissions', permissions)
+        return permissions;
+    }
+
 
     handlesOnEmailChange = event => {
         event.preventDefault()
@@ -214,13 +386,19 @@ class CreateGroup extends Component {
         event.preventDefault()
 
         let groupToCreate = this.props.form.getFieldsValue()
-        groupToCreate.permissions = this.state.checkedList
+        groupToCreate.permissions = this.handlesCreatePermission()
         groupToCreate.users = []
         // groupToCreate.landscapes = this.state.selectedRows;
         console.log('this.state.selectedRows', this.state.selectedRows)
-        groupToCreate.landscapes = this.state.selectedRows.map((row, i) =>{
-          return row._id
-        });
+        if(this.state.selectedRows){
+          groupToCreate.landscapes = this.state.selectedRows.map((row, i) =>{
+            return row._id
+          });
+        }
+        else{
+          groupToCreate.landscapes = []
+        }
+
         console.log('creating group -', groupToCreate)
         console.log('this.props -', this.props)
         this.props.CreateGroupWithMutation({

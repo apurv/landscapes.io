@@ -1,8 +1,12 @@
 import cx from 'classnames'
-import { Card, Icon } from 'antd'
+import { Icon } from 'antd'
+import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
+import getMuiTheme from 'material-ui/styles/getMuiTheme'
+import FlatButton from 'material-ui/FlatButton';
 import { Loader } from '../../components'
 import React, { Component, PropTypes } from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
+
 
 class Users extends Component {
 
@@ -10,6 +14,18 @@ class Users extends Component {
         animated: true,
         viewEntersAnim: true
     }
+
+    static childContextTypes =
+{
+    muiTheme: React.PropTypes.object
+}
+
+getChildContext()
+{
+    return {
+        muiTheme: getMuiTheme()
+    }
+}
 
     componentDidMount() {
         const { enterUsers } = this.props
@@ -46,21 +62,29 @@ class Users extends Component {
                 <ul>
                     {
                         users.map((user, i) =>
-                        <Card key={i} title={user.username} style={{ width: 300, margin: '20px', float: 'left' }}
-                            extra={
-                                <div>
-                                    <a onClick={this.handlesEditGroupClick.bind(this, user)}>
-                                        <Icon style={{ fontSize: '20px' }} type='edit'/>
-                                    </a>
-                                    <a onClick={this.handlesGroupClick.bind(this, user)}>
-                                        <Icon style={{ fontSize: '20px', marginLeft: 15 }} type='select'/>
-                                    </a>
-                                </div>
-                            }>
-                            <div style={{flexDirection: 'row'}}><p>{user.email}</p></div>
-                            <div style={{flexDirection: 'row'}}><p>{user.firstName} {user.lastName}</p></div>
-                            <div style={{flexDirection: 'row'}}><p>{user.role}</p></div>
-                        </Card>)
+                        <Card key={i} style={{ width: 300, margin: '20px', float: 'left' }}>
+                            <CardHeader
+                              title={user.username}
+                              subtitle={user.email}
+                            />
+                            <CardText>
+                                  Name: {user.firstName} {user.lastName} <br></br>
+                                  Role: {user.role}
+                            </CardText>
+                            <CardActions>
+                              <FlatButton onClick={this.handlesEditGroupClick.bind(this, user)}>
+                                <a onClick={this.handlesEditGroupClick.bind(this, user)}>
+                                  <Icon style={{ fontSize: '20px' }} type='edit'/>
+                                </a>
+                              </FlatButton>
+                              <FlatButton onClick={this.handlesGroupClick.bind(this, user)}>
+                                <a onClick={this.handlesGroupClick.bind(this, user)}>
+                                  <Icon style={{ fontSize: '20px' }} type='select'/>
+                                </a>
+                              </FlatButton>
+                            </CardActions>
+                        </Card>
+                      )
                     }
                 </ul>
             </div>
@@ -79,7 +103,7 @@ class Users extends Component {
 
     handlesGroupClick = (user, event) => {
         const { router } = this.context
-        router.push({ pathname: '/user/' + user._id })
+        router.push({ pathname: '/users/' + user._id })
     }
 }
 
@@ -87,7 +111,7 @@ Users.propTypes = {
     currentView: PropTypes.string.isRequired,
     enterUsers: PropTypes.func.isRequired,
     leaveUsers: PropTypes.func.isRequired
-}
+  }
 
 Users.contextTypes = {
     router: PropTypes.object
