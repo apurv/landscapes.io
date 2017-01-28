@@ -1,18 +1,77 @@
 import cx from 'classnames'
-import { Form, Select, Input, Switch, Radio, Slider, Button, Upload, Icon, Row, message } from 'antd'
+import { Form, Select, Switch, Radio, Upload, Icon, Row, message } from 'antd'
 import { Loader } from '../../components'
 import React, { Component, PropTypes } from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 
+import { Checkbox, RaisedButton} from 'material-ui'
+import {GridList, GridTile} from 'material-ui/GridList';
+import Subheader from 'material-ui/Subheader';
+import IconButton from 'material-ui/IconButton';
+import StarBorder from 'material-ui/svg-icons/toggle/star-border';
+import Snackbar from 'material-ui/Snackbar';
 
-const FormItem = Form.Item
+import {Table, TableBody, TableFooter, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
+import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
+import {Tabs, Tab} from 'material-ui/Tabs';
+import TextField from 'material-ui/TextField';
+
+import Slider from 'material-ui/Slider';
+import {RadioButtonGroup, RadioButton} from 'material-ui/RadioButton';
+import getMuiTheme from 'material-ui/styles/getMuiTheme'
+import FlatButton from 'material-ui/FlatButton';
+
+const styles = {
+  root: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'space-around',
+  },
+  gridList: {
+    width: 500,
+    overflowY: 'auto'
+  },
+};
 
 class CreateUser extends Component {
 
     state = {
-        animated: true,
-        viewEntersAnim: true
+      animated: true,
+      viewEntersAnim: true,
+      indeterminate: true,
+      successOpen: false,
+      failOpen: false,
+
+      checkAll: false,
+        permissionC: false,
+        permissionU: false,
+        permissionD: false,
+        permissionX: false,
+
+        fixedHeader: true,
+        fixedFooter: true,
+        stripedRows: true,
+        showRowHover: true,
+        selectable: true,
+        multiSelectable: true,
+        enableSelectAll: true,
+        deselectOnClickaway: true,
+        showCheckboxes: true,
+        height:'300'
     }
+
+    static childContextTypes =
+      {
+          muiTheme: React.PropTypes.object
+      }
+
+      getChildContext()
+      {
+          return {
+              muiTheme: getMuiTheme()
+          }
+      }
+
 
     componentDidMount() {
         const { enterUsers } = this.props
@@ -33,7 +92,7 @@ class CreateUser extends Component {
 
             let self = this
             const { animated, viewEntersAnim } = this.state
-            const { loading, users } = this.props
+            const { loading, users, groups } = this.props
 
             const formItemLayout = {
                 labelCol: { span: 8 },
@@ -51,55 +110,111 @@ class CreateUser extends Component {
 
             return (
                 <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
-                    <h5>Create User</h5><br/><br/>
-                    <Row type='flex' className={cx({ 'screen-height': true, 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
-                        <Form style={{ width: '100%' }} onSubmit={this.handleSubmit}>
-                            <FormItem
-                                {...formItemLayout}
-                                label='Username'
+                    <Snackbar
+                      open={this.state.successOpen}
+                      message="User successfully created."
+                      autoHideDuration={3000}
+                      onRequestClose={this.handleRequestClose}
+                    />
+                    <Snackbar
+                      open={this.state.failOpen}
+                      message="Error updating created"
+                      autoHideDuration={3000}
+                      onRequestClose={this.handleRequestClose}
+                    />
+                    {
+                      console.log('this.state.username', this.state.username)
+                    }
+
+                        <h4>Create User</h4><br/>
+                        <Tabs >
+                          <Tab label="User" key="1">
+                          <div style={styles.root}>
+                          <GridList
+                            cols={1}
+                            cellHeight='auto'
+                            style={styles.gridList}
+                          >
+                              <GridTile
+                                key='username'
+                              >
+
+                              <TextField style={{width:450}} id="username" floatingLabelText="Username" value={this.state.username} onChange={this.handlesOnUsernameChange}/>
+                              </GridTile>
+                              <GridTile
+                                key='email'
+                              >
+                              <TextField style={{width:450}} id="email" floatingLabelText="Email" value={this.state.email} onChange={this.handlesOnEmailChange} />
+                              </GridTile>
+                              <GridTile
+                                key='firstName'
+                              >
+                              <TextField style={{width:450}} id="firstName" floatingLabelText="First Name" value={this.state.firstName} onChange={this.handlesOnFirstNameChange}  />
+                              </GridTile>
+                              <GridTile
+                                key='lastName'
+                              >
+                              <TextField style={{width:450}} id="lastName" floatingLabelText="Last Name" value={this.state.lastName} onChange={this.handlesOnLastNameChange}  />
+                              </GridTile>
+                              <GridTile
+                                key='password'
+                              >
+                              <TextField style={{width:450}} id="password" type="password" floatingLabelText="Password" value={this.state.password} onChange={this.handlesOnPasswordChange}  />
+                              </GridTile>
+                              <GridTile
+                                key='role'
+                              >
+                              <RadioButtonGroup style={{width:450, margin: 5}} name="role" id="role" valueSelected={this.state.role} onChange={this.handleRoleChange}>
+                                    <RadioButton
+                                      value="admin"
+                                      label="Global Admin"
+                                    />
+                                    <RadioButton
+                                      value="user"
+                                      label="User"
+                                    />
+                                  </RadioButtonGroup>
+                            </GridTile>
+                            <GridTile
+                              key='SubmitButton'
                             >
-                                    <Input placeholder='Username' />
-                            </FormItem>
+                            <RaisedButton style={{width:450, margin: 5}} primary={true} disabled={loading} label="Submit" onClick={this.handlesCreateClick} />
+                            </GridTile>
+                          </GridList>
+                          </div>
+                          </Tab>
+                          <Tab label="Groups" key="2">
+                          <Table height={this.state.height} fixedHeader={this.state.fixedHeader} fixedFooter={this.state.fixedFooter}
+                                  selectable={this.state.selectable} multiSelectable={this.state.multiSelectable}
+                                  onRowSelection={this.handleOnRowSelection}>
+                                    <TableHeader displaySelectAll={this.state.showCheckboxes} adjustForCheckbox={this.state.showCheckboxes}
+                                      enableSelectAll={this.state.enableSelectAll} >
+                                      <TableRow>
+                                        <TableHeaderColumn tooltip="Name">Name</TableHeaderColumn>
+                                        <TableHeaderColumn tooltip="Permissions">Permissions</TableHeaderColumn>
+                                      </TableRow>
+                                    </TableHeader>
+                                    <TableBody displayRowCheckbox={this.state.showCheckboxes} deselectOnClickaway={this.state.deselectOnClickaway}
+                                      showRowHover={this.state.showRowHover} stripedRows={this.state.stripedRows} >
+                                      {groups.map( (row, index) => (
+                                        <TableRow key={row._id} selected={row.selected}>
+                                          <TableRowColumn>{row.name}</TableRowColumn>
+                                          <TableRowColumn>{row.permissions}</TableRowColumn>
+                                        </TableRow>
+                                        ))}
+                                    </TableBody>
+                                    <TableFooter adjustForCheckbox={this.state.showCheckboxes}   >
+                                      <TableRow>
+                                        <TableRowColumn>Email</TableRowColumn>
+                                        <TableRowColumn>Username</TableRowColumn>
+                                        <TableRowColumn>Role</TableRowColumn>
+                                      </TableRow>
+                                    </TableFooter>
+                                  </Table>
 
-                            <FormItem
-                                {...formItemLayout}
-                                label='Email'
-                            >
-                                    <Input placeholder='user@email.com' />
-                            </FormItem>
-
-                            <FormItem
-                                {...formItemLayout}
-                                label='firstName'
-                            >
-                                    <Input placeholder='First Name' />
-                            </FormItem>
-
-                            <FormItem
-                                {...formItemLayout}
-                                label='lastName'
-                            >
-                                    <Input placeholder='Last Name' />
-                            </FormItem>
-
-                            <FormItem
-                                {...formItemLayout}
-                                label='New Password'
-
-                            >
-                                    <Input type="password" placeholder='New Password' />
-                            </FormItem>
-
-
-
-                            <FormItem wrapperCol={{ span: 12, offset: 6 }}>
-                                <Button type='primary' htmlType='submit' disabled={loading} onClick={this.handlesCreateClick}>
-                                    Create
-                                </Button>
-                            </FormItem>
-                        </Form>
-                    </Row>
-                </div>
+                          </Tab>
+                        </Tabs>
+                    </div>
             )
         }
 
@@ -108,10 +223,16 @@ class CreateUser extends Component {
             router.push({ pathname: '/protected' })
         }
 
+        handleRoleChange= event => {
+            if(this.state.role === 'admin'){
+              this.setState({role: ''})
+            }
+        }
+
         handlesOnEmailChange = event => {
             event.preventDefault()
             // should add some validator before setState in real use cases
-            this.setState({ username: event.target.value })
+            this.setState({ email: event.target.value })
         }
 
         handlesOnPasswordChange = event => {
@@ -119,20 +240,50 @@ class CreateUser extends Component {
             // should add some validator before setState in real use cases
             this.setState({ password: event.target.value })
         }
+        handlesOnUsernameChange = event => {
+            event.preventDefault()
+            // should add some validator before setState in real use cases
+            this.setState({ username: event.target.value })
+        }
+        handlesOnFirstNameChange = event => {
+            event.preventDefault()
+            // should add some validator before setState in real use cases
+            this.setState({ firstName: event.target.value })
+        }
+        handlesOnLastNameChange = event => {
+            event.preventDefault()
+            // should add some validator before setState in real use cases
+            this.setState({ lastName: event.target.value })
+        }
 
         handlesCreateClick = event => {
 
             event.preventDefault()
 
-            let userToCreate = this.props.form.getFieldsValue()
-            userToCreate.imageUri = this.state.imageUri || ''
-            userToCreate.cloudFormationTemplate = this.state.cloudFormationTemplate || ''
-
-            this.props.mutate({
+            // let userToCreate = this.props.form.getFieldsValue()
+            let userToCreate = {
+              username: this.state.username,
+              email: this.state.email,
+              password: this.state.password,
+              firstName: this.state.firstName,
+              lastName: this.state.lastName
+            };
+            console.log('creating user -', userToCreate)
+            console.log('this.props -', this.props)
+            this.props.CreateUserMutation({
                 variables: { user: userToCreate }
              }).then(({ data }) => {
+               const { router } = this.context
                 console.log('got data', data)
+                this.setState({
+                  successOpen: true
+                })
+
+                router.push({ pathname: '/users' })
             }).catch((error) => {
+              this.setState({
+                failOpen: true
+              })
                 console.log('there was an error sending the query', error)
             })
 

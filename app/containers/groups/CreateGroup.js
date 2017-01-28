@@ -19,6 +19,19 @@ import * as viewsActions from '../../redux/modules/views'
      }
  `
 
+ const UserQuery = gql `
+     query getUsers {
+         users {
+             _id,
+             username,
+             email,
+             firstName,
+             lastName,
+             role
+         }
+     }
+  `
+
  const CreateGroupWithMutation = graphql(createGroupMutation)(CreateGroup)
 
 //
@@ -46,22 +59,43 @@ const LandscapeQuery = gql `
  // createdBy
 
 // 1- add queries:
-const LandscapesWithQuery = graphql(LandscapeQuery, {
-    props: ({ data: { loading, landscapes, groups } }) => ({
-        landscapes,
-        groups,
+const GroupsWithQuery = graphql(UserQuery, {
+    props: ({ data: { loading, users } }) => ({
+        users,
         loading
     })
-})(CreateGroup)
-
-
-const NewEntryWithData =  graphql(LandscapeQuery, {props: ({ data: { loading, landscapes, groups } }) => ({
-    landscapes,
-    groups,
-    loading
-})})(
-  graphql(createGroupMutation, {name: 'CreateGroupWithMutation'})(CreateGroup)
+})
+(graphql(LandscapeQuery, {
+    props: ({ data: { loading, landscapes } }) => ({
+        landscapes,
+        loading
+    })
+  }
 )
+(
+  graphql(createGroupMutation, {name: 'CreateGroupWithMutation'})
+(CreateGroup)))
+// const LandscapesWithQuery = graphql(LandscapeQuery, {
+//     props: ({ data: { loading, landscapes, groups } }) => ({
+//         landscapes,
+//         groups,
+//         loading
+//     })
+// })(CreateGroup)
+
+//
+// const NewEntryWithData =  graphql(LandscapeQuery, {props: ({ data: { loading, landscapes, groups } }) => ({
+//     landscapes,
+//     groups,
+//     loading
+// })})(graphql(UserQuery, {
+//     props: ({ data: { loading, users } }) => ({
+//         users,
+//         loading
+//     })
+// }))(
+//   graphql(createGroupMutation, {name: 'CreateGroupWithMutation'})(CreateGroup)
+// )
 /* -----------------------------------------
   Redux
  ------------------------------------------*/
@@ -77,4 +111,4 @@ const mapDispatchToProps = (dispatch) => {
     }, dispatch)
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(NewEntryWithData)
+export default connect(mapStateToProps, mapDispatchToProps)(GroupsWithQuery)
