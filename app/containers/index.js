@@ -15,6 +15,8 @@ import ConnectedEditUser from './users/EditUser'
 import ConnectedUserDetails from './users/UserDetails'
 import ConnectedCreateGroup from './groups/CreateGroup'
 import ConnectedEditGroup from './groups/EditGroup'
+import ConnectedGroupDetails from './groups/GroupDetails'
+import GroupDetails from './groups/GroupDetails'
 import ConnectedDeployments from './deployments/Deployments'
 import ConnectedAccounts from './accounts/Accounts'
 import ConnectedCreateAccount from './accounts/CreateAccount'
@@ -27,8 +29,12 @@ export {
     App,
     ConnectedHome,
     ConnectedLogin,
+
+    ConnectedGroups,
     ConnectedCreateGroup,
     ConnectedEditGroup,
+    ConnectedGroupDetails,
+
     ConnectedRegister,
     ConnectedPasswordChange,
     // protected view containers
@@ -37,7 +43,6 @@ export {
     ConnectedAccounts,
     ConnectedCreateAccount,
     ConnectedLandscapes,
-    ConnectedGroups,
 
     ConnectedUsers,
     ConnectedCreateUser,

@@ -101,7 +101,7 @@ class Groups extends Component {
 
     handlesGroupClick = (group, event) => {
         const { router } = this.context
-        router.push({ pathname: '/group/' + group._id })
+        router.push({ pathname: '/groups/' + group._id })
     }
 }
 

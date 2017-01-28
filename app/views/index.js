@@ -10,15 +10,16 @@ import CreateLandscape        from './landscapes/CreateLandscape'
 import EditLandscape        from './landscapes/EditLandscape'
 import LandscapeDetails        from './landscapes/LandscapeDetails'
 import Landscapes        from './landscapes/Landscapes'
-import Groups        from './groups/Groups'
 
 import Users        from './users/Users'
 import CreateUser        from './users/CreateUser'
 import EditUser        from './users/EditUser'
 import UserDetails        from './users/UserDetails'
 
+import Groups        from './groups/Groups'
 import CreateGroup        from './groups/CreateGroup'
 import EditGroup        from './groups/EditGroup'
+import GroupDetails        from './groups/GroupDetails'
 
 import Accounts        from './accounts/Accounts'
 import CreateAccount        from './accounts/CreateAccount'
@@ -38,15 +39,16 @@ export {
   CreateLandscape,
   EditLandscape,
   LandscapeDetails,
-  Groups,
 
   Users,
   CreateUser,
   EditUser,
   UserDetails,
 
+  Groups,
   CreateGroup,
   EditGroup,
+  GroupDetails,
 
   Accounts,
   CreateAccount,

@@ -1,10 +1,10 @@
 import cx from 'classnames'
-import { Form, Select, Switch, Radio, Upload, Icon, Row, message } from 'antd'
 import { Loader } from '../../components'
 import React, { Component, PropTypes } from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 
 import { Checkbox, RaisedButton} from 'material-ui'
+import {GridList, GridTile} from 'material-ui/GridList';
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton'
 import {Table, TableBody, TableFooter, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
@@ -16,7 +16,18 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import FlatButton from 'material-ui/FlatButton';
 
 
-const FormItem = Form.Item
+
+const styles = {
+  root: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'space-around',
+  },
+  gridList: {
+    width: 500,
+    overflowY: 'auto'
+  },
+};
 
 class UserDetails extends Component {
 
@@ -76,29 +87,30 @@ class UserDetails extends Component {
 
             return (
                 <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
-                    <h5>User Detials</h5>
-                    <FlatButton primary={true} disabled={loading} onClick={this.handlesEditClick} label="Edit" />
+                    <h4>User Details</h4>
                     <br/><br/>
-                    <Row type='flex' className={cx({ 'screen-height': true, 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
-                        <Form style={{ width: '100%' }} onSubmit={this.handleSubmit}>
-                          <div>
-                            <p>Username:  {currentUser.username}</p>
-                          </div>
-                          <div>
-                            <p>Email:  {currentUser.email}</p>
-                          </div>
-                          <div>
-                            <p>First Name:  {currentUser.firstName}</p>
-                          </div>
-                          <div>
-                            <p>Last Name:  {currentUser.lastName}</p>
-                          </div>
-                          <div>
-                            <p>Role:  {currentUser.role}</p>
-                          </div>
-                        </Form>
-                    </Row>
-                </div>
+                    <div style={styles.root}>
+
+                    <GridList
+                      cols={1}
+                      cellHeight='auto'
+                      style={styles.gridList}
+                    >
+                        <GridTile key='name'>
+                        <p>First Name:  {currentUser.firstName} {currentUser.lastName}</p>
+                        </GridTile>
+                        <GridTile key='email' >
+                        <p>Email:  {currentUser.email}</p>
+                        </GridTile>
+                        <GridTile key='username'>
+                        <p>Username:  {currentUser.username}</p>
+                      </GridTile>
+                        <GridTile key='Role'>
+                        <p>Role:  {currentUser.role}</p>
+                      </GridTile>
+                    </GridList>
+                    </div>
+              </div>
             )
         }
 
