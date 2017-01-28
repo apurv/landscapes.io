@@ -21,7 +21,13 @@ const config = {
                 loader: 'babel'
             }, {
                 test: /\.css$/,
-                loader: 'style!css!postcss'
+                loader: 'style-loader!css-loader?modules=true',
+                include: /flexboxgrid/
+            }, {
+                test: /\.css$/,
+                loader: 'style!css!postcss',
+                include: path.join(__dirname, 'node_modules'),
+                exclude: /flexboxgrid/
             }, {
                 test: /\.scss$/,
                 loader: 'style!css!postcss!sass'

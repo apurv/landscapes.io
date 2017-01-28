@@ -2,37 +2,23 @@ import cx from 'classnames'
 import axios from 'axios'
 import React, { Component, PropTypes } from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Form, Icon, Input, Button, Checkbox, Row } from 'antd'
+import { Row, Col } from 'react-flexbox-grid'
+import { Paper, RaisedButton, Checkbox, TextField } from 'material-ui'
+
 import './login.style.scss'
-
 import { ErrorAlert } from '../../components'
-
-const FormItem = Form.Item
 
 class Login extends Component {
 
     state = {
         animated: true,
-        viewEntersAnim: true,
-
-        username: '',
-        password: ''
+        viewEntersAnim: true
     }
 
     componentDidMount() {
         const { enterLogin } = this.props
         enterLogin()
     }
-
-    // componentWillReceiveProps(newProps) {
-    //   const { user: { username } } = newProps
-    //
-    //   if (username &&
-    //       username.length > 0 &&
-    //       this.props.user.username !== username) {
-    //     this.setState({username: username})
-    //   }
-    // }
 
     shouldComponentUpdate(nextProps, nextState) {
         return shallowCompare(this, nextProps, nextState)
@@ -46,48 +32,28 @@ class Login extends Component {
     render() {
         const { animated, viewEntersAnim } = this.state
         const { loading } = this.props
-        const { getFieldDecorator } = this.props.form
 
         return (
-            <Row type='flex' justify='center' align='middle' className={cx({ 'screen-height': true, 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
-                <Form onSubmit={this.handleSubmit} className='login-form'>
-                    <FormItem>
-                        {getFieldDecorator('username', {
-                            rules: [{ required: true, message: 'Please input your username!' }],
-                        })(
-                            <Input addonBefore={<Icon type='user' />} placeholder='Username' />
-                        )}
-                    </FormItem>
-                    <FormItem>
-                        {getFieldDecorator('password', {
-                            rules: [{ required: true, message: 'Please input your Password!' }],
-                        })(
-                            <Input addonBefore={<Icon type='lock' />} type='password' placeholder='Password' />
-                        )}
-                    </FormItem>
-                    <FormItem>
-                        {getFieldDecorator('remember', {
-                            valuePropName: 'checked',
-                            initialValue: true,
-                        })(
-                            <Checkbox>Remember me</Checkbox>
-                        )}
-                        <Button type='primary' htmlType='submit' className='login-form-button' disabled={loading} onClick={this.handlesOnLogin}>
-                            Log in
-                        </Button>
-                    </FormItem>
-                </Form>
+            <Row center='xs' middle='xs' className={cx({ 'screen-height': true, 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
+                <Col xs={6} lg={4} className={cx( { 'login-page': true } )}>
+                    <Paper zDepth={1} rounded={false}>
+
+                        <TextField id='username' ref='username' floatingLabelText='Username' fullWidth={true}/>
+                        <TextField id='password' ref='password' floatingLabelText='Password' fullWidth={true} type='password'/>
+
+                        <Checkbox label='Remember Me' onCheck={this.handlesPasswordCookie}
+                            style={{ margin: '20px 0px' }} labelStyle={{ fontFamily: 'Nunito, sans-serif', width: 'none' }}/>
+
+                        <RaisedButton label='Login' fullWidth={true} type='primary' onClick={this.handlesOnLogin}
+                            labelStyle={{ fontFamily: 'Nunito, sans-serif', textTransform: 'none' }}/>
+                    </Paper>
+                </Col>
             </Row>
         )
     }
 
-    handlesOnEmailChange = event => {
-        event.preventDefault()
-        // should add some validator before setState in real use cases
-        this.setState({ username: event.target.value })
-    }
-
-    handlesOnPasswordChange = event => {
+    // TODO: Add remember capability
+    handlesPasswordCookie = event => {
         event.preventDefault()
         // should add some validator before setState in real use cases
         this.setState({ password: event.target.value })
@@ -96,8 +62,11 @@ class Login extends Component {
     handlesOnLogin = event => {
         event.preventDefault()
         const { loginUser } = this.props
-        const { username, password } = this.props.form.getFieldsValue()
         const { router } = this.context
+        let { username, password } = this.refs
+
+        username = username.getValue()
+        password = password.getValue()
 
         axios({
             method: 'post',
@@ -146,4 +115,4 @@ Login.contextTypes = {
     router: PropTypes.object
 }
 
-export default Form.create()(Login)
+export default Login

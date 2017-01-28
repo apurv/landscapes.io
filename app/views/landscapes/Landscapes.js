@@ -1,9 +1,11 @@
 
 import cx from 'classnames'
-import { Card, Icon } from 'antd'
+import { Icon } from 'antd'
+import { IoEdit, IoLoadC, IoIosPlusEmpty } from 'react-icons/lib/io'
 import { Loader } from '../../components'
 import React, { Component, PropTypes } from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
+import { Card , CardHeader, CardActions, CardText } from 'material-ui'
 
 class Landscapes extends Component {
 
@@ -42,24 +44,31 @@ class Landscapes extends Component {
             <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
 
                 <a onClick={this.handlesCreateLandscapeClick}>
-                    <Icon style={{ fontSize: '20px' }} type='plus'/>
+                    <IoIosPlusEmpty size={30}/>
                 </a>
 
                 <ul>
                     {
                         landscapes.map((landscape, i) =>
-                        <Card key={i} title={landscape.name} style={{ width: 300, margin: '20px', float: 'left' }}
-                            extra={
-                                <div>
-                                    <a onClick={this.handlesEditLandscapeClick.bind(this, landscape)}>
-                                        <Icon style={{ fontSize: '20px' }} type='edit'/>
-                                    </a>
-                                    <a onClick={this.handlesLandscapeClick.bind(this, landscape)}>
-                                        <Icon style={{ fontSize: '20px' }} type='loading'/>
-                                    </a>
-                                </div>
-                            }>
-                            <p>{landscape.description}</p>
+                        <Card key={i} style={{ width: 300, margin: '20px', float: 'left' }}>
+                                <CardHeader
+                                    title={landscape.name}
+                                    subtitle="Subtitle"
+                                />
+                                <CardActions>
+                                    <div>
+                                        <a onClick={this.handlesEditLandscapeClick.bind(this, landscape)}>
+                                            <IoEdit/>
+                                        </a>
+                                        <a onClick={this.handlesLandscapeClick.bind(this, landscape)}>
+                                            <IoLoadC/>
+                                        </a>
+                                    </div>
+                                </CardActions>
+
+                                <CardText>
+                                    {landscape.description}
+                                </CardText>
                         </Card>)
                     }
                 </ul>

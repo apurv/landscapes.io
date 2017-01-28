@@ -1,5 +1,6 @@
 import cx from 'classnames'
-import { Button } from 'antd'
+// import { Button } from 'antd'
+import { RaisedButton } from 'material-ui'
 import { Link } from 'react-router'
 import { Jumbotron } from '../../components'
 import React, { Component, PropTypes } from 'react'
@@ -34,7 +35,7 @@ class Home extends Component {
                     <h1>Landscapes.io</h1>
 
                     <Link to={'/login'}>
-                        <Button type="primary">Primary</Button>
+                        <RaisedButton primary={true}>Primary</RaisedButton>
                     </Link>
                 </Jumbotron>
             </div>
