@@ -1,14 +1,16 @@
-
-import cx from 'classnames'
 import React, { Component, PropTypes } from 'react'
+import axios from 'axios'
+import cx from 'classnames'
+import { Row, Col } from 'react-flexbox-grid'
+import Dropzone from 'react-dropzone'
+import { IoCube } from 'react-icons/lib/io'
+import IconButton from 'material-ui/IconButton'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Form, Select, Input, Switch, Radio, Slider, Button, Upload, Icon, Row, message } from 'antd'
+import UploadIcon from 'material-ui/svg-icons/file/file-upload'
+import { Paper, FlatButton, RaisedButton, Checkbox, TextField } from 'material-ui'
 
 import './landscapes.style.scss'
 import { Loader } from '../../components'
-
-const FormItem = Form.Item
-const Dragger = Upload.Dragger
 
 class CreateLandscape extends Component {
 
@@ -33,52 +35,8 @@ class CreateLandscape extends Component {
 
     render() {
 
-        let self = this
         const { animated, viewEntersAnim } = this.state
         const { loading, landscapes } = this.props
-        const { setFieldsValue, getFieldValue, getFieldDecorator } = this.props.form
-
-        const formItemLayout = {
-            labelCol: { span: 8 },
-            wrapperCol: { span: 12 }
-        }
-
-        const uploadProps = {
-            listType: 'picture',
-            customRequest: content => {
-                let reader = new FileReader()
-                reader.readAsDataURL(content.file)
-                reader.onload = () => {
-                    setFieldsValue({ imageUri: reader.result })
-                    setFieldsValue({ filename: content.file.name })
-                }
-                reader.onerror = error => {
-                    console.log('Error: ', error)
-                }
-            }
-        }
-
-        const dragProps = {
-            name: 'file',
-            multiple: false,
-            showUploadList: false,
-            action: 'http://localhost:8080/api/upload/template',
-            onChange(info) {
-                const status = info.file.status
-
-                if (status !== 'uploading') {
-                    console.log(info.file, info.fileList)
-                }
-                if (status === 'done') {
-                    message.success(`${info.file.name} file uploaded successfully.`)
-                    self.setState({
-                        cloudFormationTemplate: JSON.stringify(info.file.response, null, 4)
-                    })
-                } else if (status === 'error') {
-                    message.error(`${info.file.name} file upload failed.`)
-                }
-            }
-        }
 
         if (loading) {
             return (
@@ -89,159 +47,121 @@ class CreateLandscape extends Component {
         }
 
         return (
-            <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
-                <h5>Create Landscape</h5><br/><br/>
-                <Row type='flex' className={cx({ 'screen-height': true, 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
-                    <Form style={{ width: '100%' }} onSubmit={this.handleSubmit}>
-                        <FormItem
-                            {...formItemLayout}
-                            label='Name'
-                        >
-                            {getFieldDecorator('name', {
-                                rules: [{ required: true, message: 'Please input name of the landscape' }],
-                            })(
-                                <Input placeholder='Name' />
-                            )}
-                        </FormItem>
+            <Row center='xs' middle='xs' className={cx({ 'screen-height': true, 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
+                <Col xs={6} lg={9} className={cx( { 'create-landscape': true } )}>
+                    <Paper zDepth={1} rounded={false}>
 
-                        <FormItem
-                            {...formItemLayout}
-                            label='Version'
-                        >
-                            {getFieldDecorator('version', {
-                                rules: [{ required: true, message: 'Please input version of the landscape' }],
-                            })(
-                                <Input placeholder='1.0' />
-                            )}
-                        </FormItem>
+                        <RaisedButton label='Create' onClick={this.handlesCreateClick}
+                            style={{ margin: 50, float: 'right' }}
+                            labelStyle={{ textTransform: 'none' }}/>
 
-                        <FormItem
-                            {...formItemLayout}
-                            label='Description'
-                        >
-                            {getFieldDecorator('description', {})(
-                                <Input type="textarea" rows={4} placeholder='Description' />
-                            )}
-                        </FormItem>
+                        <TextField id='name' ref='name' floatingLabelText='Name' className={cx( { 'two-field-row': true } )}/>
+                        <TextField id='version' ref='version' floatingLabelText='Version' className={cx( { 'two-field-row': true } )}/>
 
-                        <FormItem
-                            {...formItemLayout}
-                            label='Info Link'
-                        >
-                            {getFieldDecorator('infoLink', {})(
-                                <Input placeholder='Info Link' />
-                            )}
-                        </FormItem>
+                        <TextField id='description' ref='description' multiLine={true} rows={4} floatingLabelText='Description' fullWidth={true}
+                            floatingLabelStyle={{ left: '0px' }}/>
 
-                        <FormItem
-                            {...formItemLayout}
-                            label='Link Test'
-                        >
-                            {getFieldDecorator('infoLinkText', {})(
-                                <Input placeholder='Link Test' />
-                            )}
-                        </FormItem>
+                        <TextField id='infoLink' ref='infoLink' floatingLabelText='Info Link' fullWidth={true}/>
+                        <TextField id='infoLinkText' ref='infoLinkText' floatingLabelText='Link Test' fullWidth={true}/>
 
-                        <FormItem
-                            {...formItemLayout}
-                            label='Avatar'
-                        >
-                            {getFieldDecorator('imageUri', {})(
-                                <Upload {...uploadProps}>
-                                    <Button type='ghost'>
-                                        <Icon type='upload' /> Upload
-                                    </Button>
-                                    {
-                                        getFieldValue('imageUri')
-                                        ?
-                                            <div className='ant-upload-list ant-upload-list-picture'>
-                                                <div className='ant-upload-list-item ant-upload-list-item-done'>
-                                                    <div className='ant-upload-list-item-info'>
-                                                        <a className='ant-upload-list-item-thumbnail' href={getFieldValue('imageUri')} target='_blank' rel='noopener noreferrer'>
-                                                            <img src={getFieldValue('imageUri')}/>
-                                                        </a>
-                                                        <a href={getFieldValue('imageUri')} target='_blank' rel='noopener noreferrer' className='ant-upload-list-item-name'>
-                                                            {getFieldValue('filename')}
-                                                        </a>
-                                                        <i title='Remove file' className='anticon anticon-cross'></i>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        :
-                                            <span></span>
-                                    }
-                                </Upload>
-                            )}
-                        </FormItem>
+                        <Dropzone id='imageUri' onDrop={this.handlesImageUpload} multiple={false} accept='image/*'
+                            style={{ marginLeft: '10px', width: '180px', padding: '15px 0px' }}>
+                            {
+                                this.state.imageUri
+                                ?
+                                    <Row middle='xs'>
+                                        <img src={this.state.imageUri} style={{ margin: '0 10px', height: '50px' }}/>
+                                        <span style={{ fontSize: '11px' }}>{this.state.imageFileName}</span>
+                                    </Row>
+                                :
+                                    <Row middle='xs'>
+                                        <IconButton>
+                                            <UploadIcon/>
+                                        </IconButton>
+                                        <span style={{ fontSize: '11px' }}>LANDSCAPE IMAGE</span>
+                                    </Row>
+                            }
+                        </Dropzone>
 
-                        {
-                            this.state.cloudFormationTemplate
-                            ?
-                                <textarea rows={100} style={{ background: '#f9f9f9', fontFamily: 'monospace', width: '100%' }}>{ this.state.cloudFormationTemplate }</textarea>
-                            :
-                                <FormItem
-                                    {...formItemLayout}
-                                    label='CloudFormation Template'
-                                >
-                                    {getFieldDecorator('cloudFormationTemplate', {})(
-                                        <div style={{ marginTop: 16, height: 180 }}>
-                                            <Dragger {...dragProps}>
-                                                <p className="ant-upload-drag-icon">
-                                                    <Icon type="inbox" />
-                                                </p>
-                                                <p className="ant-upload-text">Click or drag file to this area to upload</p>
-                                                <p className="ant-upload-hint">Support for a single files only</p>
-                                            </Dragger>
+                        <Dropzone id='cloudFormationTemplate' onDrop={this.handlesTemplateClick} multiple={false}
+                            style={{ width: '100%', height: 150, padding: '15px 0px' }}
+                            activeStyle={{ border: 'limegreen 1px solid', width: '100%', padding: '15px 0px' }}>
+                            {
+                                this.state.cloudFormationTemplate
+                                ?
+                                    <textarea rows={100} style={{ background: '#f9f9f9', fontFamily: 'monospace', width: '100%' }}>{ this.state.cloudFormationTemplate }</textarea>
+                                :
+                                    <Row center='xs' middle='xs'>
+                                        <Col style={{ marginTop: 25 }}>
+                                            <IoCube size={42}/>
+                                        </Col>
+                                        <div style={{ fontSize: '12px', width: '100%', margin: '10px 0px' }}> Drop
+                                            <strong style={{ fontSize: '12px' }}> JSON </strong> or
+                                            <strong style={{ fontSize: '12px' }}> YAML </strong> file
                                         </div>
-                                    )}
-                                </FormItem>
-                        }
-
-
-                        <FormItem wrapperCol={{ span: 12, offset: 12 }}>
-                            <Button type='primary' id='create-button' size='large' htmlType='submit' disabled={loading} onClick={this.handlesCreateClick}>
-                                Create
-                            </Button>
-                        </FormItem>
-                    </Form>
-                </Row>
-            </div>
+                                    </Row>
+                            }
+                        </Dropzone>
+                    </Paper>
+                </Col>
+            </Row>
         )
     }
 
-    handlesLandscapeClick = event => {
-        const { router } = this.context
-        router.push({ pathname: '/protected' })
+    handlesImageUpload = (acceptedFiles, rejectedFiles) => {
+        let reader = new FileReader()
+
+        reader.readAsDataURL(acceptedFiles[0])
+        reader.onload = () => {
+            this.setState({
+                imageUri: reader.result,
+                imageFileName: acceptedFiles[0].name
+            })
+        }
+
+        reader.onerror = error => {
+            console.log('Error: ', error)
+        }
     }
 
-    handlesOnEmailChange = event => {
-        event.preventDefault()
-        // should add some validator before setState in real use cases
-        this.setState({ username: event.target.value })
-    }
+    handlesTemplateClick = (acceptedFiles, rejectedFiles) => {
 
-    handlesOnPasswordChange = event => {
-        event.preventDefault()
-        // should add some validator before setState in real use cases
-        this.setState({ password: event.target.value })
+        let self = this
+        let data = new FormData()
+
+        data.append('file', acceptedFiles[0])
+
+        axios.post('http://0.0.0.0:8080/api/upload/template', data).then(res => {
+            self.setState({
+                cloudFormationTemplate: JSON.stringify(res.data, null, 4)
+            })
+        }).catch(err => {
+            console.log(err)
+        })
     }
 
     handlesCreateClick = event => {
-
         event.preventDefault()
+        const { mutate } = this.props
+        const { router } = this.context
 
-        let landscapeToCreate = this.props.form.getFieldsValue()
+        let landscapeToCreate = {}
+        // map all fields to landscapeToCreate
+        for (let key in this.refs) {
+            landscapeToCreate[key] = this.refs[key].getValue()
+        }
+        // attach imageUri and cloudFormationTemplate
         landscapeToCreate.imageUri = this.state.imageUri || ''
         landscapeToCreate.cloudFormationTemplate = this.state.cloudFormationTemplate || ''
 
-        this.props.mutate({
+        mutate({
             variables: { landscape: landscapeToCreate }
          }).then(({ data }) => {
-            console.log('got data', data)
+            console.log('landscape created', data)
+            router.push({ pathname: '/landscapes' })
         }).catch((error) => {
             console.log('there was an error sending the query', error)
         })
-
     }
 
     closeError = (event) => {
@@ -261,4 +181,4 @@ CreateLandscape.contextTypes = {
     router: PropTypes.object
 }
 
-export default Form.create()(CreateLandscape)
+export default CreateLandscape

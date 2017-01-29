@@ -106,15 +106,15 @@ module.exports.initMiddleware = app => {
     new SubscriptionServer({ subscriptionManager }, websocketServer)
 
     // Request body parsing middleware should be above methodOverride
-    app.use(bodyParser.urlencoded({extended: true}))
+    app.use(bodyParser.urlencoded({ extended: true }))
 
-    var multer = require('multer')
-    var upload = multer({ dest: 'uploads/' })
+    let multer = require('multer')
+    let upload = multer({ dest: 'uploads/' })
 
     // TODO: Move to its own folder
     app.post('/api/upload/template', upload.single('file'), (req, res) => {
 
-        var user = req.user || {
+        let user = req.user || {
             name: 'anonymous'
         }
 
@@ -125,7 +125,7 @@ module.exports.initMiddleware = app => {
         function tryParseJSON(jsonString) {
             console.log(' ---> validating JSON')
             try {
-                var o = JSON.parse(jsonString)
+                let o = JSON.parse(jsonString)
                 if (o && typeof o === 'object' && o !== null) {
                     return o
                 }
@@ -137,7 +137,7 @@ module.exports.initMiddleware = app => {
         function tryParseYAML(yamlString) {
             console.log(' ---> validating YAML')
             try {
-                var o = YAML.parse(yamlString)
+                let o = YAML.parse(yamlString)
                 if (o && typeof o === 'object' && o !== null) {
                     console.log('YAML', o)
                     return o
@@ -160,9 +160,9 @@ module.exports.initMiddleware = app => {
             })
         }
 
-        var f = req.file
+        let f = req.file
 
-        var template = fs.readFileSync(f.path, 'utf-8')
+        let template = fs.readFileSync(f.path, 'utf-8')
 
         if (tryParseJSON(template)) {
             deleteFile(f.path, err => {
@@ -235,7 +235,7 @@ module.exports.initModulesConfiguration = (app, db) => {
  */
 module.exports.initHelmetHeaders = app => {
     // Use helmet to secure Express headers
-    var SIX_MONTHS = 15778476000
+    let SIX_MONTHS = 15778476000
     app.use(helmet.frameguard())
     app.use(helmet.xssFilter())
     app.use(helmet.noSniff())
@@ -317,7 +317,7 @@ module.exports.initErrorRoutes = app => {
  */
 module.exports.configureSocketIO = (app, db) => {
     // Load the Socket.io configuration
-    var server = require('./socket.io')(app, db)
+    let server = require('./socket.io')(app, db)
 
     // Return server object
     return server

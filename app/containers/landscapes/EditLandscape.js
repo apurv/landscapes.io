@@ -1,8 +1,8 @@
 import gql from 'graphql-tag'
 import { EditLandscape } from '../../views'
 import { connect } from 'react-redux'
-import { graphql } from 'react-apollo'
 import { bindActionCreators } from 'redux'
+import { graphql, compose } from 'react-apollo'
 import * as viewsActions from '../../redux/modules/views'
 
 /* -----------------------------------------
@@ -30,7 +30,19 @@ import * as viewsActions from '../../redux/modules/views'
          landscapes,
          loading
      })
- })(EditLandscape)
+ })
+
+ const updateLandscapeMutation = gql `
+     mutation updateLandscape($landscape: LandscapeInput!) {
+         updateLandscape(landscape: $landscape) {
+             name
+         }
+     }
+ `
+ const composedRequest = compose(
+     EditLandscapeWithQuery,
+     graphql(updateLandscapeMutation)
+ )(EditLandscape)
 
 /* -----------------------------------------
   Redux
@@ -47,4 +59,4 @@ const mapDispatchToProps = (dispatch) => {
     }, dispatch)
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(EditLandscapeWithQuery)
+export default connect(mapStateToProps, mapDispatchToProps)(composedRequest)

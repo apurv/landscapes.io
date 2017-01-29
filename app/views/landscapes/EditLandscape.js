@@ -1,14 +1,13 @@
-
-import cx from 'classnames'
 import React, { Component, PropTypes } from 'react'
+import axios from 'axios'
+import cx from 'classnames'
+import { Row, Col } from 'react-flexbox-grid'
+import Dropzone from 'react-dropzone'
+import { IoCube } from 'react-icons/lib/io'
+import IconButton from 'material-ui/IconButton'
 import shallowCompare from 'react-addons-shallow-compare'
-import { Form, Select, Input, Switch, Radio, Slider, Button, Upload, Icon, Row, message } from 'antd'
-
-import './landscapes.style.scss'
-import { Loader } from '../../components'
-
-const FormItem = Form.Item
-const Dragger = Upload.Dragger
+import UploadIcon from 'material-ui/svg-icons/file/file-upload'
+import { Paper, FlatButton, RaisedButton, Checkbox, TextField } from 'material-ui'
 
 class EditLandscape extends Component {
 
@@ -21,17 +20,6 @@ class EditLandscape extends Component {
         const { enterLandscapes, landscapes, params } = this.props
 
         let currentLandscape = landscapes.find(ls => { return ls._id === params.id })
-
-        let test = {}
-
-        for (let key in currentLandscape) {
-            test[key] = {
-                value: currentLandscape[key],
-                errors: []
-            }
-        }
-
-        this.props.form.setFields(test)
 
         enterLandscapes()
     }
@@ -50,50 +38,8 @@ class EditLandscape extends Component {
         let self = this
         const { animated, viewEntersAnim } = this.state
         const { loading, landscapes, params } = this.props
-        const { setFieldsValue, getFieldDecorator } = this.props.form
 
         let currentLandscape = landscapes.find(ls => { return ls._id === params.id })
-        console.log('%c currentLandscape ', 'background: #1c1c1c; color: rgb(209, 29, 238)', currentLandscape)
-
-
-        const formItemLayout = {
-            labelCol: { span: 8 },
-            wrapperCol: { span: 12 }
-        }
-
-        const uploadProps = {
-            action: 'http://localhost:8080/api/upload/template',
-            listType: 'picture',
-            defaultFileList: [{
-                uid: -1,
-                name: 'default.png',
-                status: 'done',
-                url: 'http://icons.iconarchive.com/icons/uiconstock/socialmedia/512/AWS-icon.png',
-                thumbUrl: 'http://icons.iconarchive.com/icons/uiconstock/socialmedia/512/AWS-icon.png'
-            }]
-        }
-
-        const dragProps = {
-            name: 'file',
-            multiple: false,
-            showUploadList: false,
-            action: 'http://localhost:8080/api/upload/template',
-            onChange(info) {
-                const status = info.file.status
-
-                if (status !== 'uploading') {
-                    console.log(info.file, info.fileList)
-                }
-                if (status === 'done') {
-                    message.success(`${info.file.name} file uploaded successfully.`)
-                    self.setState({
-                        cloudFormationTemplate: JSON.stringify(info.file.response, null, 4)
-                    })
-                } else if (status === 'error') {
-                    message.error(`${info.file.name} file upload failed.`)
-                }
-            }
-        }
 
         if (loading) {
             return (
@@ -104,130 +50,124 @@ class EditLandscape extends Component {
         }
 
         return (
-            <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
-                <h5>Edit Landscape</h5><br/><br/>
-                <Row type='flex' className={cx({ 'screen-height': true, 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
-                    <Form style={{ width: '100%' }} onSubmit={this.handleSubmit}>
-                        <FormItem
-                            {...formItemLayout}
-                            label='Name'
-                        >
-                            {getFieldDecorator('name', {
-                                rules: [{ required: true, message: 'Please input name of the landscape' }],
-                            })(
-                                <Input placeholder='Name' />
-                            )}
-                        </FormItem>
+            <Row center='xs' middle='xs' className={cx({ 'screen-height': true, 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
+                <Col xs={6} lg={9} className={cx( { 'create-landscape': true } )}>
+                    <Paper zDepth={1} rounded={false}>
 
-                        <FormItem
-                            {...formItemLayout}
-                            label='Version'
-                        >
-                            {getFieldDecorator('version', {
-                                rules: [{ required: true, message: 'Please input version of the landscape' }],
-                            })(
-                                <Input placeholder='1.0' />
-                            )}
-                        </FormItem>
+                        <RaisedButton label='Update' onClick={this.handlesUpdateClick}
+                            style={{ margin: 50, float: 'right' }}
+                            labelStyle={{ textTransform: 'none' }}/>
 
-                        <FormItem
-                            {...formItemLayout}
-                            label='Description'
-                        >
-                            {getFieldDecorator('description', {})(
-                                <Input type="textarea" rows={4} placeholder='Description' />
-                            )}
-                        </FormItem>
+                        <TextField id='name' ref='name' defaultValue={currentLandscape.name} floatingLabelText='Name' className={cx( { 'two-field-row': true } )}/>
+                        <TextField id='version' ref='version' defaultValue={currentLandscape.version} floatingLabelText='Version' className={cx( { 'two-field-row': true } )}/>
 
-                        <FormItem
-                            {...formItemLayout}
-                            label='Info Link'
-                        >
-                            {getFieldDecorator('infoLink', {})(
-                                <Input placeholder='Info Link' />
-                            )}
-                        </FormItem>
+                        <TextField id='description' ref='description' defaultValue={currentLandscape.description} multiLine={true} rows={4} floatingLabelText='Description' fullWidth={true}
+                            floatingLabelStyle={{ left: '0px' }}/>
 
-                        <FormItem
-                            {...formItemLayout}
-                            label='Link Test'
-                        >
-                            {getFieldDecorator('infoLinkText', {})(
-                                <Input placeholder='Link Test' />
-                            )}
-                        </FormItem>
+                        <TextField id='infoLink' ref='infoLink' defaultValue={currentLandscape.infoLink} floatingLabelText='Info Link' fullWidth={true}/>
+                        <TextField id='infoLinkText' ref='infoLinkText' defaultValue={currentLandscape.infoLinkText} floatingLabelText='Link Test' fullWidth={true}/>
 
-                        <FormItem
-                            {...formItemLayout}
-                            label='Avatar'
-                        >
-                            {getFieldDecorator('imageUri', {})(
-                                <Upload {...uploadProps}>
-                                    <Button type="ghost">
-                                        <Icon type="upload" /> Upload
-                                    </Button>
-                                </Upload>
-                            )}
-                        </FormItem>
+                        <Dropzone id='imageUri' onDrop={this.handlesImageUpload} multiple={false} accept='image/*'
+                            style={{ marginLeft: '10px', width: '180px', padding: '15px 0px' }}>
+                            {
+                                this.state.imageUri || currentLandscape.imageUri
+                                ?
+                                    <Row middle='xs'>
+                                        <img src={this.state.imageUri || currentLandscape.imageUri} style={{ margin: '0 10px', height: '50px' }}/>
+                                        <span style={{ fontSize: '11px' }}>{this.state.imageFileName || 'CURRENT IMAGE'}</span>
+                                    </Row>
+                                :
+                                    <Row middle='xs'>
+                                        <IconButton>
+                                            <UploadIcon/>
+                                        </IconButton>
+                                        <span style={{ fontSize: '11px' }}>LANDSCAPE IMAGE</span>
+                                    </Row>
+                            }
+                        </Dropzone>
 
-                        {
-                            this.state.cloudFormationTemplate
-                            ?
-                                <textarea rows={100} style={{ background: '#f9f9f9', fontFamily: 'monospace', width: '100%' }}>{ this.state.cloudFormationTemplate }</textarea>
-                            :
-                                <FormItem
-                                    {...formItemLayout}
-                                    label='CloudFormation Template'
-                                >
-                                    {getFieldDecorator('cloudFormationTemplate', {})(
-                                        <div style={{ marginTop: 16, height: 180 }}>
-                                            <Dragger {...dragProps}>
-                                                <p className="ant-upload-drag-icon">
-                                                    <Icon type="inbox" />
-                                                </p>
-                                                <p className="ant-upload-text">Click or drag file to this area to upload</p>
-                                                <p className="ant-upload-hint">Support for a single files only</p>
-                                            </Dragger>
+                        <Dropzone id='cloudFormationTemplate' onDrop={this.handlesTemplateClick} multiple={false}
+                            style={{ border: 'black 1px solid', width: '100%', height: 150, padding: '15px 0px' }}
+                            activeStyle={{ border: 'limegreen 1px solid', width: '100%', padding: '15px 0px' }}>
+                            {
+                                this.state.cloudFormationTemplate || currentLandscape.cloudFormationTemplate
+                                ?
+                                    <textarea rows={100} style={{ background: '#f9f9f9', fontFamily: 'monospace', width: '100%' }}>{ currentLandscape.cloudFormationTemplate || this.state.cloudFormationTemplate }</textarea>
+                                :
+                                    <Row center='xs' middle='xs'>
+                                        <Col style={{ marginTop: 25 }}>
+                                            <IoCube size={42}/>
+                                        </Col>
+                                        <div style={{ fontSize: '12px', width: '100%', margin: '10px 0px' }}> Drop
+                                            <strong style={{ fontSize: '12px' }}> JSON </strong> or
+                                            <strong style={{ fontSize: '12px' }}> YAML </strong> file
                                         </div>
-                                    )}
-                                </FormItem>
-                        }
-
-
-                        <FormItem wrapperCol={{ span: 12, offset: 12 }}>
-                            <Button type='primary' id='update-button' htmlType='submit' disabled={loading} onClick={this.handlesUpdateClick}>
-                                Update
-                            </Button>
-                        </FormItem>
-                    </Form>
-                </Row>
-            </div>
+                                    </Row>
+                            }
+                        </Dropzone>
+                    </Paper>
+                </Col>
+            </Row>
         )
     }
 
-    handlesLandscapeClick = event => {
-        const { router } = this.context
-        router.push({ pathname: '/protected' })
+    handlesImageUpload = (acceptedFiles, rejectedFiles) => {
+        let reader = new FileReader()
+
+        reader.readAsDataURL(acceptedFiles[0])
+        reader.onload = () => {
+            this.setState({
+                imageUri: reader.result,
+                imageFileName: acceptedFiles[0].name
+            })
+        }
+
+        reader.onerror = error => {
+            console.log('Error: ', error)
+        }
+    }
+
+    handlesTemplateClick = (acceptedFiles, rejectedFiles) => {
+
+        let self = this
+        let data = new FormData()
+
+        data.append('file', acceptedFiles[0])
+
+        axios.post('http://0.0.0.0:8080/api/upload/template', data).then(res => {
+            self.setState({
+                cloudFormationTemplate: JSON.stringify(res.data, null, 4)
+            })
+        }).catch(err => {
+            console.log(err)
+        })
     }
 
     handlesUpdateClick = event => {
-
-        const { mutate } = this.props
-
         event.preventDefault()
+        const { mutate, landscapes, params } = this.props
+        const { router } = this.context
 
-        let landscapeToUpdate = this.props.form.getFieldsValue()
+        let currentLandscape = landscapes.find(ls => { return ls._id === params.id })
+
+        let landscapeToUpdate = {}
+        // map all fields to landscapeToUpdate
+        for (let key in this.refs) {
+            landscapeToUpdate[key] = this.refs[key].getValue()
+        }
+        // attach imageUri and cloudFormationTemplate
+        landscapeToUpdate._id = currentLandscape._id
         landscapeToUpdate.imageUri = this.state.imageUri || ''
         landscapeToUpdate.cloudFormationTemplate = this.state.cloudFormationTemplate || ''
 
         mutate({
             variables: { landscape: landscapeToUpdate }
          }).then(({ data }) => {
-            console.log('got data', data)
+            console.log('landscape updated', data)
+            router.push({ pathname: '/landscapes' })
         }).catch((error) => {
             console.log('there was an error sending the query', error)
         })
-
     }
 
     closeError = (event) => {
@@ -247,4 +187,4 @@ EditLandscape.contextTypes = {
     router: PropTypes.object
 }
 
-export default Form.create()(EditLandscape)
+export default EditLandscape

@@ -10,10 +10,10 @@ import Subscription from './types/subscriptions.js'
 
 
 const Query = `
-      input userInput {
-          userId: String
-          isAdmin: Boolean
-      }
+    input userInput {
+        userId: String
+        isAdmin: Boolean
+    }
     input LoginInput {
         username: String
         password: String
@@ -81,13 +81,16 @@ const Mutation = `
         createUser ( user: UserInput! ): User
         updateUser ( user: UserInput! ): User
         deleteUser ( user: UserInput! ): User
+
         createGroup ( group: GroupInput! ): Group
         updateGroup ( group: GroupInput! ): Group
         deleteGroup ( group: GroupInput! ): Group
         editGroup ( group: GroupInput! ): Group
+
         createAccount ( account: AccountInput! ): Account
         updateAccount ( account: AccountInput! ): Account
         deleteAccount ( account: AccountInput! ): Account
+
         createLandscape ( landscape: LandscapeInput! ): Landscape
         updateLandscape ( landscape: LandscapeInput! ): Landscape
         deleteLandscape ( landscape: LandscapeInput! ): Landscape

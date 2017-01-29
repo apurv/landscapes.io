@@ -1,15 +1,14 @@
-.lscard-style {
+.create-landscape label,
+.create-landscape #name,
+.create-landscape #version,
+.create-landscape #description,
+.create-landscape #infoLink,
+.create-landscape #infoLinkText {
+    margin-left: 20px;
+}
+
+.create-landscape .two-field-row {
+    width: 48% !important;
     float: left;
-    margin: 20px;
-    width: 300;
-}
-
-#create-button,
-#update-button {
-    padding: 5px 50px 5px;
-    font-size: 20px;
-}
-
-.ant-upload-list-item-uploading {
-    display: none;
+    margin: 0 1%;
 }

@@ -102,7 +102,7 @@ const resolveFunctions = {
         },
         updateLandscape(_, { landscape }) {
 
-            console.log(' ---> updating Landscape')
+            console.log(' ---> updating Landscape', landscape)
 
             Landscape.findOneAndUpdate({ _id: landscape._id }, landscape, { new: true }, (err, doc) => {
                 if (err) {

@@ -122,6 +122,7 @@
     "react-apollo": "^0.5.13",
     "react-bootstrap": "^0.28.3",
     "react-dom": "^15.3.0",
+    "react-dropzone": "^3.9.2",
     "react-flexbox-grid": "^0.10.2",
     "react-icons": "^2.2.3",
     "react-modal": "^0.6.1",
