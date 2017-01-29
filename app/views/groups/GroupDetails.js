@@ -89,23 +89,8 @@ class GroupDetails extends Component {
         this.setState({currentGroup: currentGroup})
         this.setState({name: currentGroup.name})
         this.setState({description: currentGroup.description})
-
-        if(currentGroup){
-          currentGroup.permissions.map(value => {
-            if(value === 'c'){
-              this.setState({permissionC: true})
-            }
-            if(value === 'u'){
-              this.setState({permissionU: true})
-            }
-            if(value === 'd'){
-              this.setState({permissionD: true})
-            }
-            if(value === 'x'){
-              this.setState({permissionX: true})
-            }
-          })
-        }
+        this.setState({permissions: currentGroup.permissions})
+        
         enterGroups()
     }
 
@@ -156,13 +141,13 @@ class GroupDetails extends Component {
                     style={styles.gridList}
                   >
                       <GridTile key='name'>
-                        <p>Name: {this.state.currentGroup.name} </p>
+                        <p>Name: {this.state.name} </p>
                       </GridTile>
                       <GridTile key='description' >
-                        <p>Description: {this.state.currentGroup.description} </p>
+                        <p>Description: {this.state.description} </p>
                       </GridTile>
                       <GridTile key='permissions'>
-                      <p> Permissions: {this.state.currentGroup.permissions} </p>
+                      <p> Permissions: {this.state.permissions} </p>
                     </GridTile>
                   </GridList>
                   </div>
