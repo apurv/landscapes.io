@@ -82,6 +82,7 @@ class EditUser extends Component {
 
         let currentUser = users.find(ls => { return ls._id === params.id })
         let userGroups = []
+        let currentGroups = []
         groups.find(group => {
           console.log('%c group ', 'background: #1c1c1c; color: rgb(200, 29, 238)', group)
             if(group.users){
@@ -89,13 +90,20 @@ class EditUser extends Component {
                 console.log('%c group.users user ', 'background: #1c1c1c; color: rgb(100, 29, 238)', user)
                 if(user.userId === currentUser._id){
                   console.log('%c EQUALS', 'background: #1c1c1c; color: rgb(0, 29, 238)')
-                  userGroups.push(group._id)
+                  group.selected = true;
+                  console.log('group=====', group)
                 }
                 return
               })
+              currentGroups.push(group)
             }
-            else return
+            else {
+              currentGroups.push(group)
+              return
+            }
         })
+        this.setState({currentGroups: currentGroups})
+
         this.setState({currentUser})
         this.setState({ _id:currentUser._id, password: currentUser.password, username: currentUser.username, role: currentUser.role, email: currentUser.email, firstName: currentUser.firstName, lastName: currentUser.lastName})
         enterUsers()
@@ -116,23 +124,21 @@ class EditUser extends Component {
         const { animated, viewEntersAnim } = this.state
         const { loading, groups, landscapes, users, params } = this.props
 
+        let currentGroups = [];
+        if(!this.state.currentGroups){
+          currentGroups = groups
+        }
+        else{
+          currentGroups = this.state.currentGroups
+        }
         console.log('GROUPS', groups)
+        console.log('currentGroups', currentGroups)
         console.log('landscapes', landscapes)
         console.log('users', users)
         const formItemLayout = {
             labelCol: { span: 8 },
             wrapperCol: { span: 12 }
         }
-
-        const currentUser = this.state.currentUser
-        console.log('currentUser', currentUser)
-
-        // if(landscapes){
-        //   console.log('landscapes', landscapes)
-        //   var landscapeIds = landscapes.map((index, landscape) =>{
-        //     return {key: landscape._id, id: landscape._id, name: landscape.name, description: landscape.description}
-        //   })
-        // }
 
         if (loading) {
             return (
@@ -213,7 +219,7 @@ class EditUser extends Component {
                   </div>
                   </Tab>
                   <Tab label="Groups" key="2">
-                  <Table height={this.state.height} fixedHeader={this.state.fixedHeader} fixedFooter={this.state.fixedFooter}
+                  <Table height={this.state.height} deselectOnClickaway={false} fixedHeader={this.state.fixedHeader} fixedFooter={this.state.fixedFooter}
                           selectable={this.state.selectable} multiSelectable={this.state.multiSelectable}
                           onRowSelection={this.handleOnRowSelection}>
                             <TableHeader displaySelectAll={this.state.showCheckboxes} adjustForCheckbox={this.state.showCheckboxes}
@@ -223,10 +229,10 @@ class EditUser extends Component {
                                 <TableHeaderColumn tooltip="Permissions">Permissions</TableHeaderColumn>
                               </TableRow>
                             </TableHeader>
-                            <TableBody displayRowCheckbox={this.state.showCheckboxes} deselectOnClickaway={this.state.deselectOnClickaway}
+                            <TableBody deselectOnClickaway={false}	 displayRowCheckbox={this.state.showCheckboxes}
                               showRowHover={this.state.showRowHover} stripedRows={this.state.stripedRows} >
-                              {groups.map( (row, index) => (
-                                <TableRow key={row._id} selected={row.selected}>
+                              {currentGroups.map( (row, index) => (
+                                <TableRow key={row._id} selected={true} >
                                   <TableRowColumn>{row.name}</TableRowColumn>
                                   <TableRowColumn>{row.permissions}</TableRowColumn>
                                 </TableRow>
@@ -255,6 +261,13 @@ class EditUser extends Component {
 
     handleOnRowSelection= selectedRows => {
         console.log('THIS IS A ROW CHANGE', selectedRows)
+        const groups = this.state.groups;
+        const currentUser = this.state.currentUser;
+        for(var i=0; i< selectedRows.length; i++){
+            console.log(groups[selectedRows[i]]._id)
+            currentUser.groups.push(groups[selectedRows[i]]._id)
+        }
+
     }
 
     handlesOnEmailChange = event => {
@@ -299,6 +312,18 @@ class EditUser extends Component {
         };
         console.log('UPDATING user -', userToEdit)
         console.log('this.props -', this.props)
+
+        for (var i = 0; i< this.state.currentUser.groups; i++){
+          let groupToUpdate = groups.find(ls => { return ls._id === this.state.currentUser.groups[i] })
+          groups.users.push({ isAdmin: false, userId: this.state._id })
+          this.props.EditGroupWithMutation({
+              variables: { group: groupToUpdate }
+           }).then(({ data }) => {
+              console.log('got data', data)
+          }).catch((error) => {
+            console.log('error: ', error)
+        })
+      }
         this.props.EditUserWithMutation({
             variables: { user: userToEdit }
          }).then(({ data }) => {

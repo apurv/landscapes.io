@@ -90,7 +90,7 @@ class GroupDetails extends Component {
         this.setState({name: currentGroup.name})
         this.setState({description: currentGroup.description})
         this.setState({permissions: currentGroup.permissions})
-        
+
         enterGroups()
     }
 
@@ -132,9 +132,10 @@ class GroupDetails extends Component {
               autoHideDuration={3000}
               onRequestClose={this.handleRequestClose}
             />
-                <h4>View Group</h4><br/>
+                <h4><strong>Group:</strong> {this.state.name}</h4><br/>
                   <div style={styles.root}>
 
+                  <Card style={{padding:20}}>
                   <GridList
                     cols={1}
                     cellHeight='auto'
@@ -149,7 +150,72 @@ class GroupDetails extends Component {
                       <GridTile key='permissions'>
                       <p> Permissions: {this.state.permissions} </p>
                     </GridTile>
+                    <GridTile>
+                        <Table height={this.state.height} fixedHeader={this.state.fixedHeader} fixedFooter={this.state.fixedFooter}
+                            selectable={this.state.selectable} multiSelectable={this.state.multiSelectable}
+                            onRowSelection={this.handleOnRowSelection}>
+                              <TableHeader displaySelectAll={this.state.showCheckboxes} adjustForCheckbox={this.state.showCheckboxes}
+                                enableSelectAll={this.state.enableSelectAll} >
+                                <TableRow>
+                                  <TableHeaderColumn colSpan="3" tooltip="Landscapes" style={{textAlign: 'center'}}>
+                                    Landscapes
+                                  </TableHeaderColumn>
+                                </TableRow>
+                                <TableRow>
+                                  <TableHeaderColumn tooltip="Name">Name</TableHeaderColumn>
+                                </TableRow>
+                              </TableHeader>
+                              <TableBody displayRowCheckbox={this.state.showCheckboxes} deselectOnClickaway={this.state.deselectOnClickaway}
+                                showRowHover={this.state.showRowHover} stripedRows={this.state.stripedRows}>
+                                {groups.map( (row, index) => (
+                                  <TableRow key={index} selected={row.selected}>
+                                    <TableRowColumn>{row.name}</TableRowColumn>
+                                  </TableRow>
+                                  ))}
+                              </TableBody>
+                              <TableFooter
+                                adjustForCheckbox={this.state.showCheckboxes}
+                              >
+                                <TableRow>
+                                  <TableRowColumn>Name</TableRowColumn>
+                                </TableRow>
+                              </TableFooter>
+                            </Table>
+                    </GridTile>
+                    <GridTile>
+                        <Table height={this.state.height} fixedHeader={this.state.fixedHeader} fixedFooter={this.state.fixedFooter}
+                            selectable={this.state.selectable} multiSelectable={this.state.multiSelectable}
+                            onRowSelection={this.handleOnRowSelection}>
+                              <TableHeader displaySelectAll={this.state.showCheckboxes} adjustForCheckbox={this.state.showCheckboxes}
+                                enableSelectAll={this.state.enableSelectAll} >
+                                <TableRow>
+                                  <TableHeaderColumn colSpan="3" tooltip="Users" style={{textAlign: 'center'}}>
+                                    Users
+                                  </TableHeaderColumn>
+                                </TableRow>
+                                <TableRow>
+                                  <TableHeaderColumn tooltip="Name">Name</TableHeaderColumn>
+                                </TableRow>
+                              </TableHeader>
+                              <TableBody displayRowCheckbox={this.state.showCheckboxes} deselectOnClickaway={this.state.deselectOnClickaway}
+                                showRowHover={this.state.showRowHover} stripedRows={this.state.stripedRows}>
+                                {groups.map( (row, index) => (
+                                  <TableRow key={index} selected={row.selected}>
+                                    <TableRowColumn>{row.name}</TableRowColumn>
+                                  </TableRow>
+                                  ))}
+                              </TableBody>
+                              <TableFooter
+                                adjustForCheckbox={this.state.showCheckboxes}
+                              >
+                                <TableRow>
+                                  <TableRowColumn>Name</TableRowColumn>
+                                </TableRow>
+                              </TableFooter>
+                            </Table>
+                    </GridTile>
                   </GridList>
+                  </Card>
                   </div>
             </div>
         )
