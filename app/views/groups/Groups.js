@@ -45,6 +45,7 @@ class Groups extends Component {
         const { animated, viewEntersAnim } = this.state
         const { loading, groups } = this.props
         console.log('GROUPS - ', groups)
+        let stateGroups = groups || []
         if (loading) {
             return (
                 <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
@@ -61,7 +62,7 @@ class Groups extends Component {
 
                 <ul>
                     {
-                      groups.map((group, i) =>
+                      stateGroups.map((group, i) =>
                       <Card key={i} style={{ width: 300, margin: '20px', float: 'left' }}>
                           <CardHeader
                             title={group.name}

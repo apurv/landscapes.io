@@ -2,6 +2,7 @@
 import cx from 'classnames'
 import React, { Component, PropTypes } from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
+import { Row, Col } from 'react-flexbox-grid'
 
 import { Checkbox, RaisedButton} from 'material-ui'
 import {GridList, GridTile} from 'material-ui/GridList';
@@ -9,12 +10,10 @@ import Subheader from 'material-ui/Subheader';
 import IconButton from 'material-ui/IconButton';
 import StarBorder from 'material-ui/svg-icons/toggle/star-border';
 import Snackbar from 'material-ui/Snackbar';
-
 import {Table, TableBody, TableFooter, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import {Tabs, Tab} from 'material-ui/Tabs';
 import TextField from 'material-ui/TextField';
-
 import Slider from 'material-ui/Slider';
 import {RadioButtonGroup, RadioButton} from 'material-ui/RadioButton';
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
@@ -124,6 +123,9 @@ class EditGroup extends Component {
 
 
         if(currentGroup){
+          if(currentGroup.permissions.length === 5){
+            this.setState({checkAll: true})
+          }
           currentGroup.permissions.map(value => {
             if(value === 'c'){
               this.setState({permissionC: true})
@@ -178,7 +180,12 @@ class EditGroup extends Component {
         }
 
         return (
-            <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
+          <div>
+          <Row className={cx({ 'screen-width': true, 'animatedViews': animated, 'view-enter': viewEntersAnim })} style={{ justifyContent: 'space-between'}} >
+            <h4>Edit Group</h4><br/>
+            <RaisedButton primary={true} label="Save" onClick={this.handlesCreateClick} />
+          </Row>
+          <Row center='xs' middle='xs' className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
             {console.log('stateLandscapes', stateLandscapes)}
             {console.log('stateUsers', stateUsers)}
             <Snackbar
@@ -193,7 +200,6 @@ class EditGroup extends Component {
               autoHideDuration={3000}
               onRequestClose={this.handleRequestClose}
             />
-                <h4>Edit Group</h4><br/>
                 <Tabs >
                   <Tab label="Group" key="1">
                   <div style={styles.root}>
@@ -226,11 +232,6 @@ class EditGroup extends Component {
                       <Checkbox label="Update" checked={this.state.permissionU} onCheck={this.handlesPermissionClickU}/>
                       <Checkbox label="Delete" checked={this.state.permissionD} onCheck={this.handlesPermissionClickD}/>
                       <Checkbox label="Execute" checked={this.state.permissionX} onCheck={this.handlesPermissionClickX}/>
-                    </GridTile>
-                    <GridTile
-                      key='SubmitButton'
-                    >
-                    <RaisedButton style={{width:450}} type='primary' disabled={loading} primary={true} label="Submit" onClick={this.handlesCreateClick} />
                     </GridTile>
                   </GridList>
                   </div>
@@ -301,7 +302,9 @@ class EditGroup extends Component {
                           </Table>
                   </Tab>
                 </Tabs>
+            </Row>
             </div>
+
         )
     }
 
