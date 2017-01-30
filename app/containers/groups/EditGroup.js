@@ -35,6 +35,10 @@ import * as viewsActions from '../../redux/modules/views'
          groups {
              _id,
              name,
+             users{
+               isAdmin,
+               userId
+             }
              description,
              landscapes,
              permissions
