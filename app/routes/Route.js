@@ -19,7 +19,9 @@ import {
 
     // protected views
     ConnectedProtected,
+
     ConnectedDeployments,
+    ConnectedCreateDeployment,
 
     ConnectedUsers,
     ConnectedCreateUser,
@@ -52,9 +54,7 @@ export const Routes = () => {
                 <Router history={syncedHistory}>
                     <Route path="/" component={App}>
                         {/* non protected views */}
-                        <IndexRoute component={ConnectedLandscapes}/>
-                        {/* deployment views */}
-                        <Route path="/deployments/*" component={ConnectedDeployments} onEnter={requireAuth}/>
+                        <IndexRoute component={ConnectedLandscapes} onEnter={requireAuth}/>
                         {/* account views */}
                         <Route path="/accounts" component={ConnectedAccounts} onEnter={requireAuth}/>
                         <Route path="/accounts/create" component={ConnectedCreateAccount} onEnter={requireAuth}/>
@@ -64,6 +64,9 @@ export const Routes = () => {
                         <Route path="/landscape/:id" component={ConnectedLandscapeDetails} onEnter={requireAuth}/>
                         <Route path="/landscapes/create" component={ConnectedCreateLandscape} onEnter={requireAuth}/>
                         <Route path="/landscapes/edit/:id" component={ConnectedEditLandscape} onEnter={requireAuth}/>
+                        {/* deployment views */}
+                        <Route path="/:landscapeId/deployments" component={ConnectedDeployments} onEnter={requireAuth}/>
+                        <Route path="/:landscapeId/deployments/create" component={ConnectedCreateDeployment} onEnter={requireAuth}/>
                         {/* user views */}
                         <Route path="/users" component={ConnectedUsers} onEnter={requireAuth}/>
                         <Route path="/users/create" component={ConnectedCreateUser} onEnter={requireAuth}/>

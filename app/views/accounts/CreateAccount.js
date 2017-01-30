@@ -94,7 +94,7 @@ class CreateAccount extends Component {
                             </CardText>
                         </Card>
 
-                        <RaisedButton label='Create' onClick={this.handlesCreateClick}
+                        <RaisedButton label='Save' onClick={this.handlesCreateClick}
                             style={{ margin: 50, float: 'left' }}
                             labelStyle={{ textTransform: 'none' }}/>
                     </Col>
