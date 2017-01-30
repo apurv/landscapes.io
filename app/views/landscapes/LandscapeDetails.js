@@ -1,9 +1,13 @@
 
 import cx from 'classnames'
-import { Row, Col, Button, Tabs, Icon, Table } from 'antd'
+// import { Row, Col, Button, Tabs, Icon, Table } from 'antd'
 import { Loader } from '../../components'
 import React, { Component, PropTypes } from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
+import { Row, Col } from 'react-flexbox-grid'
+import { IoEdit, IoAndroidClose } from 'react-icons/lib/io'
+import { Card, CardHeader, CardText, FlatButton, Tab, Tabs, TextField } from 'material-ui'
+import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table'
 
 const TabPane = Tabs.TabPane
 
@@ -31,8 +35,8 @@ class LandscapeDetails extends Component {
     render() {
         const { animated, viewEntersAnim } = this.state
         const { loading, landscapes, params } = this.props
-
         const currentLandscape = landscapes.find(ls => { return ls._id === params.id })
+        const parsedCFTemplate = JSON.parse(currentLandscape.cloudFormationTemplate)
 
         console.log('%c currentLandscape ', 'background: #1c1c1c; color: rgb(209, 29, 238)', currentLandscape)
 
@@ -61,13 +65,6 @@ class LandscapeDetails extends Component {
             )
         }]
 
-        const data = [{
-            key: '1',
-            name: 'test-4-instance',
-            status: 'deleted',
-            createdAt: '12/16/2016 @ 12:02'
-        }]
-
         if (loading) {
             return (
                 <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
@@ -76,10 +73,112 @@ class LandscapeDetails extends Component {
             )
         }
 
+        let paramDetails = []
+
         return (
             <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
+                <Tabs>
 
-                <Row type="flex">
+                    <Tab label='Template'>
+                        <textarea rows={100} style={{ background: '#f9f9f9', fontFamily: 'monospace', width: '100%' }}>
+                            { currentLandscape.cloudFormationTemplate }
+                        </textarea>
+                    </Tab>
+
+                    <Tab label='Resources'>
+                        <Table>
+                            <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
+                                <TableRow>
+                                    <TableHeaderColumn></TableHeaderColumn>
+                                    <TableHeaderColumn>Resource</TableHeaderColumn>
+                                    <TableHeaderColumn>Resource Type</TableHeaderColumn>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody displayRowCheckbox={false}>
+                                {
+                                    Object.keys(parsedCFTemplate.Resources).map((res, index) => {
+                                        return (
+                                            <TableRow key={`${index}`}>
+                                                <TableRowColumn>{index + 1}</TableRowColumn>
+                                                <TableRowColumn>{res}</TableRowColumn>
+                                                <TableRowColumn>{parsedCFTemplate.Resources[res].Type}</TableRowColumn>
+                                            </TableRow>
+                                        )
+                                    })
+                                }
+                            </TableBody>
+                        </Table>
+                    </Tab>
+
+                    <Tab label='Parameters'>
+                        {
+                            Object.keys(parsedCFTemplate.Parameters).map((key, index) => {
+                                let _param = parsedCFTemplate.Parameters[key]
+
+                                for (let k in _param) {
+
+                                    if (!paramDetails[index]) {
+                                        paramDetails[index] = []
+                                    }
+
+                                    paramDetails[index][k] = _param[k]
+                                }
+
+                                return (
+                                    <Card key={index}>
+                                        <CardHeader title={key} titleStyle={{ fontSize: '13px', paddingRight: 0 }} actAsExpander={true} showExpandableButton={true}/>
+
+                                        {
+                                            paramDetails.map((p, i) => {
+                                                return (
+                                                    <CardText key={i} expandable={true}>
+                                                        <Row>
+                                                            <label style={{ margin: '0px 15px' }}>{Object.keys(p)[i]}</label>
+                                                            <label>{p.Description}</label>
+                                                        </Row>
+                                                    </CardText>
+                                                )
+                                            })
+                                        }
+                                    </Card>
+                                )
+                            })
+                        }
+                    </Tab>
+
+                    <Tab label='Mappings'>
+
+                    </Tab>
+                    <Tab label='Deployments'>
+                        <Table>
+                            <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
+                                <TableRow>
+                                    <TableHeaderColumn>Deployment Name</TableHeaderColumn>
+                                    <TableHeaderColumn>Status</TableHeaderColumn>
+                                    <TableHeaderColumn>Date Created</TableHeaderColumn>
+                                    <TableHeaderColumn></TableHeaderColumn>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody displayRowCheckbox={false}>
+                                <TableRow key={`${2}`}>
+                                    <TableRowColumn>test-2</TableRowColumn>
+                                    <TableRowColumn>ROLLBACK_COMPLETE</TableRowColumn>
+                                    <TableRowColumn></TableRowColumn>
+                                    <TableRowColumn>
+                                        <FlatButton onTouchTap={this.handlesEditDeploymentClick}>
+                                            <IoEdit/>
+                                        </FlatButton>
+                                        <FlatButton onTouchTap={this.handlesDialogToggle}>
+                                            <IoAndroidClose/>
+                                        </FlatButton>
+                                    </TableRowColumn>
+                                </TableRow>
+                            </TableBody>
+                        </Table>
+                    </Tab>
+                </Tabs>
+
+                {/* <Row type="flex">
                     <Col span={12}>
                         <h4>Landscape Details</h4>
                     </Col>
@@ -100,7 +199,7 @@ class LandscapeDetails extends Component {
                     <TabPane tab="Deployments" key="5">
                         <Table columns={columns} dataSource={data} />
                     </TabPane>
-                </Tabs>
+                </Tabs> */}
 
             </div>
         )
