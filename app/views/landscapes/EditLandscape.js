@@ -18,9 +18,6 @@ class EditLandscape extends Component {
 
     componentDidMount() {
         const { enterLandscapes, landscapes, params } = this.props
-
-        let currentLandscape = landscapes.find(ls => { return ls._id === params.id })
-
         enterLandscapes()
     }
 
@@ -38,8 +35,7 @@ class EditLandscape extends Component {
         let self = this
         const { animated, viewEntersAnim } = this.state
         const { loading, landscapes, params } = this.props
-
-        let currentLandscape = landscapes.find(ls => { return ls._id === params.id })
+        const currentLandscape = landscapes.find(ls => { return ls._id === params.id })
 
         if (loading) {
             return (
@@ -92,7 +88,7 @@ class EditLandscape extends Component {
                             {
                                 this.state.cloudFormationTemplate || currentLandscape.cloudFormationTemplate
                                 ?
-                                    <textarea rows={100} style={{ background: '#f9f9f9', fontFamily: 'monospace', width: '100%' }}>{ currentLandscape.cloudFormationTemplate || this.state.cloudFormationTemplate }</textarea>
+                                    <textarea rows={100} style={{ background: '#f9f9f9', fontFamily: 'monospace', width: '100%' }}>{ this.state.cloudFormationTemplate || currentLandscape.cloudFormationTemplate }</textarea>
                                 :
                                     <Row center='xs' middle='xs'>
                                         <Col style={{ marginTop: 25 }}>
@@ -145,10 +141,8 @@ class EditLandscape extends Component {
 
     handlesUpdateClick = event => {
         event.preventDefault()
-        const { mutate, landscapes, params } = this.props
+        const { mutate, params } = this.props
         const { router } = this.context
-
-        let currentLandscape = landscapes.find(ls => { return ls._id === params.id })
 
         let landscapeToUpdate = {}
         // map all fields to landscapeToUpdate
@@ -156,7 +150,7 @@ class EditLandscape extends Component {
             landscapeToUpdate[key] = this.refs[key].getValue()
         }
         // attach imageUri and cloudFormationTemplate
-        landscapeToUpdate._id = currentLandscape._id
+        landscapeToUpdate._id = params._id
         landscapeToUpdate.imageUri = this.state.imageUri || ''
         landscapeToUpdate.cloudFormationTemplate = this.state.cloudFormationTemplate || ''
 

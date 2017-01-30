@@ -16,6 +16,7 @@ import {
     ConnectedLogin,
     ConnectedRegister,
     ConnectedPasswordChange,
+
     // protected views
     ConnectedProtected,
     ConnectedDeployments,
@@ -32,10 +33,13 @@ import {
 
     ConnectedAccounts,
     ConnectedCreateAccount,
+    ConnectedUpdateAccount,
+
     ConnectedLandscapes,
     ConnectedCreateLandscape,
     ConnectedEditLandscape,
     ConnectedLandscapeDetails
+
 } from '../containers'
 
 const store = configureStore()
@@ -48,25 +52,29 @@ export const Routes = () => {
                 <Router history={syncedHistory}>
                     <Route path="/" component={App}>
                         {/* non protected views */}
-                        <IndexRoute component={ConnectedHome}/>
+                        <IndexRoute component={ConnectedLandscapes}/>
                         {/* deployment views */}
                         <Route path="/deployments/*" component={ConnectedDeployments} onEnter={requireAuth}/>
                         {/* account views */}
                         <Route path="/accounts" component={ConnectedAccounts} onEnter={requireAuth}/>
                         <Route path="/accounts/create" component={ConnectedCreateAccount} onEnter={requireAuth}/>
+                        <Route path="/accounts/update/:id" component={ConnectedUpdateAccount} onEnter={requireAuth}/>
                         {/* landscape views */}
                         <Route path="/landscapes" component={ConnectedLandscapes} onEnter={requireAuth}/>
                         <Route path="/landscape/:id" component={ConnectedLandscapeDetails} onEnter={requireAuth}/>
                         <Route path="/landscapes/create" component={ConnectedCreateLandscape} onEnter={requireAuth}/>
                         <Route path="/landscapes/edit/:id" component={ConnectedEditLandscape} onEnter={requireAuth}/>
+                        {/* user views */}
                         <Route path="/users" component={ConnectedUsers} onEnter={requireAuth}/>
                         <Route path="/users/create" component={ConnectedCreateUser} onEnter={requireAuth}/>
                         <Route path="/users/:id" component={ConnectedUserDetails} onEnter={requireAuth}/>
                         <Route path="/users/edit/:id" component={ConnectedEditUser} onEnter={requireAuth}/>
+                        {/* group views */}
                         <Route path="/groups" component={ConnectedGroups} onEnter={requireAuth}/>
                         <Route path="/groups/create" component={ConnectedCreateGroup} onEnter={requireAuth}/>
                         <Route path="/groups/edit/:id" component={ConnectedEditGroup} onEnter={requireAuth}/>
                         <Route path="/groups/:id" component={ConnectedGroupDetails} onEnter={requireAuth}/>
+                        {/* misc views */}
                         <Route path="/login" component={ConnectedLogin}/>
                         <Route path="/register" component={ConnectedRegister}/> {/* logout: just redirects to home (App will take care of removing the token) */}
                         <Route path="/logout" onEnter={logOutUser}/> {/* protected views */}

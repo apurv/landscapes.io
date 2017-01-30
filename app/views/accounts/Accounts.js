@@ -1,17 +1,22 @@
 
 import cx from 'classnames'
-import { Table, Modal, Icon } from 'antd'
-import { Loader } from '../../components'
+// import { Table, Modal, Icon } from 'antd'
+import { Icon } from 'antd'
+import { Dialog, FlatButton } from 'material-ui'
 import React, { Component, PropTypes } from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
+import { IoEdit, IoAndroidClose } from 'react-icons/lib/io'
+import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table'
 
-const confirm = Modal.confirm
+import { Loader } from '../../components'
+// const confirm = Modal.confirm
 
 class Accounts extends Component {
 
     state = {
         animated: true,
-        viewEntersAnim: true
+        viewEntersAnim: true,
+        showDialog: false
     }
 
     componentDidMount() {
@@ -32,34 +37,10 @@ class Accounts extends Component {
         const { animated, viewEntersAnim } = this.state
         const { loading, accounts } = this.props
 
-        const tableHeaders = [{
-            title: 'Account Name',
-            dataIndex: 'name',
-            key: 'name',
-            render: text => <a href="#">{text}</a>,
-        }, {
-            title: 'Region',
-            dataIndex: 'region',
-            key: 'region',
-        }, {
-            title: 'Date Created',
-            dataIndex: 'createdAt',
-            key: 'createdAt',
-        }, {
-            title: '',
-            key: 'action',
-            render: (obj, record) => (
-                <span>
-                    <a onClick={this.handlesEditAccountClick.bind(this, obj)}>
-                        <Icon style={{ fontSize: '16px', color: 'rgb(168, 168, 168)' }} type='edit'/>
-                    </a>
-                    <span className="ant-divider"/>
-                    <a onClick={this.handlesDeleteAccountClick.bind(this, obj)}>
-                        <Icon style={{ fontSize: '16px', color: 'rgb(168, 168, 168)' }} type='close'/>
-                    </a>
-                </span>
-            )
-        }]
+        const confirmActions = [
+            <FlatButton label='Cancel' primary={true} onTouchTap={this.handlesDialogToggle}/>,
+            <FlatButton label='Delete' primary={true} onTouchTap={this.handlesDeleteAccountClick}/>
+        ]
 
         if (loading) {
             return (
@@ -73,13 +54,56 @@ class Accounts extends Component {
             <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
 
                 <a onClick={this.handlesCreateAccountClick}>
-                    <Icon style={{ fontSize: '20px' }} type='plus'/>
+                    <Icon style={{ fontSize: '20px' }} type='plus'/> Add Account
                 </a>
 
-                <Table columns={tableHeaders} dataSource={accounts} />
-
+                <Table>
+                    <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
+                        <TableRow>
+                            <TableHeaderColumn>Account Name</TableHeaderColumn>
+                            <TableHeaderColumn>Region</TableHeaderColumn>
+                            <TableHeaderColumn>Date Created</TableHeaderColumn>
+                            <TableHeaderColumn></TableHeaderColumn>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody displayRowCheckbox={false}>
+                        {
+                            accounts.map((account, index) => {
+                                return (
+                                    <TableRow key={`${index}`}>
+                                        <TableRowColumn>{account.name}</TableRowColumn>
+                                        <TableRowColumn>{account.region}</TableRowColumn>
+                                        <TableRowColumn>{account.createdAt}</TableRowColumn>
+                                        <TableRowColumn>
+                                            <FlatButton onTouchTap={this.handlesEditAccountClick.bind(this, account)}>
+                                                <IoEdit/>
+                                            </FlatButton>
+                                            <FlatButton onTouchTap={this.handlesDialogToggle}>
+                                                <IoAndroidClose/>
+                                            </FlatButton>
+                                            <Dialog title='Delete Account' modal={false} open={this.state.showDialog}
+                                                onRequestClose={this.handlesDialogToggle}
+                                                actions={[
+                                                    <FlatButton label='Cancel' primary={true} onTouchTap={this.handlesDialogToggle}/>,
+                                                    <FlatButton label='Delete' primary={true} onTouchTap={this.handlesDeleteAccountClick.bind(this, account)}/>
+                                                ]}>
+                                                Are you sure you want to delete {account.name}?
+                                            </Dialog>
+                                        </TableRowColumn>
+                                    </TableRow>
+                                )
+                            })
+                        }
+                    </TableBody>
+                </Table>
             </div>
         )
+    }
+
+    handlesDialogToggle = event => {
+        this.setState({
+            showDialog: !this.state.showDialog
+        })
     }
 
     handlesCreateAccountClick = event => {
@@ -89,27 +113,24 @@ class Accounts extends Component {
 
     handlesEditAccountClick = (account, event) => {
         const { router } = this.context
-        router.push({ pathname: '/accounts/edit/' + account._id })
+        router.push({ pathname: '/accounts/update/' + account._id })
     }
 
     handlesDeleteAccountClick = (accountToDelete, event) => {
-        const { mutate } = this.props
+        event.preventDefault()
 
-        confirm({
-            title: `Are you sure you want to delete ${accountToDelete.name}?`,
-            okText: 'Yes',
-            cancelText: 'Cancel',
-            iconType: 'delete',
-            onOk() {
-                mutate({
-                    variables: { account: accountToDelete }
-                 }).then(({ data }) => {
-                    console.log('deleted', data)
-                }).catch((error) => {
-                    console.log('there was an error sending the query', error)
-                })
-            },
-            onCancel() {}
+        const { mutate } = this.props
+        const { router } = this.context
+
+        this.handlesDialogToggle()
+
+        mutate({
+            variables: { account: accountToDelete }
+         }).then(({ data }) => {
+            console.log('deleted', data)
+            router.push({ pathname: '/accounts' })
+        }).catch((error) => {
+            console.log('there was an error sending the query', error)
         })
     }
 }

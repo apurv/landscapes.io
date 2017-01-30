@@ -7,7 +7,7 @@ import { Card, CardHeader, CardText, MenuItem, RaisedButton, SelectField, TextFi
 import './accounts.style.scss'
 import { Loader } from '../../components'
 
-class CreateAccount extends Component {
+class UpdateAccount extends Component {
 
     state = {
         animated: true,
@@ -15,7 +15,7 @@ class CreateAccount extends Component {
     }
 
     componentDidMount() {
-        const { enterLandscapes } = this.props
+        const { enterLandscapes, accounts, params } = this.props
         enterLandscapes()
     }
 
@@ -31,7 +31,8 @@ class CreateAccount extends Component {
     render() {
 
         const { animated, viewEntersAnim } = this.state
-        const { loading, accounts } = this.props
+        const { loading, accounts, params } = this.props
+        const currentAccount = accounts.find(ac => { return ac._id === params.id })
 
         const menuItems = [
             { text: 'Gov Cloud', value: 'us-gov-west-1' },
@@ -55,15 +56,15 @@ class CreateAccount extends Component {
 
         return (
             <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
-                <h5>Create Account</h5>
+                <h5>Update Account</h5>
 
                 <Row center='xs' middle='xs'>
                     <Col xs={6} lg={9} className={cx( { 'create-account': true } )}>
                         <Card>
 
-                            <TextField id='name' ref='name' floatingLabelText='Name' className={cx( { 'two-field-row': true } )}/>
+                            <TextField id='name' ref='name' defaultValue={currentAccount.name} floatingLabelText='Name' className={cx( { 'two-field-row': true } )}/>
 
-                            <SelectField id='region' floatingLabelText='Region' value={this.state.region} onChange={this.handlesRegionChange}
+                            <SelectField id='region' floatingLabelText='Region' value={this.state.region || currentAccount.region} onChange={this.handlesRegionChange}
                                 floatingLabelStyle={{ left: '0px' }} className={cx( { 'two-field-row': true } )}>
                                 {
                                     menuItems.map((item, index) => {
@@ -74,27 +75,27 @@ class CreateAccount extends Component {
                                 }
                             </SelectField>
 
-                            <TextField id='accessKeyId' ref='accessKeyId' floatingLabelText='Access Key ID' fullWidth={true}/>
+                            <TextField id='accessKeyId' ref='accessKeyId' defaultValue={currentAccount.accessKeyId} floatingLabelText='Access Key ID' fullWidth={true}/>
 
-                            <TextField id='secretAccessKey' ref='secretAccessKey' multiLine={true} rows={4} floatingLabelText='Secret Access Key' fullWidth={true}
+                            <TextField id='secretAccessKey' ref='secretAccessKey' defaultValue={currentAccount.secretAccessKey} multiLine={true} rows={4} floatingLabelText='Secret Access Key' fullWidth={true}
                                 floatingLabelStyle={{ left: '0px' }}/>
 
                             <CardHeader title='Advanced' titleStyle={{ fontSize: '13px', paddingRight: 0 }} actAsExpander={true} showExpandableButton={true}/>
 
                             <CardText expandable={true}>
-                                <TextField id='endpoint' ref='endpoint' floatingLabelText='Endpoint' fullWidth={true}/>
+                                <TextField id='endpoint' ref='endpoint' defaultValue={currentAccount.endpoint} floatingLabelText='Endpoint' fullWidth={true}/>
 
-                                <TextField id='caBundlePath' ref='caBundlePath' floatingLabelText='CA Bundle' fullWidth={true}/>
+                                <TextField id='caBundlePath' ref='caBundlePath' defaultValue={currentAccount.caBundlePath} floatingLabelText='CA Bundle' fullWidth={true}/>
 
-                                <Toggle id='rejectUnauthorizedSsl' ref='rejectUnauthorizedSsl' label='Reject Unauthorized SSL'
+                                <Toggle id='rejectUnauthorizedSsl' ref='rejectUnauthorizedSsl' defaultToggled={currentAccount.rejectUnauthorizedSsl} label='Reject Unauthorized SSL'
                                     style={{ marginTop: '25px' }} labelStyle={{ width: 'none' }}/>
 
-                                <TextField id='signatureBlock' ref='signatureBlock' multiLine={true} rows={4} fullWidth={true}
+                                <TextField id='signatureBlock' ref='signatureBlock' defaultValue={currentAccount.signatureBlock} multiLine={true} rows={4} fullWidth={true}
                                     floatingLabelText='Signature Block' floatingLabelStyle={{ left: '0px' }}/>
                             </CardText>
                         </Card>
 
-                        <RaisedButton label='Create' onClick={this.handlesCreateClick}
+                        <RaisedButton label='Update' onClick={this.handlesUpdateClick}
                             style={{ margin: 50, float: 'left' }}
                             labelStyle={{ textTransform: 'none' }}/>
                     </Col>
@@ -109,28 +110,28 @@ class CreateAccount extends Component {
         })
     }
 
-    handlesCreateClick = event => {
-
+    handlesUpdateClick = event => {
         event.preventDefault()
-        const { mutate } = this.props
+        const { mutate, params } = this.props
         const { router } = this.context
 
-        let accountToCreate = {}
+        let accountToUpdate = {}
 
-        // map all fields to accountToCreate
+        // map all fields to accountToUpdate
         for (let key in this.refs) {
             if (key === 'rejectUnauthorizedSsl') {
-                accountToCreate[key] = this.refs[key].isToggled()
+                accountToUpdate[key] = this.refs[key].isToggled()
             } else {
-                accountToCreate[key] = this.refs[key].getValue()
+                accountToUpdate[key] = this.refs[key].getValue()
             }
         }
 
         // attach derived fields
-        accountToCreate.region = this.state.region
+        accountToUpdate._id = params.id
+        accountToUpdate.region = this.state.region
 
         mutate({
-            variables: { account: accountToCreate }
+            variables: { account: accountToUpdate }
          }).then(({ data }) => {
             console.log('account created', data)
             router.push({ pathname: '/accounts' })
@@ -140,14 +141,14 @@ class CreateAccount extends Component {
     }
 }
 
-CreateAccount.propTypes = {
+UpdateAccount.propTypes = {
     currentView: PropTypes.string.isRequired,
     enterLandscapes: PropTypes.func.isRequired,
     leaveLandscapes: PropTypes.func.isRequired
 }
 
-CreateAccount.contextTypes = {
+UpdateAccount.contextTypes = {
     router: PropTypes.object
 }
 
-export default CreateAccount
+export default UpdateAccount
