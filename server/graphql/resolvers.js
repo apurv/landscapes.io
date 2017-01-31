@@ -1,7 +1,9 @@
 import passport from 'passport'
 import { find, filter } from 'lodash'
 import { pubsub } from './subscriptions'
+
 const Landscape = require('./models/landscape')
+const Deployment = require('./models/deployment')
 const Group = require('./models/group')
 const Account = require('./models/account')
 const User = require('../auth/models/user.server.model')
@@ -20,23 +22,28 @@ const resolveFunctions = {
                 if (err) return err
                 return accounts
             })
-        }
-        ,
+        },
+        // TODO: should be with landscapeId
+        deploymentsByLandscapeId() {
+            return Deployment.find().sort('-created').exec((err, deployments) => {
+                console.log('deployments', deployments)
+                if (err) return err
+                return deployments
+            })
+        },
         groups() {
             return Group.find().sort('-created').populate('user', 'displayName').exec((err, groups) => {
                 console.log('groups ---', groups)
                 if (err) return err
                 return groups
             })
-            // return groups.retrieve()
         },
         users() {
             return User.find().sort('-created').populate('user', 'displayName').exec((err, groups) => {
-                console.log('groups ---', groups)
+                console.log('users ---', groups)
                 if (err) return err
                 return groups
             })
-            // return groups.retrieve()
         }
     },
     Mutation: {

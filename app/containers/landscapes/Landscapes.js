@@ -17,13 +17,13 @@ const LandscapeQuery = gql `
             version,
             imageUri,
             infoLink,
+            infoLinkText,
             createdAt,
             description,
             cloudFormationTemplate
         }
     }
  `
- // infoLinkText,
  // img,
  // createdBy
 

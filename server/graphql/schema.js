@@ -3,17 +3,18 @@ import { makeExecutableSchema } from 'graphql-tools'
 import resolvers from './resolvers'
 
 import User from './types/user.js'
+import Group from './types/group.js'
 import Account from './types/account.js'
 import Landscape from './types/landscape.js'
-import Group from './types/group.js'
+import Deployment from './types/deployment.js'
 import Subscription from './types/subscriptions.js'
-
 
 const Query = `
     input userInput {
         userId: String
         isAdmin: Boolean
     }
+
     input LoginInput {
         username: String
         password: String
@@ -43,6 +44,28 @@ const Query = `
         secretAccessKey: String
     }
 
+    input DeploymentInput {
+        _id: String
+        __typename: String
+        createdAt: String
+        stackName: String
+        accountName: String
+        landscapeId: String
+        isDeleted: Boolean
+        description: String
+        location: String
+        billingCode: String
+        flavor: String
+        cloudFormationTemplate: String
+        cloudFormationParameters: [String]
+        tags: [String]
+        notes: [String]
+        stackId: String
+        stackStatus: String
+        stackLastUpdate: String
+        awsErrors: String
+    }
+
     input LandscapeInput {
         _id: String
         __typename: String
@@ -61,16 +84,15 @@ const Query = `
       landscapes: [String]
       users: [userInput]
       permissions: [String]
-
       name: String
       description: String
-
     }
 
     type Query {
         groups: [Group]
         accounts: [Account]
         landscapes: [Landscape]
+        deploymentsByLandscapeId: [Deployment]
         users: [User]
     }
 `
@@ -94,10 +116,14 @@ const Mutation = `
         createLandscape ( landscape: LandscapeInput! ): Landscape
         updateLandscape ( landscape: LandscapeInput! ): Landscape
         deleteLandscape ( landscape: LandscapeInput! ): Landscape
+
+        createDeployment ( deployment: DeploymentInput! ): Deployment
+        updateDeployment ( deployment: DeploymentInput! ): Deployment
+        deleteDeployment ( deployment: DeploymentInput! ): Deployment
     }
 `
 
 export default makeExecutableSchema({
-    typeDefs: [ Query, User, Group, Mutation, Landscape, Account, Subscription ],
+    typeDefs: [ Query, User, Group, Mutation, Landscape, Deployment, Account, Subscription ],
     resolvers,
 })

@@ -51,7 +51,7 @@ class CreateLandscape extends Component {
                 <Col xs={6} lg={9} className={cx( { 'create-landscape': true } )}>
                     <Paper zDepth={1} rounded={false}>
 
-                        <RaisedButton label='Create' onClick={this.handlesCreateClick}
+                        <RaisedButton label='Save' onClick={this.handlesCreateClick}
                             style={{ margin: 50, float: 'right' }}
                             labelStyle={{ textTransform: 'none' }}/>
 
@@ -62,7 +62,7 @@ class CreateLandscape extends Component {
                             floatingLabelStyle={{ left: '0px' }}/>
 
                         <TextField id='infoLink' ref='infoLink' floatingLabelText='Info Link' fullWidth={true}/>
-                        <TextField id='infoLinkText' ref='infoLinkText' floatingLabelText='Link Test' fullWidth={true}/>
+                        <TextField id='infoLinkText' ref='infoLinkText' floatingLabelText='Link Text' fullWidth={true}/>
 
                         <Dropzone id='imageUri' onDrop={this.handlesImageUpload} multiple={false} accept='image/*'
                             style={{ marginLeft: '10px', width: '180px', padding: '15px 0px' }}>

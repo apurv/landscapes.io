@@ -27,34 +27,36 @@ import CreateAccount    from './accounts/CreateAccount'
 import UpdateAccount    from './accounts/UpdateAccount'
 
 import Deployments      from './deployments/Deployments'
+import CreateDeployment      from './deployments/CreateDeployment'
 
 export {
-  // non protected views:
-  Home,
-  PageNotFound,
-  Login,
-  Register,
-  Password,
-  // protected views:
-  Protected,
-  Landscapes,
-  CreateLandscape,
-  EditLandscape,
-  LandscapeDetails,
+    // non protected views:
+    Home,
+    PageNotFound,
+    Login,
+    Register,
+    Password,
+    // protected views:
+    Protected,
+    Landscapes,
+    CreateLandscape,
+    EditLandscape,
+    LandscapeDetails,
 
-  Users,
-  CreateUser,
-  EditUser,
-  UserDetails,
+    Users,
+    CreateUser,
+    EditUser,
+    UserDetails,
 
-  Groups,
-  CreateGroup,
-  EditGroup,
-  GroupDetails,
+    Groups,
+    CreateGroup,
+    EditGroup,
+    GroupDetails,
 
-  Accounts,
-  CreateAccount,
-  UpdateAccount,
+    Accounts,
+    CreateAccount,
+    UpdateAccount,
 
-  Deployments
+    Deployments,
+    CreateDeployment
 }

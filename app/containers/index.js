@@ -20,6 +20,7 @@ import ConnectedGroupDetails from './groups/GroupDetails'
 import GroupDetails from './groups/GroupDetails'
 
 import ConnectedDeployments from './deployments/Deployments'
+import ConnectedCreateDeployment from './deployments/CreateDeployment'
 
 import ConnectedAccounts from './accounts/Accounts'
 import ConnectedCreateAccount from './accounts/CreateAccount'
@@ -46,7 +47,9 @@ export {
 
     // protected view containers
     ConnectedProtected,
+
     ConnectedDeployments,
+    ConnectedCreateDeployment,
 
     ConnectedAccounts,
     ConnectedCreateAccount,

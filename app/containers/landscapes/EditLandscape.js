@@ -2,7 +2,7 @@ import gql from 'graphql-tag'
 import { EditLandscape } from '../../views'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { graphql, compose } from 'react-apollo'
+import { compose, graphql } from 'react-apollo'
 import * as viewsActions from '../../redux/modules/views'
 
 /* -----------------------------------------
