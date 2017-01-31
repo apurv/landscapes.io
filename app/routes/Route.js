@@ -70,10 +70,12 @@ export const Routes = () => {
                         <Route path="/users/:id" component={ConnectedUserDetails} onEnter={requireAuth}/>
                         <Route path="/users/edit/:id" component={ConnectedEditUser} onEnter={requireAuth}/>
                         {/* group views */}
-                        <Route path="/groups" component={ConnectedGroups} onEnter={requireAuth}/>
-                        <Route path="/groups/create" component={ConnectedCreateGroup} onEnter={requireAuth}/>
-                        <Route path="/groups/edit/:id" component={ConnectedEditGroup} onEnter={requireAuth}/>
-                        <Route path="/groups/:id" component={ConnectedGroupDetails} onEnter={requireAuth}/>
+                        <Route name="groups" path="groups">
+                          <IndexRoute component={ConnectedGroups} onEnter={requireAuth}/>
+                          <Route path="create" component={ConnectedCreateGroup} onEnter={requireAuth}/>
+                          <Route path="edit/:id" component={ConnectedEditGroup} onEnter={requireAuth}/>
+                          <Route path=":id" component={ConnectedGroupDetails} onEnter={requireAuth}/>
+                        </Route>
                         {/* misc views */}
                         <Route path="/login" component={ConnectedLogin}/>
                         <Route path="/register" component={ConnectedRegister}/> {/* logout: just redirects to home (App will take care of removing the token) */}

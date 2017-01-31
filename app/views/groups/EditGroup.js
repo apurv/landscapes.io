@@ -79,15 +79,13 @@ class EditGroup extends Component {
           }
       }
 
-      componentWillMount(){
-        const { loading, groups, landscapes, users, params } = this.props
+      componentWillReceiveProps(nextProps) {
+        const { loading, groups, landscapes, users, params } = nextProps
 
         let currentGroup = groups.find(ls => { return ls._id === params.id })
         console.log('%c currentGroup ', 'background: #1c1c1c; color: rgb(209, 29, 238)', currentGroup)
         this.setState({users: users})
         this.setState({currentGroup: currentGroup})
-        this.setState({name: currentGroup.name})
-        this.setState({description: currentGroup.description})
         this.setState({landscapes: landscapes})
         let selectedLandscapeRows = []
         let selectedUserRows = []

@@ -127,8 +127,6 @@ class CreateUser extends Component {
                     }
 
                         <h4>Create User</h4><br/>
-                        <Tabs >
-                          <Tab label="User" key="1">
                           <div style={styles.root}>
                           <GridList
                             cols={1}
@@ -182,38 +180,6 @@ class CreateUser extends Component {
                             </GridTile>
                           </GridList>
                           </div>
-                          </Tab>
-                          <Tab label="Groups" key="2">
-                          <Table height={this.state.height} fixedHeader={this.state.fixedHeader} fixedFooter={this.state.fixedFooter}
-                                  selectable={this.state.selectable} multiSelectable={this.state.multiSelectable}
-                                  onRowSelection={this.handleOnRowSelection}>
-                                    <TableHeader displaySelectAll={this.state.showCheckboxes} adjustForCheckbox={this.state.showCheckboxes}
-                                      enableSelectAll={this.state.enableSelectAll} >
-                                      <TableRow>
-                                        <TableHeaderColumn tooltip="Name">Name</TableHeaderColumn>
-                                        <TableHeaderColumn tooltip="Permissions">Permissions</TableHeaderColumn>
-                                      </TableRow>
-                                    </TableHeader>
-                                    <TableBody displayRowCheckbox={this.state.showCheckboxes} deselectOnClickaway={this.state.deselectOnClickaway}
-                                      showRowHover={this.state.showRowHover} stripedRows={this.state.stripedRows} >
-                                      {groups.map( (row, index) => (
-                                        <TableRow key={row._id} selected={row.selected}>
-                                          <TableRowColumn>{row.name}</TableRowColumn>
-                                          <TableRowColumn>{row.permissions}</TableRowColumn>
-                                        </TableRow>
-                                        ))}
-                                    </TableBody>
-                                    <TableFooter adjustForCheckbox={this.state.showCheckboxes}   >
-                                      <TableRow>
-                                        <TableRowColumn>Email</TableRowColumn>
-                                        <TableRowColumn>Username</TableRowColumn>
-                                        <TableRowColumn>Role</TableRowColumn>
-                                      </TableRow>
-                                    </TableFooter>
-                                  </Table>
-
-                          </Tab>
-                        </Tabs>
                     </div>
             )
         }

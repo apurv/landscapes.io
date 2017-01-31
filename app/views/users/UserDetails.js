@@ -54,6 +54,27 @@ class UserDetails extends Component {
         enterUsers()
     }
 
+    // Necessary for case: hard refresh or route from no other state
+    componentWillReceiveProps(nextProps){
+      console.log('nextProps', nextProps)
+      const { loading, users, params } = nextProps
+
+      if(users){
+        let currentUser = users.find(ls => { return ls._id === params.id })
+        this.setState({currentUser: currentUser})
+      }
+    }
+
+    // Necessary for case: routes from another state
+    componentWillMount(){
+      const { loading, users, params } = this.props
+
+      if(users){
+        let currentUser = users.find(ls => { return ls._id === params.id })
+        this.setState({currentUser: currentUser})
+      }
+    }
+
     shouldComponentUpdate(nextProps, nextState) {
         return shallowCompare(this, nextProps, nextState)
     }
@@ -69,8 +90,6 @@ class UserDetails extends Component {
             let self = this
             const { animated, viewEntersAnim } = this.state
             const { loading, users, params } = this.props
-
-            let currentUser = users.find(ls => { return ls._id === params.id })
 
             const formItemLayout = {
                 labelCol: { span: 8 },
@@ -97,16 +116,16 @@ class UserDetails extends Component {
                       style={styles.gridList}
                     >
                         <GridTile key='name'>
-                        <p>First Name:  {currentUser.firstName} {currentUser.lastName}</p>
+                        <p>First Name:  {this.state.currentUser.firstName} {this.state.currentUser.lastName}</p>
                         </GridTile>
                         <GridTile key='email' >
-                        <p>Email:  {currentUser.email}</p>
+                        <p>Email:  {this.state.currentUser.email}</p>
                         </GridTile>
                         <GridTile key='username'>
-                        <p>Username:  {currentUser.username}</p>
+                        <p>Username:  {this.state.currentUser.username}</p>
                       </GridTile>
                         <GridTile key='Role'>
-                        <p>Role:  {currentUser.role}</p>
+                        <p>Role:  {this.state.currentUser.role}</p>
                       </GridTile>
                     </GridList>
                     </div>
@@ -116,11 +135,8 @@ class UserDetails extends Component {
 
         handlesEditClick = event => {
           const { router } = this.context
-          const { users, params } = this.props
 
-          let currentUser = users.find(ls => { return ls._id === params.id })
-
-          router.push({ pathname: `/users/edit/${currentUser._id}` })
+          router.push({ pathname: `/users/edit/${this.state.currentUser._id}` })
 
         }
 

@@ -64,7 +64,8 @@ class GroupDetails extends Component {
           enableSelectAll: true,
           deselectOnClickaway: true,
           showCheckboxes: true,
-          height:'300'
+          height:'300',
+          currentGroup: {}
     }
 
     static childContextTypes =
@@ -78,30 +79,35 @@ class GroupDetails extends Component {
               muiTheme: getMuiTheme()
           }
       }
-
-
     componentDidMount() {
-        const { enterGroups } = this.props
-        const { loading, groups, landscapes, users, params } = this.props
-
-        let currentGroup = groups.find(ls => { return ls._id === params.id })
-        console.log('%c currentGroup ', 'background: #1c1c1c; color: rgb(209, 29, 238)', currentGroup)
-        this.setState({currentGroup: currentGroup})
-        this.setState({name: currentGroup.name})
-        this.setState({description: currentGroup.description})
-        this.setState({permissions: currentGroup.permissions})
-
-        enterGroups()
+        const { enterGroupDetails, groups, params } = this.props
+        if(groups){
+          let currentGroup = groups.find(ls => { return ls._id === params.id })
+          this.setState({currentGroup: currentGroup})
+        }
+        console.log('groups- ---- componentDidMount', groups)
+        enterGroupDetails()
     }
 
+    componentWillReceiveProps(nextProps) {
+      // use the name from nextProps to get the profile
+      const { enterGroupDetails, groups, params } = nextProps
+      if(groups){
+        let currentGroup = groups.find(ls => { return ls._id === params.id })
+        this.setState({currentGroup: currentGroup})
+      }
+      console.log('groups- ---- componentWillMount', groups)
+    }
 
     shouldComponentUpdate(nextProps, nextState) {
+        console.log('shouldComponentUpdate nextProps', nextProps)
+        console.log('shouldComponentUpdate nextState', nextState)
         return shallowCompare(this, nextProps, nextState)
     }
 
     componentWillUnmount() {
-        const { leaveGroups } = this.props
-        leaveGroups()
+        const { leaveGroupDetails } = this.props
+        leaveGroupDetails()
     }
 
     render() {
@@ -110,7 +116,8 @@ class GroupDetails extends Component {
         const { animated, viewEntersAnim } = this.state
         const { loading, groups, landscapes, users, params } = this.props
 
-        if (loading) {
+        console.log('GROUPS', groups)
+        if (loading || !groups) {
             return (
                 <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
                     <Loader/>
@@ -120,19 +127,7 @@ class GroupDetails extends Component {
 
         return (
             <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
-            <Snackbar
-              open={this.state.successOpen}
-              message="Group successfully updated."
-              autoHideDuration={3000}
-              onRequestClose={this.handleRequestClose}
-            />
-            <Snackbar
-              open={this.state.failOpen}
-              message="Error updating group"
-              autoHideDuration={3000}
-              onRequestClose={this.handleRequestClose}
-            />
-                <h4><strong>Group:</strong> {this.state.name}</h4><br/>
+                <h4><strong>Group:</strong> {this.state.currentGroup.name}</h4><br/>
                   <div style={styles.root}>
 
                   <Card style={{padding:20}}>
@@ -142,13 +137,13 @@ class GroupDetails extends Component {
                     style={styles.gridList}
                   >
                       <GridTile key='name'>
-                        <p>Name: {this.state.name} </p>
+                        <p>Name: {this.state.currentGroup.name} </p>
                       </GridTile>
                       <GridTile key='description' >
-                        <p>Description: {this.state.description} </p>
+                        <p>Description: {this.state.currentGroup.description} </p>
                       </GridTile>
                       <GridTile key='permissions'>
-                      <p> Permissions: {this.state.permissions} </p>
+                      <p> Permissions: {this.state.currentGroup.permissions} </p>
                     </GridTile>
                     <GridTile>
                         <Table height={this.state.height} fixedHeader={this.state.fixedHeader} fixedFooter={this.state.fixedFooter}
@@ -250,8 +245,8 @@ class GroupDetails extends Component {
 
 GroupDetails.propTypes = {
     currentView: PropTypes.string.isRequired,
-    enterGroups: PropTypes.func.isRequired,
-    leaveGroups: PropTypes.func.isRequired
+    enterGroupDetails: PropTypes.func.isRequired,
+    leaveGroupDetails: PropTypes.func.isRequired
 }
 
 GroupDetails.contextTypes = {

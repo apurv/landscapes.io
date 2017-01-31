@@ -14,6 +14,10 @@ const GroupQuery = gql `
         groups {
             _id,
             name,
+            users{
+              isAdmin,
+              userId
+            },
             description,
             landscapes,
             permissions
@@ -43,8 +47,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = (dispatch) => {
     return bindActionCreators({
-        enterGroups: viewsActions.enterGroups,
-        leaveGroups: viewsActions.leaveGroups
+        enterGroupDetails: viewsActions.enterGroupDetails,
+        leaveGroupDetails: viewsActions.leaveGroupDetails
     }, dispatch)
 }
 

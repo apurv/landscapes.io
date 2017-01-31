@@ -78,35 +78,31 @@ class EditUser extends Component {
 
     componentDidMount() {
         const { enterUsers } = this.props
-        const { loading, groups, landscapes, users, params } = this.props
-
-        let currentUser = users.find(ls => { return ls._id === params.id })
-        let userGroups = []
-        let currentGroups = []
-        groups.find(group => {
-          console.log('%c group ', 'background: #1c1c1c; color: rgb(200, 29, 238)', group)
-            if(group.users){
-              return group.users.find(user => {
-                console.log('%c group.users user ', 'background: #1c1c1c; color: rgb(100, 29, 238)', user)
-                if(user.userId === currentUser._id){
-                  console.log('%c EQUALS', 'background: #1c1c1c; color: rgb(0, 29, 238)')
-                  group.selected = true;
-                  console.log('group=====', group)
-                }
-                return
-              })
-              currentGroups.push(group)
-            }
-            else {
-              currentGroups.push(group)
-              return
-            }
-        })
-        this.setState({currentGroups: currentGroups})
-
-        this.setState({currentUser})
-        this.setState({ _id:currentUser._id, password: currentUser.password, username: currentUser.username, role: currentUser.role, email: currentUser.email, firstName: currentUser.firstName, lastName: currentUser.lastName})
         enterUsers()
+    }
+
+    // Necessary for case: hard refresh or route from no other state
+    componentWillReceiveProps(nextProps){
+      const { loading, groups, landscapes, users, params } = nextProps
+
+      let currentUser = {}
+      if(users){
+        let currentUser = users.find(ls => { return ls._id === params.id })
+        this.setState({ _id:currentUser._id, password: currentUser.password, username: currentUser.username, role: currentUser.role, email: currentUser.email, firstName: currentUser.firstName, lastName: currentUser.lastName})
+      }
+      this.setState({currentUser})
+    }
+
+    // Necessary for case: routes from another state
+    componentWillMount(){
+      const { loading, groups, landscapes, users, params } = this.props
+
+      let currentUser = {}
+      if(users){
+        currentUser = users.find(ls => { return ls._id === params.id })
+        this.setState({ _id:currentUser._id, password: currentUser.password, username: currentUser.username, role: currentUser.role, email: currentUser.email, firstName: currentUser.firstName, lastName: currentUser.lastName})
+      }
+      this.setState({currentUser})
     }
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -124,17 +120,6 @@ class EditUser extends Component {
         const { animated, viewEntersAnim } = this.state
         const { loading, groups, landscapes, users, params } = this.props
 
-        let currentGroups = [];
-        if(!this.state.currentGroups){
-          currentGroups = groups
-        }
-        else{
-          currentGroups = this.state.currentGroups
-        }
-        console.log('GROUPS', groups)
-        console.log('currentGroups', currentGroups)
-        console.log('landscapes', landscapes)
-        console.log('users', users)
         const formItemLayout = {
             labelCol: { span: 8 },
             wrapperCol: { span: 12 }
@@ -167,8 +152,6 @@ class EditUser extends Component {
             }
 
                 <h4>Edit User</h4><br/>
-                <Tabs >
-                  <Tab label="User" key="1">
                   <div style={styles.root}>
                   <GridList
                     cols={1}
@@ -217,57 +200,8 @@ class EditUser extends Component {
                     </GridTile>
                   </GridList>
                   </div>
-                  </Tab>
-                  <Tab label="Groups" key="2">
-                  <Table height={this.state.height} deselectOnClickaway={false} fixedHeader={this.state.fixedHeader} fixedFooter={this.state.fixedFooter}
-                          selectable={this.state.selectable} multiSelectable={this.state.multiSelectable}
-                          onRowSelection={this.handleOnRowSelection}>
-                            <TableHeader displaySelectAll={this.state.showCheckboxes} adjustForCheckbox={this.state.showCheckboxes}
-                              enableSelectAll={this.state.enableSelectAll} >
-                              <TableRow>
-                                <TableHeaderColumn tooltip="Name">Name</TableHeaderColumn>
-                                <TableHeaderColumn tooltip="Permissions">Permissions</TableHeaderColumn>
-                              </TableRow>
-                            </TableHeader>
-                            <TableBody deselectOnClickaway={false}	 displayRowCheckbox={this.state.showCheckboxes}
-                              showRowHover={this.state.showRowHover} stripedRows={this.state.stripedRows} >
-                              {currentGroups.map( (row, index) => (
-                                <TableRow key={row._id} selected={true} >
-                                  <TableRowColumn>{row.name}</TableRowColumn>
-                                  <TableRowColumn>{row.permissions}</TableRowColumn>
-                                </TableRow>
-                                ))}
-                            </TableBody>
-                            <TableFooter adjustForCheckbox={this.state.showCheckboxes}   >
-                              <TableRow>
-                                <TableRowColumn>Email</TableRowColumn>
-                                <TableRowColumn>Username</TableRowColumn>
-                                <TableRowColumn>Role</TableRowColumn>
-                              </TableRow>
-                            </TableFooter>
-                          </Table>
-
-                  </Tab>
-                </Tabs>
             </div>
         )
-    }
-
-    handleRoleChange= event => {
-        if(this.state.role === 'admin'){
-          this.setState({role: ''})
-        }
-    }
-
-    handleOnRowSelection= selectedRows => {
-        console.log('THIS IS A ROW CHANGE', selectedRows)
-        const groups = this.state.groups;
-        const currentUser = this.state.currentUser;
-        for(var i=0; i< selectedRows.length; i++){
-            console.log(groups[selectedRows[i]]._id)
-            currentUser.groups.push(groups[selectedRows[i]]._id)
-        }
-
     }
 
     handlesOnEmailChange = event => {
@@ -312,18 +246,7 @@ class EditUser extends Component {
         };
         console.log('UPDATING user -', userToEdit)
         console.log('this.props -', this.props)
-
-        for (var i = 0; i< this.state.currentUser.groups; i++){
-          let groupToUpdate = groups.find(ls => { return ls._id === this.state.currentUser.groups[i] })
-          groups.users.push({ isAdmin: false, userId: this.state._id })
-          this.props.EditGroupWithMutation({
-              variables: { group: groupToUpdate }
-           }).then(({ data }) => {
-              console.log('got data', data)
-          }).catch((error) => {
-            console.log('error: ', error)
-        })
-      }
+        
         this.props.EditUserWithMutation({
             variables: { user: userToEdit }
          }).then(({ data }) => {

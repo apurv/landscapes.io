@@ -13,6 +13,8 @@ const ENTER_USERS_VIEW = 'ENTER_USERS_VIEW'
 const LEAVE_USERS_VIEW = 'LEAVE_USERS_VIEW'
 const ENTER_GROUPS_VIEW = 'ENTER_GROUPS_VIEW'
 const LEAVE_GROUPS_VIEW = 'LEAVE_GROUPS_VIEW'
+const ENTER_GROUP_DETAILS_VIEW = 'ENTER_GROUP_DETAILS_VIEW'
+const LEAVE_GROUP_DETAILS_VIEW = 'LEAVE_GROUP_DETAILS_VIEW'
 const ENTER_LOGIN_VIEW = 'ENTER_LOGIN_VIEW'
 const LEAVE_LOGIN_VIEW = 'LEAVE_LOGIN_VIEW'
 const ENTER_REGISTER_VIEW = 'ENTER_REGISTER_VIEW'
@@ -167,6 +169,17 @@ export function enterGroups() {
 export function leaveGroups() {
     return {
         type: LEAVE_GROUPS_VIEW, currentView: 'groups'
+    }
+}
+export function enterGroupDetails() {
+    return {
+        type: ENTER_GROUP_DETAILS_VIEW, currentView: 'group-details'
+    }
+}
+
+export function leaveGroupDetails() {
+    return {
+        type: LEAVE_GROUP_DETAILS_VIEW, currentView: 'group-details'
     }
 }
 
