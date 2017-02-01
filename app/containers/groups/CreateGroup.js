@@ -47,10 +47,20 @@ const LandscapeQuery = gql `
             description,
             cloudFormationTemplate
         }
+    }
+ `
+const GroupQuery = gql `
+    query getGroups {
         groups {
             _id,
             name,
-            description
+            users{
+              isAdmin,
+              userId
+            }
+            description,
+            landscapes,
+            permissions
         }
     }
  `
@@ -72,30 +82,17 @@ const GroupsWithQuery = graphql(UserQuery, {
     })
   }
 )
+(graphql(GroupQuery, {
+    props: ({ data: { loading, groups, refetch } }) => ({
+        groups,
+        loading,
+        refetchGroups: refetch
+    })
+  }
+)
 (
   graphql(createGroupMutation, {name: 'CreateGroupWithMutation'})
-(CreateGroup)))
-// const LandscapesWithQuery = graphql(LandscapeQuery, {
-//     props: ({ data: { loading, landscapes, groups } }) => ({
-//         landscapes,
-//         groups,
-//         loading
-//     })
-// })(CreateGroup)
-
-//
-// const NewEntryWithData =  graphql(LandscapeQuery, {props: ({ data: { loading, landscapes, groups } }) => ({
-//     landscapes,
-//     groups,
-//     loading
-// })})(graphql(UserQuery, {
-//     props: ({ data: { loading, users } }) => ({
-//         users,
-//         loading
-//     })
-// }))(
-//   graphql(createGroupMutation, {name: 'CreateGroupWithMutation'})(CreateGroup)
-// )
+(CreateGroup))))
 /* -----------------------------------------
   Redux
  ------------------------------------------*/

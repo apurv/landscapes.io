@@ -119,7 +119,7 @@ function requireAuth(nextState, replace) {
 
 function logOutUser(nextState, replace) {
     replace({
-        pathname: '/',
+        pathname: '/login',
         state: {
             nextPathname: nextState.location.pathname
         }

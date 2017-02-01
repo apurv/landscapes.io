@@ -21,15 +21,6 @@
       "hideWhenUserAuth": true
     },
     {
-      "label":      "Register",
-      "link":       "/register",
-      "view":       "register",
-      "isRouteBtn": true,
-      "alwaysShows": false,
-      "showWhenUserAuth": false,
-      "hideWhenUserAuth": true
-    },
-    {
       "label":      "Groups",
       "link":       "/groups",
       "view":       "groups",

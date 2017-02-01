@@ -223,7 +223,9 @@ class CreateUser extends Component {
         }
 
         handlesCreateClick = event => {
+          const { router } = this.context
 
+          const { refetchUsers } = this.props
             event.preventDefault()
 
             // let userToCreate = this.props.form.getFieldsValue()
@@ -239,13 +241,18 @@ class CreateUser extends Component {
             this.props.CreateUserMutation({
                 variables: { user: userToCreate }
              }).then(({ data }) => {
-               const { router } = this.context
                 console.log('got data', data)
-                this.setState({
-                  successOpen: true
-                })
+            }).then(() =>{
+                this.props.refetchUsers({}).then(({ data }) =>{
+                  console.log('got MORE data', data);
+                  this.setState({
+                    successOpen: true
+                  })
 
-                router.push({ pathname: '/users' })
+                  router.push({ pathname: '/users' })
+                }).catch((error) => {
+                    console.log('there was an error sending the SECOND query', error)
+                })
             }).catch((error) => {
               this.setState({
                 failOpen: true
@@ -265,7 +272,8 @@ class CreateUser extends Component {
 CreateUser.propTypes = {
     currentView: PropTypes.string.isRequired,
     enterUsers: PropTypes.func.isRequired,
-    leaveUsers: PropTypes.func.isRequired
+    leaveUsers: PropTypes.func.isRequired,
+    refetchUsers: PropTypes.func
 }
 
 CreateUser.contextTypes = {

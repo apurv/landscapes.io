@@ -66,19 +66,15 @@ class Groups extends Component {
                       <Card key={i} style={{ width: 300, margin: '20px', float: 'left' }}>
                           <CardHeader
                             title={group.name}
+                            onClick={this.handlesGroupClick.bind(this, group)}
                           />
-                          <CardText>
+                          <CardText onClick={this.handlesGroupClick.bind(this, group)}>
                                 {group.description}
                           </CardText>
                           <CardActions>
                             <FlatButton onClick={this.handlesEditGroupClick.bind(this, group)}>
                               <a onClick={this.handlesEditGroupClick.bind(this, group)}>
-                                <Icon style={{ fontSize: '20px' }} type='edit'/>
-                              </a>
-                            </FlatButton>
-                            <FlatButton onClick={this.handlesGroupClick.bind(this, group)}>
-                              <a onClick={this.handlesGroupClick.bind(this, group)}>
-                                <Icon style={{ fontSize: '20px' }} type='select'/>
+                                <Icon style={{ fontSize: '20px' }} type='edit'/> EDIT
                               </a>
                             </FlatButton>
                           </CardActions>
