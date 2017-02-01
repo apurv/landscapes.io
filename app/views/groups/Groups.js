@@ -1,6 +1,6 @@
 
 import cx from 'classnames'
-import { Icon } from 'antd'
+import { IoEdit, IoLoadC, IoIosPlusEmpty } from 'react-icons/lib/io'
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import FlatButton from 'material-ui/FlatButton';
@@ -78,7 +78,7 @@ class Groups extends Component {
         return (
             <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
                 <a onClick={this.handlesCreateGroupClick}>
-                    <p style={{ fontSize: '20px' }}><Icon style={{ fontSize: '20px' }} type='plus'/> Add Group</p>
+                    <p style={{ fontSize: '20px' }}><IoIosPlusEmpty size={30}/>Add Group</p>
                 </a>
 
                 <ul>
@@ -95,7 +95,7 @@ class Groups extends Component {
                           <CardActions>
                             <FlatButton onClick={this.handlesEditGroupClick.bind(this, group)}>
                               <a onClick={this.handlesEditGroupClick.bind(this, group)}>
-                                <Icon style={{ fontSize: '20px' }} type='edit'/> EDIT
+                                <IoEdit size={20}/> EDIT
                               </a>
                             </FlatButton>
                           </CardActions>

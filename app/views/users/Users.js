@@ -1,11 +1,12 @@
 import cx from 'classnames'
-import { Icon } from 'antd'
+import { IoEdit, IoLoadC, IoIosPlusEmpty } from 'react-icons/lib/io'
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import FlatButton from 'material-ui/FlatButton';
 import { Loader } from '../../components'
 import React, { Component, PropTypes } from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
+import defaultImage from '../../style/empty.png'
 
 
 class Users extends Component {
@@ -33,11 +34,25 @@ getChildContext()
     }
     componentWillReceiveProps(nextProps){
       const {users} = nextProps;
-      this.setState({users: users});
+      if(users){
+        for(var i = 0; i< users.length; i++){ //TODO: MUST BE REAL IMAGE
+          if(!users[i].imageUri){
+            users[i].imageUri = defaultImage
+          }
+        }
+        this.setState({users: users});
+      }
     }
     componentWillMount(){
-      const {users} = this.props;
-      this.setState({users: users});
+      const { users } = this.props;
+      if(users){
+        for(var i = 0; i< users.length; i++){ //TODO: MUST BE REAL IMAGE
+          if(!users[i].imageUri){
+            users[i].imageUri = defaultImage
+          }
+        }
+        this.setState({users: users});
+      }
     }
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -53,6 +68,7 @@ getChildContext()
         const { animated, viewEntersAnim } = this.state
         const { loading } = this.props
 
+
         if (loading) {
             return (
                 <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
@@ -63,8 +79,9 @@ getChildContext()
 
         return (
             <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
+              {console.log('this.state.users', this.state.users)}
                 <a onClick={this.handlesCreateGroupClick}>
-                    <p style={{ fontSize: '20px' }}><Icon style={{ fontSize: '20px' }} type='plus'/> Add User</p>
+                  <p style={{ fontSize: '20px' }}><IoIosPlusEmpty size={30}/>Add User</p>
                 </a>
 
                 <ul>
@@ -74,6 +91,7 @@ getChildContext()
                             <CardHeader
                               title={user.username}
                               subtitle={user.email}
+                              avatar={user.imageUri}
                               onClick={this.handlesGroupClick.bind(this, user)}
                             />
                             <CardText onClick={this.handlesGroupClick.bind(this, user)}>
@@ -83,7 +101,7 @@ getChildContext()
                             <CardActions>
                               <FlatButton onClick={this.handlesEditGroupClick.bind(this, user)}>
                                 <a onClick={this.handlesEditGroupClick.bind(this, user)}>
-                                  <Icon style={{ fontSize: '20px' }} type='edit'/> EDIT
+                                  <IoEdit size={20}/> EDIT
                                 </a>
                               </FlatButton>
                               {/*<FlatButton onClick={this.handlesGroupClick.bind(this, user)}>
