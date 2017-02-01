@@ -79,8 +79,8 @@ class CreateLandscape extends Component {
                         <TextField id='name' ref='name' floatingLabelText='Name' className={cx( { 'two-field-row': true } )}/>
                         <TextField id='version' ref='version' floatingLabelText='Version' className={cx( { 'two-field-row': true } )}/>
 
-                        <TextField id='description' ref='description' multiLine={true} rows={4} floatingLabelText='Description' fullWidth={true}
-                            floatingLabelStyle={{ left: '0px' }}/>
+                        <TextField id='description' ref='description' multiLine={true} rows={4} floatingLabelText='Description'
+                            fullWidth={true} floatingLabelStyle={{ left: '0px' }} textareaStyle={{ width: '95%' }}/>
 
                         <TextField id='infoLink' ref='infoLink' floatingLabelText='Info Link' fullWidth={true}/>
                         <TextField id='infoLinkText' ref='infoLinkText' floatingLabelText='Link Text' fullWidth={true}/>

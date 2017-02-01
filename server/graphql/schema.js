@@ -57,6 +57,8 @@ const Query = `
         location: String
         billingCode: String
         flavor: String
+        accessKeyId: String
+        secretAccessKey: String
         cloudFormationTemplate: String
         cloudFormationParameters: [String]
         tags: [String]

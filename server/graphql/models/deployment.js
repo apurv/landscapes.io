@@ -1,8 +1,8 @@
-// landscape.js
+// deployment.js
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
-// landscape schema
+// deployment schema
 const deploymentSchema = new Schema({
     createdAt: { type: Date, default: Date.now },
     createdBy: { type: String, required: true },

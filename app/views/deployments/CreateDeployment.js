@@ -84,7 +84,8 @@ class CreateDeployment extends Component {
                                 }
                             </SelectField>
 
-                            <TextField id='description' ref='description' floatingLabelText='Description' fullWidth={true}/>
+                            <TextField id='description' ref='description' value={this.state.templateDescription} multiLine={true} rows={4}
+                                floatingLabelText='Description' fullWidth={true} floatingLabelStyle={{ left: '0px' }} textareaStyle={{ width: '95%' }}/>
 
                             <SelectField id='location' floatingLabelText='Region' value={this.state.location} onChange={this.handlesRegionChange}
                                 floatingLabelStyle={{ left: '0px' }} className={cx( { 'two-field-row': true } )}>
@@ -143,8 +144,14 @@ class CreateDeployment extends Component {
     }
 
     handlesAccountChange = (event, index, accountName) => {
-        const { accounts } = this.props
+        const { accounts, landscapes, params } = this.props
+
         const account = accounts.find(acc => { return acc.name === accountName })
+        const currentLandscape = landscapes.find(ls => { return ls._id === params.landscapeId })
+        const template = JSON.parse(currentLandscape.cloudFormationTemplate)
+
+        console.log('%c currentLandscape ', 'background: #1c1c1c; color: deeppink', currentLandscape)
+        console.log('%c template ', 'background: #1c1c1c; color: limegreen', template)
 
         this.setState({
             accountName: accountName,
@@ -153,7 +160,9 @@ class CreateDeployment extends Component {
             endpoint: account.endpoint || '',
             caBundlePath: account.caBundlePath || '',
             rejectUnauthorizedSsl: account.rejectUnauthorizedSsl || '',
-            signatureBlock: account.signatureBlock || ''
+            signatureBlock: account.signatureBlock || '',
+            templateDescription: template.Description,
+            templateParameters: template.Parameters
         })
     }
 
@@ -166,8 +175,9 @@ class CreateDeployment extends Component {
     handlesDeployClick = event => {
 
         event.preventDefault()
-        const { mutate, params } = this.props
+        const { mutate, landscapes, params } = this.props
         const { router } = this.context
+        const currentLandscape = landscapes.find(ls => { return ls._id === params.landscapeId })
 
         let deploymentToCreate = {}
 
@@ -181,9 +191,13 @@ class CreateDeployment extends Component {
         }
 
         // attach derived fields
+        deploymentToCreate.tags = {}
         deploymentToCreate.location = this.state.location
         deploymentToCreate.accountName = this.state.accountName
         deploymentToCreate.landscapeId = params.landscapeId
+        deploymentToCreate.cloudFormationTemplate = currentLandscape.cloudFormationTemplate
+        deploymentToCreate.cloudFormationParameters = this.state.templateParameters
+
 
         console.log('%c deploymentToCreate ', 'background: #1c1c1c; color: limegreen', deploymentToCreate)
 
@@ -191,7 +205,7 @@ class CreateDeployment extends Component {
             variables: { deployment: deploymentToCreate }
          }).then(({ data }) => {
             console.log('deployment created', data)
-            router.push({ pathname: '/accounts' })
+            router.push({ pathname: `/landscapes` })
         }).catch(error => {
             console.log('there was an error sending the query', error)
         })

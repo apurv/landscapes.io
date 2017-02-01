@@ -9,6 +9,23 @@ import * as viewsActions from '../../redux/modules/views'
   GraphQL - Apollo client
  ------------------------------------------*/
 
+const LandscapeQuery = gql `
+    query getLandscapes {
+        landscapes {
+            _id,
+            description,
+            cloudFormationTemplate
+        }
+    }
+`
+
+const LandscapeWithQuery = graphql(LandscapeQuery, {
+    props: ({ data: { loading, landscapes } }) => ({
+        landscapes,
+        loading
+    })
+})
+
 const AccountsQuery = gql `
     query getAccounts {
         accounts {
@@ -26,36 +43,24 @@ const AccountsQuery = gql `
         }
     }
  `
- // createdBy
 
-let tempId
- const LandscapeWithQuery = graphql(AccountsQuery, {
-     props: ({ data: { loading, landscape } }) => ({
-         landscape,
-         loading,
-         passLandscape(landscapeId) {
-             tempId = landscapeId
-         },
-         landscapeId: tempId
+ const AccountsWithQuery = graphql(AccountsQuery, {
+     props: ({ data: { loading, accounts } }) => ({
+         accounts,
+         loading
      })
  })
-
-const AccountsWithQuery = graphql(AccountsQuery, {
-    props: ({ data: { loading, accounts } }) => ({
-        accounts,
-        loading
-    })
-})
 
 const createDeploymentMutation = gql `
     mutation createDeployment($deployment: DeploymentInput!) {
         createDeployment(deployment: $deployment) {
-            name
+            stackName
         }
     }
 `
 
 const composedRequest = compose(
+    LandscapeWithQuery,
     AccountsWithQuery,
     graphql(createDeploymentMutation)
 )(CreateDeployment)
@@ -68,7 +73,6 @@ const composedRequest = compose(
 const mapStateToProps = state => {
     return {
         currentView: state.views.currentView,
-        id: tempId
     }
 }
 

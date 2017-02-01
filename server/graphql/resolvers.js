@@ -1,4 +1,10 @@
+import * as fs from 'fs'
+import * as path from 'path'
 import passport from 'passport'
+import async from 'async'
+import https from 'https'
+import AWS from 'aws-sdk'
+import winston from 'winston'
 import { find, filter } from 'lodash'
 import { pubsub } from './subscriptions'
 
@@ -32,6 +38,7 @@ const resolveFunctions = {
             })
         },
         accounts() {
+            console.log('accounts invoked')
             return Account.find().sort('-created').exec((err, accounts) => {
                 if (err) return err
                 return accounts
@@ -229,6 +236,230 @@ const resolveFunctions = {
                     return doc
                 }
             })
+        },
+        createDeployment(_, { deployment }) {
+
+            console.log(' ---> creating Deployment')
+
+            function _setCABundle(pathToCertDotPemFile, rejectUnauthorized) {
+                let filePath = path.join(process.cwd(), pathToCertDotPemFile)
+                winston.info('## rejectUnauthorizedSsl -->', deployment.rejectUnauthorizedSsl)
+                winston.info('##          caBundlePath -->', deployment.caBundlePath)
+
+                let certs = [fs.readFileSync(filePath)]
+                winston.info('##        Read CA Bundle -->', filePath)
+
+                AWS.config.update({
+                    httpOptions: {
+                        agent: new https.Agent({
+                            rejectUnauthorized: rejectUnauthorized,
+                            ca: certs
+                        })
+                    }
+                })
+            }
+
+            function _setRejectUnauthorizedSsl(rejectUnauthorized) {
+                winston.info('## rejectUnauthorizedSsl -->', rejectUnauthorized)
+                AWS.config.update({
+                    httpOptions: {
+                        agent: new https.Agent({
+                            rejectUnauthorized: rejectUnauthorized
+                        })
+                    }
+                })
+            }
+
+            let newDeployment = {}
+            let parentLandscape = {}
+            let stackParams = {}
+            let stackName = {}
+            let params = {}
+            let cloudFormation
+
+            if (deployment.location.substring(0, 'openstack'.length) === 'openstack') {
+
+                winston.info('using OpenStack provider')
+                cloudFormation = new OpenStack()
+                cloudFormation.config(deployment.accessKeyId, deployment.secretAccessKey)
+
+            } else {
+
+                winston.info('---> Default to AWS provider')
+                if (deployment.accessKeyId && deployment.secretAccessKey) {
+                    winston.info('---> setting AWS security credentials')
+
+                    AWS.config.update({
+                        accessKeyId: deployment.accessKeyId,
+                        secretAccessKey: deployment.secretAccessKey
+                    })
+                } else {
+                    winston.info(' ---> No AWS security credentials set - assuming Server Role')
+                }
+
+                if (deployment.caBundlePath) {
+                    let rejectUnauthorized = deployment.rejectUnauthorizedSsl || true
+                    _setCABundle(deployment.caBundlePath, rejectUnauthorized)
+
+                } else if (deployment.rejectUnauthorizedSsl !== undefined) {
+                    // no caBundlePath
+                    _setRejectUnauthorizedSsl(deployment.rejectUnauthorizedSsl)
+                }
+
+                if (deployment.endpoint) {
+                    winston.info('##              endpoint -->', deployment.endpoint)
+                    AWS.config.endpoint = deployment.endpoint
+                }
+
+                winston.info('##            AWS Region -->', deployment.location)
+                AWS.config.region = deployment.location
+
+                cloudFormation = new AWS.CloudFormation({apiVersion: '2010-05-15'})
+
+                console.log(AWS.config)
+            }
+
+            async.series({
+                saveDeploymentData: function(callback) {
+                    winston.info('---> async.series >> saving deployment deployment...')
+                    try {
+                        newDeployment = new Deployment(deployment)
+                        // TODO: update with username
+                        newDeployment.createdBy = 'tempAdmin'
+
+                        let tags = Object.keys(deployment.tags)
+                        newDeployment.tags = []
+                        for (let i = 0; i < tags.length; i++) {
+                            let tag = {
+                                Key: tags[i],
+                                Value: deployment.tags[tags[i]]
+                            }
+                            newDeployment.tags.push(tag)
+                        }
+                        winston.info('## Tags:', JSON.stringify(newDeployment.tags))
+
+                        newDeployment.cloudFormationParameters = [] //
+                        let keys = Object.keys(deployment.cloudFormationParameters)
+                        for (let j = 0; j < keys.length; j++) {
+                            let cloudFormationParameter = {
+                                ParameterKey: keys[j],
+                                ParameterValue: deployment.cloudFormationParameters[keys[j]]
+                            }
+                            newDeployment.cloudFormationParameters.push(cloudFormationParameter)
+                        }
+
+                        newDeployment.save(function(err, deployment) {
+                            if (err) {
+                                callback(err)
+                            } else {
+                                winston.info('---> async.series >> deployment deployment saved!')
+                                //What are the next three lines for - AH ?
+                                stackName = newDeployment.stackName
+                                params = {
+                                    StackName: stackName
+                                }
+                                callback(null)
+                            }
+                        })
+                    } catch (err) {
+                        callback(err)
+                    }
+                },
+                setStackParameters: function(callback) {
+                    winston.info('---> async.series >> setting stack parameters...')
+                    Landscape.findOne({
+                        _id: newDeployment.landscapeId
+                    }, function(err, landscape) {
+                        if (err) {
+                            callback(err)
+                        } else {
+                            parentLandscape = landscape
+
+                            stackParams = {
+                                // RoleARN: 'arn:aws:iam::414519249282:role/aws-elasticbeanstalk-ec2-role',
+                                StackName: stackName,
+                                TemplateBody: landscape.cloudFormationTemplate,
+                                Parameters: newDeployment.cloudFormationParameters,
+                                Capabilities: ['CAPABILITY_IAM']
+                            }
+
+                            stackParams.Parameters = newDeployment.cloudFormationParameters
+
+                            stackParams.Tags = newDeployment.tags
+
+                            if (newDeployment.description) {
+                                stackParams.Tags.push({Key: 'Description', Value: newDeployment.description})
+                            }
+                            if (newDeployment.billingCode) {
+                                stackParams.Tags.push({Key: 'Billing Code', Value: newDeployment.billingCode})
+                            }
+
+                            winston.info('---> async.series >> stack parameters set!')
+                            callback(null)
+                        }
+                    })
+                },
+                verifyStackNameAvailability: function(callback) {
+                    winston.info('---> async.series >> verifying availability of stack name...')
+                    cloudFormation.describeStacks(params, function(err, deployment) {
+                        if (err) {
+                            if (err.message.indexOf('does not exist') !== -1) {
+                                winston.info('---> async.series >> stack name "' + stackName + '" available!')
+                                callback(null)
+                            } else {
+                                // It's a real error...
+                                callback(err)
+                            }
+
+                        } else {
+                            let e = {
+                                message: 'Stack with name \'' + stackName + '\' already exists.'
+                            }
+                            winston.info('---> async.series >> stack name "' + stackName + '" already exists!')
+                            callback(e)
+                        }
+                    })
+                },
+                createStack: function(callback) {
+                    winston.info('---> async.series >> creating stack...')
+
+                    // fix single quote issue...
+                    let cleanStackParams = JSON.parse(JSON.stringify(stackParams))
+
+                    let awsRequest = cloudFormation.createStack(cleanStackParams, function(err, deployment) {
+                        if (err) {
+                            callback(err)
+
+                        } else {
+                            winston.info('---> async.series >> stack created!')
+
+                            newDeployment.stackId = deployment.StackId
+                            newDeployment.save(function(err) {
+                                if (err) {
+                                    callback(err)
+                                }
+                                callback(null, deployment) // awsRequest?
+                            })
+                        }
+                    })
+                }
+            }, function(err, results) {
+                if (err) {
+                    winston.info('---> async.series >> final callback: ERR')
+                    winston.error(err)
+
+                    newDeployment.awsErrors = err.message || err
+                    newDeployment.save(function(err) {
+                        if (err) {
+                            winston.log('error', err)
+                        }
+                        return err
+                    })
+                } else {
+                    winston.info('---> async.series >> final callback: SUCCESS')
+                    return results
+                }
+            }) // end - async.series
         }
     },
     Subscription: {
