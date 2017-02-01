@@ -11,7 +11,8 @@ class UpdateAccount extends Component {
 
     state = {
         animated: true,
-        viewEntersAnim: true
+        viewEntersAnim: true,
+        loading: false
     }
 
     componentDidMount() {
@@ -46,7 +47,7 @@ class UpdateAccount extends Component {
             { text: 'South America (Sao Paulo) Region', value: 'sa-east-1' }
         ]
 
-        if (loading) {
+        if (loading || this.state.loading) {
             return (
                 <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
                     <Loader/>
@@ -118,6 +119,7 @@ class UpdateAccount extends Component {
         event.preventDefault()
         const { mutate, params } = this.props
         const { router } = this.context
+        this.setState({loading: true})
 
         let accountToUpdate = {}
 
@@ -137,8 +139,18 @@ class UpdateAccount extends Component {
         mutate({
             variables: { account: accountToUpdate }
          }).then(({ data }) => {
-            console.log('account created', data)
-            router.push({ pathname: '/accounts' })
+           console.log('account updated', data)
+           this.props.refetchAccounts({}).then(({ data }) =>{
+             console.log('got data', data);
+             this.setState({
+               successOpen: true,
+               loading: false
+             })
+             router.push({ pathname: '/accounts' })
+           }).catch((error) => {
+             this.setState({loading: false})
+               console.log('there was an error sending the SECOND query', error)
+           })
         }).catch(error => {
             console.log('there was an error sending the query', error)
         })
@@ -148,7 +160,8 @@ class UpdateAccount extends Component {
 UpdateAccount.propTypes = {
     currentView: PropTypes.string.isRequired,
     enterLandscapes: PropTypes.func.isRequired,
-    leaveLandscapes: PropTypes.func.isRequired
+    leaveLandscapes: PropTypes.func.isRequired,
+    refetchAccounts: PropTypes.func
 }
 
 UpdateAccount.contextTypes = {

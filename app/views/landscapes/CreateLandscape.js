@@ -8,6 +8,7 @@ import IconButton from 'material-ui/IconButton'
 import shallowCompare from 'react-addons-shallow-compare'
 import UploadIcon from 'material-ui/svg-icons/file/file-upload'
 import { Paper, RaisedButton, TextField } from 'material-ui'
+import Snackbar from 'material-ui/Snackbar';
 
 import './landscapes.style.scss'
 import { Loader } from '../../components'
@@ -16,7 +17,9 @@ class CreateLandscape extends Component {
 
     state = {
         animated: true,
-        viewEntersAnim: true
+        viewEntersAnim: true,
+        successOpen: false,
+        failOpen: false
     }
 
     componentDidMount() {
@@ -48,6 +51,18 @@ class CreateLandscape extends Component {
 
         return (
             <Row center='xs' middle='xs' className={cx({ 'screen-height': true, 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
+            <Snackbar
+              open={this.state.successOpen}
+              message="Landscape successfully created."
+              autoHideDuration={3000}
+              onRequestClose={this.handleRequestClose}
+            />
+            <Snackbar
+              open={this.state.failOpen}
+              message="Error creating landscape."
+              autoHideDuration={3000}
+              onRequestClose={this.handleRequestClose}
+            />
                 <Col xs={6} lg={9} className={cx( { 'create-landscape': true } )}>
                     <Row middle='xs'>
                         <Col xs={4} style={{ textAlign: 'left' }}>
@@ -164,7 +179,16 @@ class CreateLandscape extends Component {
             variables: { landscape: landscapeToCreate }
          }).then(({ data }) => {
             console.log('landscape created', data)
-            router.push({ pathname: '/landscapes' })
+            this.props.refetchLandscapes({}).then(({ data }) =>{
+              console.log('got MORE data', data);
+              this.setState({
+                successOpen: true
+              })
+
+              router.push({ pathname: '/landscapes' })
+            }).catch((error) => {
+                console.log('there was an error sending the SECOND query', error)
+            })
         }).catch((error) => {
             console.log('there was an error sending the query', error)
         })
@@ -180,7 +204,8 @@ class CreateLandscape extends Component {
 CreateLandscape.propTypes = {
     currentView: PropTypes.string.isRequired,
     enterLandscapes: PropTypes.func.isRequired,
-    leaveLandscapes: PropTypes.func.isRequired
+    leaveLandscapes: PropTypes.func.isRequired,
+    refetchLandscapes: PropTypes.func
 }
 
 CreateLandscape.contextTypes = {

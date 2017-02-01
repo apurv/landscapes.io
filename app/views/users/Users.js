@@ -31,6 +31,14 @@ getChildContext()
         const { enterUsers } = this.props
         enterUsers()
     }
+    componentWillReceiveProps(nextProps){
+      const {users} = nextProps;
+      this.setState({users: users});
+    }
+    componentWillMount(){
+      const {users} = this.props;
+      this.setState({users: users});
+    }
 
     shouldComponentUpdate(nextProps, nextState) {
         return shallowCompare(this, nextProps, nextState)
@@ -43,8 +51,8 @@ getChildContext()
 
     render() {
         const { animated, viewEntersAnim } = this.state
-        const { loading, users } = this.props
-        console.log('USERS - ', users)
+        const { loading } = this.props
+
         if (loading) {
             return (
                 <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
@@ -61,27 +69,28 @@ getChildContext()
 
                 <ul>
                     {
-                        users.map((user, i) =>
+                        this.state.users.map((user, i) =>
                         <Card key={i} style={{ width: 300, margin: '20px', float: 'left' }}>
                             <CardHeader
                               title={user.username}
                               subtitle={user.email}
+                              onClick={this.handlesGroupClick.bind(this, user)}
                             />
-                            <CardText>
+                            <CardText onClick={this.handlesGroupClick.bind(this, user)}>
                                   Name: {user.firstName} {user.lastName} <br></br>
                                   Role: {user.role}
                             </CardText>
                             <CardActions>
                               <FlatButton onClick={this.handlesEditGroupClick.bind(this, user)}>
                                 <a onClick={this.handlesEditGroupClick.bind(this, user)}>
-                                  <Icon style={{ fontSize: '20px' }} type='edit'/>
+                                  <Icon style={{ fontSize: '20px' }} type='edit'/> EDIT
                                 </a>
                               </FlatButton>
-                              <FlatButton onClick={this.handlesGroupClick.bind(this, user)}>
+                              {/*<FlatButton onClick={this.handlesGroupClick.bind(this, user)}>
                                 <a onClick={this.handlesGroupClick.bind(this, user)}>
                                   <Icon style={{ fontSize: '20px' }} type='select'/>
                                 </a>
-                              </FlatButton>
+                              </FlatButton>*/}
                             </CardActions>
                         </Card>
                       )

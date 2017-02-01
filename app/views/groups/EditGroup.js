@@ -54,6 +54,8 @@ class EditGroup extends Component {
           permissionU: false,
           permissionD: false,
           permissionX: false,
+          name: '',
+          description: '',
 
           fixedHeader: true,
           fixedFooter: true,
@@ -79,17 +81,22 @@ class EditGroup extends Component {
           }
       }
 
-      componentWillReceiveProps(nextProps) {
-        const { loading, groups, landscapes, users, params } = nextProps
+      componentWillMount(){
+        const { loading, groups, landscapes, users, params } = this.props
 
-        let currentGroup = groups.find(ls => { return ls._id === params.id })
+          let currentGroup = {};
+          if(groups){
+            currentGroup = groups.find(ls => { return ls._id === params.id })
+            this.setState({description: currentGroup.description})
+            this.setState({name: currentGroup.name})
+          }
         console.log('%c currentGroup ', 'background: #1c1c1c; color: rgb(209, 29, 238)', currentGroup)
         this.setState({users: users})
         this.setState({currentGroup: currentGroup})
         this.setState({landscapes: landscapes})
         let selectedLandscapeRows = []
         let selectedUserRows = []
-          if(currentGroup.landscapes.length > 0){
+          if(currentGroup.landscapes){
             for(var i = 0; i< currentGroup.landscapes.length; i++){
               landscapes.find(ls => {
                 console.log('ls', ls)
@@ -102,7 +109,7 @@ class EditGroup extends Component {
               })
             }
         }
-          if(currentGroup.users.length){
+          if(currentGroup.users){
             for(var i = 0; i< currentGroup.users.length; i++){
               users.find(user => {
                 console.log('user', user)
@@ -119,8 +126,73 @@ class EditGroup extends Component {
         this.setState({selectedLandscapeRows: selectedLandscapeRows})
         this.setState({selectedUserRows: selectedUserRows})
 
+        if(currentGroup.permissions){
+          if(currentGroup.permissions.length === 5){
+            this.setState({checkAll: true})
+          }
+          currentGroup.permissions.map(value => {
+            if(value === 'c'){
+              this.setState({permissionC: true})
+            }
+            if(value === 'u'){
+              this.setState({permissionU: true})
+            }
+            if(value === 'd'){
+              this.setState({permissionD: true})
+            }
+            if(value === 'x'){
+              this.setState({permissionX: true})
+            }
+          })
+        }
+      }
 
-        if(currentGroup){
+      componentWillReceiveProps(nextProps) {
+        const { loading, groups, landscapes, users, params } = nextProps
+
+          let currentGroup = {};
+          if(groups){
+            currentGroup = groups.find(ls => { return ls._id === params.id })
+            this.setState({description: currentGroup.description})
+            this.setState({name: currentGroup.name})
+          }
+        console.log('%c currentGroup ', 'background: #1c1c1c; color: rgb(209, 29, 238)', currentGroup)
+        this.setState({users: users})
+        this.setState({currentGroup: currentGroup})
+        this.setState({landscapes: landscapes})
+        let selectedLandscapeRows = []
+        let selectedUserRows = []
+          if(currentGroup.landscapes){
+            for(var i = 0; i< currentGroup.landscapes.length; i++){
+              landscapes.find(ls => {
+                console.log('ls', ls)
+                console.log('currentGroup.landscapes[i]', currentGroup.landscapes[i])
+                if(currentGroup.landscapes[i] === ls._id){
+                  ls.selected = true;
+                  selectedLandscapeRows.push(i)
+                }
+                this.setState({landscapes: landscapes})
+              })
+            }
+        }
+          if(currentGroup.users){
+            for(var i = 0; i< currentGroup.users.length; i++){
+              users.find(user => {
+                console.log('user', user)
+                console.log('currentGroup.users[i]', currentGroup.users[i])
+                if(currentGroup.users[i].userId === user._id){
+                  user.selected = true;
+                  selectedUserRows.push(i)
+                }
+                this.setState({users: users})
+              })
+            }
+        }
+
+        this.setState({selectedLandscapeRows: selectedLandscapeRows})
+        this.setState({selectedUserRows: selectedUserRows})
+
+        if(currentGroup.permissions){
           if(currentGroup.permissions.length === 5){
             this.setState({checkAll: true})
           }
@@ -168,8 +240,13 @@ class EditGroup extends Component {
 
         let stateLandscapes = this.state.landscapes || []
         let stateUsers = this.state.users || []
+        let stateCurrentGroup = this.state.currentGroup || {name:'', description:''}
+        let selectedLandscapeRows = []
+        let selectedUserRows = []
 
-        if (loading) {
+        console.log('CURRENT GROUP', stateCurrentGroup)
+
+        if (loading || this.state.loading) {
             return (
                 <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
                     <Loader/>
@@ -216,7 +293,7 @@ class EditGroup extends Component {
                       <GridTile
                         key='description'
                       >
-                      <TextField style={{width:450}} multiLine={true} rows={2} rowsMax={4} floatingLabelText="Description" onChange={this.handlesOnDescriptionChange}  defaultValue={this.state.description} hintText='Description' />
+                      <TextField id="description" style={{width:450}} multiLine={true} rows={2} rowsMax={4} floatingLabelText="Description" onChange={this.handlesOnDescriptionChange}  value={this.state.description} hintText='Description' />
                       </GridTile>
                       <GridTile
                         key='firstName'
@@ -242,16 +319,17 @@ class EditGroup extends Component {
                               enableSelectAll={this.state.enableSelectAll} >
                               <TableRow>
                                 <TableHeaderColumn tooltip="Email">Email</TableHeaderColumn>
-                                <TableHeaderColumn tooltip="Username">Username</TableHeaderColumn>
+                                <TableHeaderColumn tooltip="Name">Name</TableHeaderColumn>
                                 <TableHeaderColumn tooltip="Role">Role</TableHeaderColumn>
                               </TableRow>
                             </TableHeader>
                             <TableBody displayRowCheckbox={this.state.showCheckboxes} deselectOnClickaway={false}
-                              showRowHover={this.state.showRowHover} stripedRows={this.state.stripedRows}>
-                              {stateUsers.map( (row, index) => (
-                                <TableRow key={index} selected={row.selected}>
+                              showRowHover={this.state.showRowHover} stripedRows={false}>
+                              {
+                                stateUsers.map( (row, index) => (
+                                <TableRow key={row._id} selected={row.selected}>
                                   <TableRowColumn>{row.email}</TableRowColumn>
-                                  <TableRowColumn>{row.username}</TableRowColumn>
+                                  <TableRowColumn>{row.firstName} {row.lastName}</TableRowColumn>
                                   <TableRowColumn>{row.role}</TableRowColumn>
                                 </TableRow>
                                 ))}
@@ -275,15 +353,17 @@ class EditGroup extends Component {
                             <TableHeader displaySelectAll={this.state.showCheckboxes} adjustForCheckbox={this.state.showCheckboxes}
                               enableSelectAll={this.state.enableSelectAll} >
                               <TableRow>
+                                <TableHeaderColumn tooltip="Image">Image</TableHeaderColumn>
                                 <TableHeaderColumn tooltip="Name">Name</TableHeaderColumn>
                                 <TableHeaderColumn tooltip="Description">Description</TableHeaderColumn>
                               </TableRow>
                             </TableHeader>
                             <TableBody displayRowCheckbox={this.state.showCheckboxes} deselectOnClickaway={false}
-                              showRowHover={this.state.showRowHover} stripedRows={this.state.stripedRows}>
+                              showRowHover={this.state.showRowHover} stripedRows={false}>
                               {
                                 stateLandscapes.map( (row, index) => (
                                 <TableRow key={row._id} selected={row.selected}>
+                                  <TableRowColumn><img src={row.imageUri} style={{width: 50}} /></TableRowColumn>
                                   <TableRowColumn>{row.name}</TableRowColumn>
                                   <TableRowColumn>{row.description}</TableRowColumn>
                                 </TableRow>
@@ -377,7 +457,7 @@ class EditGroup extends Component {
         return permissions;
     }
     handlesOnNameChange = event => {
-        event.preventDefault()
+        // event.preventDefault()
         // should add some validator before setState in real use cases
         this.setState({ name: event.target.value })
     }
@@ -388,7 +468,7 @@ class EditGroup extends Component {
     }
     handlesCreateClick = event => {
         const { router } = this.context
-
+        this.setState({loading: true})
         event.preventDefault()
 
         let groupToCreate = {
@@ -429,15 +509,23 @@ class EditGroup extends Component {
             variables: { group: groupToCreate }
          }).then(({ data }) => {
             console.log('got data', data)
+            this.props.refetchGroups({
+            }).then(({ data }) =>{
+              console.log('got MORE data', data);
+              this.setState({
+                successOpen: true
+              })
 
-            this.setState({
-              successOpen: true
+              router.push({ pathname: '/groups' })
+            }).catch((error) => {
+                this.setState({loading: false})
+                console.log('there was an error sending the SECOND query', error)
             })
-            router.push({ pathname: '/groups' })
         }).catch((error) => {
             this.setState({
               failOpen: true
             })
+            this.setState({loading: false})
             console.log('there was an error sending the query', error)
         })
 
@@ -473,7 +561,8 @@ class EditGroup extends Component {
 EditGroup.propTypes = {
     currentView: PropTypes.string.isRequired,
     enterGroups: PropTypes.func.isRequired,
-    leaveGroups: PropTypes.func.isRequired
+    leaveGroups: PropTypes.func.isRequired,
+    refetchGroups: PropTypes.func
 }
 
 EditGroup.contextTypes = {

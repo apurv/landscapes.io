@@ -222,31 +222,25 @@ class CreateGroup extends Component {
                             selectable={this.state.selectable}
                             multiSelectable={this.state.multiSelectable}
                           >
-                            <TableHeader
-                              displaySelectAll={this.state.showCheckboxes}
-                              adjustForCheckbox={this.state.showCheckboxes}
-                              enableSelectAll={this.state.enableSelectAll}
-                            >
-                              <TableRow>
-                                <TableHeaderColumn tooltip="Email">Email</TableHeaderColumn>
-                                <TableHeaderColumn tooltip="Username">Username</TableHeaderColumn>
-                                <TableHeaderColumn tooltip="Role">Role</TableHeaderColumn>
+                          <TableHeader displaySelectAll={this.state.showCheckboxes} adjustForCheckbox={this.state.showCheckboxes}
+                            enableSelectAll={this.state.enableSelectAll} >
+                            <TableRow>
+                              <TableHeaderColumn tooltip="Email">Email</TableHeaderColumn>
+                              <TableHeaderColumn tooltip="Name">Username</TableHeaderColumn>
+                              <TableHeaderColumn tooltip="Role">Role</TableHeaderColumn>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody displayRowCheckbox={this.state.showCheckboxes} deselectOnClickaway={false}
+                            showRowHover={this.state.showRowHover} stripedRows={false}>
+                            {
+                              users.map( (row, index) => (
+                              <TableRow key={row._id} selected={row.selected}>
+                                <TableRowColumn>{row.email}</TableRowColumn>
+                                <TableRowColumn>{row.firstName} {row.lastName}</TableRowColumn>
+                                <TableRowColumn>{row.role}</TableRowColumn>
                               </TableRow>
-                            </TableHeader>
-                            <TableBody
-                              displayRowCheckbox={this.state.showCheckboxes}
-                              deselectOnClickaway={this.state.deselectOnClickaway}
-                              showRowHover={this.state.showRowHover}
-                              stripedRows={this.state.stripedRows}
-                            >
-                              {users.map( (row, index) => (
-                                <TableRow key={index} selected={row.selected}>
-                                  <TableRowColumn>{row.email}</TableRowColumn>
-                                  <TableRowColumn>{row.username}</TableRowColumn>
-                                  <TableRowColumn>{row.role}</TableRowColumn>
-                                </TableRow>
-                                ))}
-                            </TableBody>
+                              ))}
+                          </TableBody>
                             <TableFooter
                               adjustForCheckbox={this.state.showCheckboxes}
                             >
@@ -267,29 +261,25 @@ class CreateGroup extends Component {
                             selectable={this.state.selectable}
                             multiSelectable={this.state.multiSelectable}
                           >
-                            <TableHeader
-                              displaySelectAll={this.state.showCheckboxes}
-                              adjustForCheckbox={this.state.showCheckboxes}
-                              enableSelectAll={this.state.enableSelectAll}
-                            >
-                              <TableRow>
-                                <TableHeaderColumn tooltip="Name">Name</TableHeaderColumn>
-                                <TableHeaderColumn tooltip="Description">Description</TableHeaderColumn>
+                          <TableHeader displaySelectAll={this.state.showCheckboxes} adjustForCheckbox={this.state.showCheckboxes}
+                            enableSelectAll={this.state.enableSelectAll} >
+                            <TableRow>
+                              <TableHeaderColumn tooltip="Image">Image</TableHeaderColumn>
+                              <TableHeaderColumn tooltip="Name">Name</TableHeaderColumn>
+                              <TableHeaderColumn tooltip="Description">Description</TableHeaderColumn>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody displayRowCheckbox={this.state.showCheckboxes} deselectOnClickaway={false}
+                            showRowHover={this.state.showRowHover} stripedRows={false}>
+                            {
+                              landscapes.map( (row, index) => (
+                              <TableRow key={row._id} selected={row.selected}>
+                                <TableRowColumn><img src={row.imageUri} style={{width: 50}} /></TableRowColumn>
+                                <TableRowColumn>{row.name}</TableRowColumn>
+                                <TableRowColumn>{row.description}</TableRowColumn>
                               </TableRow>
-                            </TableHeader>
-                            <TableBody
-                              displayRowCheckbox={this.state.showCheckboxes}
-                              deselectOnClickaway={this.state.deselectOnClickaway}
-                              showRowHover={this.state.showRowHover}
-                              stripedRows={this.state.stripedRows}
-                            >
-                              {landscapes.map( (row, index) => (
-                                <TableRow key={index} selected={row.selected}>
-                                  <TableRowColumn>{row.name}</TableRowColumn>
-                                  <TableRowColumn>{row.description}</TableRowColumn>
-                                </TableRow>
-                                ))}
-                            </TableBody>
+                              ))}
+                          </TableBody>
                             <TableFooter
                               adjustForCheckbox={this.state.showCheckboxes}
                             >
@@ -411,10 +401,15 @@ class CreateGroup extends Component {
             });
 
             message.success('Group was successfully created.');
-            router.push({ pathname: '/groups' })
+            // router.push({ pathname: '/groups' })
+        }).then(() =>{
+            this.props.refetchGroups({}).then(({ data }) =>{
+              console.log('got MORE data', data);
+              router.push({ pathname: '/groups' })
+            }).catch((error) => {
+                console.log('there was an error sending the SECOND query', error)
+            })
         }).catch((error) => {
-            message.fail('An error occurred while creating group.');
-
             console.log('there was an error sending the query', error)
         })
 
@@ -450,7 +445,8 @@ class CreateGroup extends Component {
 CreateGroup.propTypes = {
     currentView: PropTypes.string.isRequired,
     enterGroups: PropTypes.func.isRequired,
-    leaveGroups: PropTypes.func.isRequired
+    leaveGroups: PropTypes.func.isRequired,
+    refetchGroups: PropTypes.func
 }
 
 CreateGroup.contextTypes = {

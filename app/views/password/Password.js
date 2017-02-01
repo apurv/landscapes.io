@@ -133,6 +133,8 @@ class Password extends Component {
             },
 
         }).then(res => {
+          const { router } = this.context
+
             console.log('res --->', res)
             message.config({
               top: 5,
@@ -143,7 +145,7 @@ class Password extends Component {
             this.setState({ oldPassword: '' })
             this.setState({ newPassword: '' })
             this.setState({ verifyPassword: '' })
-            // router.push({ pathname: '/landscapes' })
+            router.push({ pathname: '/landscapes' })
         }).catch(err => {
             message.error('Password Change Fail.  Please Try Again.');
             console.log('ERROR: ', err )

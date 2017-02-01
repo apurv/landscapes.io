@@ -76,9 +76,10 @@ import * as viewsActions from '../../redux/modules/views'
    }
  )
  (graphql(UserQuery, {
-     props: ({ data: { loading, users } }) => ({
+     props: ({ data: { loading, users, refetch } }) => ({
          users,
-         loading
+         loading,
+         refetchUsers: refetch
      })
    }
  )

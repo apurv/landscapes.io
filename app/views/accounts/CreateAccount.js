@@ -11,7 +11,8 @@ class CreateAccount extends Component {
 
     state = {
         animated: true,
-        viewEntersAnim: true
+        viewEntersAnim: true,
+        loading: false
     }
 
     componentDidMount() {
@@ -45,7 +46,7 @@ class CreateAccount extends Component {
             { text: 'South America (Sao Paulo) Region', value: 'sa-east-1' }
         ]
 
-        if (loading) {
+        if (loading || this.state.loading) {
             return (
                 <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
                     <Loader/>
@@ -113,6 +114,7 @@ class CreateAccount extends Component {
     }
 
     handlesCreateClick = event => {
+        this.setState({loading: true})
 
         event.preventDefault()
         const { mutate } = this.props
@@ -135,8 +137,18 @@ class CreateAccount extends Component {
         mutate({
             variables: { account: accountToCreate }
          }).then(({ data }) => {
-            console.log('account created', data)
-            router.push({ pathname: '/accounts' })
+           console.log('account created', data)
+           this.props.refetchAccounts({}).then(({ data }) =>{
+             console.log('got data', data);
+             this.setState({
+               successOpen: true,
+               loading: false
+             })
+             router.push({ pathname: '/accounts' })
+           }).catch((error) => {
+             this.setState({loading: false})
+               console.log('there was an error sending the SECOND query', error)
+           })
         }).catch(error => {
             console.log('there was an error sending the query', error)
         })
@@ -146,7 +158,8 @@ class CreateAccount extends Component {
 CreateAccount.propTypes = {
     currentView: PropTypes.string.isRequired,
     enterLandscapes: PropTypes.func.isRequired,
-    leaveLandscapes: PropTypes.func.isRequired
+    leaveLandscapes: PropTypes.func.isRequired,
+    refetchAccounts: PropTypes.func
 }
 
 CreateAccount.contextTypes = {

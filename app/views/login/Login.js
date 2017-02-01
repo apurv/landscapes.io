@@ -41,8 +41,8 @@ class Login extends Component {
                         <TextField id='username' ref='username' floatingLabelText='Username' fullWidth={true}/>
                         <TextField id='password' ref='password' floatingLabelText='Password' fullWidth={true} type='password'/>
 
-                        <Checkbox label='Remember Me' onCheck={this.handlesPasswordCookie}
-                            style={{ margin: '20px 0px' }} labelStyle={{ fontFamily: 'Nunito, sans-serif', width: 'none' }}/>
+                        {/* <Checkbox label='Remember Me' onCheck={this.handlesPasswordCookie}
+                            style={{ margin: '20px 0px' }} labelStyle={{ fontFamily: 'Nunito, sans-serif', width: 'none' }}/> */}
 
                         <RaisedButton label='Login' fullWidth={true} type='primary' onClick={this.handlesOnLogin}
                             labelStyle={{ fontFamily: 'Nunito, sans-serif', textTransform: 'none' }}/>

@@ -9,29 +9,86 @@ import * as viewsActions from '../../redux/modules/views'
   GraphQL - Apollo client
  ------------------------------------------*/
 
-const UserQuery = gql `
-    query getUsers {
-        users {
-            _id,
-            username,
-            email,
-            firstName,
-            lastName,
-            role
-        }
-    }
+ const editUserMutation = gql `
+     mutation createUser($user: UserInput!) {
+         createUser(user: $user) {
+             name
+         }
+     }
  `
- // infoLinkText,
- // img,
- // createdBy
+
+ // const CreateUserWithMutation = graphql(editUserMutation)(CreateUser)
+ const UserQuery = gql `
+     query getUsers {
+         users {
+             _id,
+             username,
+             email,
+             firstName,
+             lastName,
+             password,
+             role
+         }
+     }
+  `
+
+ const GroupQuery = gql `
+     query getGroups {
+         groups {
+             _id,
+             name,
+             users{
+               isAdmin,
+               userId
+             },
+             description,
+             landscapes,
+             permissions
+         }
+     }
+  `
+
+ const LandscapeQuery = gql `
+     query getLandscapes {
+       landscapes {
+           _id,
+           name,
+           version,
+           imageUri,
+           infoLink,
+           createdAt,
+           description,
+           cloudFormationTemplate
+       }
+     }
+  `
 
 // 1- add queries:
-const GroupsWithQuery = graphql(UserQuery, {
-    props: ({ data: { loading, users } }) => ({
-        users,
+const UsersWithQuery = graphql(GroupQuery, {
+    props: ({ data: { loading, groups } }) => ({
+        groups,
         loading
     })
-})(UserDetails)
+})
+(graphql(LandscapeQuery, {
+    props: ({ data: { loading, landscapes } }) => ({
+        landscapes,
+        loading
+    })
+  }
+)
+(graphql(UserQuery, {
+    props: ({ data: { loading, users, refetch } }) => ({
+        users,
+        loading,
+        refetchUsers: refetch
+    })
+  }
+)
+(
+  graphql(editUserMutation, {name: 'EditUserWithMutation'})
+(UserDetails))))
+
 
 
 /* -----------------------------------------
@@ -49,4 +106,4 @@ const mapDispatchToProps = (dispatch) => {
     }, dispatch)
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(GroupsWithQuery)
+export default connect(mapStateToProps, mapDispatchToProps)(UsersWithQuery)

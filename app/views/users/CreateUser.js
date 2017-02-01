@@ -189,10 +189,10 @@ class CreateUser extends Component {
             router.push({ pathname: '/protected' })
         }
 
-        handleRoleChange= event => {
-            if(this.state.role === 'admin'){
-              this.setState({role: ''})
-            }
+        handleRoleChange = event => {
+            event.preventDefault()
+            // should add some validator before setState in real use cases
+            this.setState({ role: event.target.value })
         }
 
         handlesOnEmailChange = event => {
@@ -223,13 +223,16 @@ class CreateUser extends Component {
         }
 
         handlesCreateClick = event => {
+          const { router } = this.context
 
+          const { refetchUsers } = this.props
             event.preventDefault()
-
+            console.log('this.state.role------', this.state.role)
             // let userToCreate = this.props.form.getFieldsValue()
             let userToCreate = {
               username: this.state.username,
               email: this.state.email,
+              role: this.state.role,
               password: this.state.password,
               firstName: this.state.firstName,
               lastName: this.state.lastName
@@ -239,13 +242,18 @@ class CreateUser extends Component {
             this.props.CreateUserMutation({
                 variables: { user: userToCreate }
              }).then(({ data }) => {
-               const { router } = this.context
                 console.log('got data', data)
-                this.setState({
-                  successOpen: true
-                })
+            }).then(() =>{
+                this.props.refetchUsers({}).then(({ data }) =>{
+                  console.log('got MORE data', data);
+                  this.setState({
+                    successOpen: true
+                  })
 
-                router.push({ pathname: '/users' })
+                  router.push({ pathname: '/users' })
+                }).catch((error) => {
+                    console.log('there was an error sending the SECOND query', error)
+                })
             }).catch((error) => {
               this.setState({
                 failOpen: true
@@ -265,7 +273,8 @@ class CreateUser extends Component {
 CreateUser.propTypes = {
     currentView: PropTypes.string.isRequired,
     enterUsers: PropTypes.func.isRequired,
-    leaveUsers: PropTypes.func.isRequired
+    leaveUsers: PropTypes.func.isRequired,
+    refetchUsers: PropTypes.func
 }
 
 CreateUser.contextTypes = {
