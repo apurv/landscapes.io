@@ -16,11 +16,12 @@ class RightNav extends Component {
       this.setState({userIsAuthenticated})
     }
     componentWillReceiveProps(nextProps) {
-      const isAuthenticated = (auth.getToken() && this.props.user && this.props.user._id && (this.props.user._id.length > 0))
+      const isAuthenticated = (auth.getToken())
           ? true
           : false
       const { userIsAuthenticated } = nextProps
       this.setState({userIsAuthenticated: isAuthenticated})
+      this.setState({userMenu: false})
     }
 
     render() {

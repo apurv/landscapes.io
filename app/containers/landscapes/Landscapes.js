@@ -8,6 +8,34 @@ import * as viewsActions from '../../redux/modules/views'
 /* -----------------------------------------
   GraphQL - Apollo client
  ------------------------------------------*/
+ const UserQuery = gql `
+     query getUsers {
+         users {
+             _id,
+             username,
+             email,
+             firstName,
+             lastName,
+             password,
+             role
+         }
+     }
+  `
+  const GroupQuery = gql `
+      query getGroups {
+          groups {
+              _id,
+              name,
+              users{
+                isAdmin,
+                userId
+              },
+              description,
+              landscapes,
+              permissions
+          }
+      }
+   `
 
 const LandscapeQuery = gql `
     query getLandscapes {
@@ -33,7 +61,18 @@ const LandscapesWithQuery = graphql(LandscapeQuery, {
         landscapes,
         loading
     })
-})(Landscapes)
+})(graphql(UserQuery, {
+    props: ({ data: { loading, users } }) => ({
+        users,
+        loading
+    })
+})(graphql(GroupQuery, {
+    props: ({ data: { loading, groups, refetch } }) => ({
+        groups,
+        loading,
+        refetchGroups: refetch
+    })
+})(Landscapes)))
 
 
 /* -----------------------------------------

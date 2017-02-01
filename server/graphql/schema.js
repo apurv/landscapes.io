@@ -24,6 +24,7 @@ const Query = `
         _id: String
         username: String
         email: String
+        role: String
         password: String
         firstName: String
         lastName: String

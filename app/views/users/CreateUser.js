@@ -189,10 +189,10 @@ class CreateUser extends Component {
             router.push({ pathname: '/protected' })
         }
 
-        handleRoleChange= event => {
-            if(this.state.role === 'admin'){
-              this.setState({role: ''})
-            }
+        handleRoleChange = event => {
+            event.preventDefault()
+            // should add some validator before setState in real use cases
+            this.setState({ role: event.target.value })
         }
 
         handlesOnEmailChange = event => {
@@ -227,11 +227,12 @@ class CreateUser extends Component {
 
           const { refetchUsers } = this.props
             event.preventDefault()
-
+            console.log('this.state.role------', this.state.role)
             // let userToCreate = this.props.form.getFieldsValue()
             let userToCreate = {
               username: this.state.username,
               email: this.state.email,
+              role: this.state.role,
               password: this.state.password,
               firstName: this.state.firstName,
               lastName: this.state.lastName

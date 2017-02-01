@@ -5,6 +5,7 @@ import shallowCompare from 'react-addons-shallow-compare'
 import { Row, Col } from 'react-flexbox-grid'
 import { IoEdit, IoLoadC, IoIosPlusEmpty } from 'react-icons/lib/io'
 import { Card , CardHeader, CardActions, CardText } from 'material-ui'
+import { auth } from '../../services/auth'
 
 import './landscapes.style.scss'
 import { Loader } from '../../components'
@@ -32,9 +33,42 @@ class Landscapes extends Component {
 
     render() {
         const { animated, viewEntersAnim } = this.state
-        const { loading, landscapes } = this.props
+        const { loading, landscapes, users, groups } = this.props
 
-        console.log(landscapes)
+        var viewLandscapes = landscapes || []
+        const user = auth.getUserInfo();
+        var userGroups = []
+        let userLandscapes = {};
+        if(user.role !== 'admin'){
+          if(groups){
+            groups.map(group => group.users.map(user => {
+              console.log(user.userId)
+              if(user.userId === auth.getUserInfo()._id){
+                userGroups.push(group)
+                if(landscapes){
+                  landscapes.map(landscape => {
+                      group.landscapes.map(landscapeId =>{
+                        if(landscapeId === landscape._id){
+                          userLandscapes[landscapeId] = landscape;
+                        }
+                      })
+                  })
+                }
+              }
+            })
+          )
+          // viewLandscapes.filter(landscape)
+          console.log('userGroups', userGroups)
+          console.log('userLandscapes', userLandscapes)
+          viewLandscapes = Object.keys(userLandscapes).map(key => {return userLandscapes[key]})
+        }
+        }
+
+        console.log(viewLandscapes)
+
+        console.log(this.props)
+
+        console.log('user', user)
 
         if (loading) {
             return (
@@ -53,7 +87,7 @@ class Landscapes extends Component {
 
                 <ul>
                     {
-                        landscapes.map((landscape, i) =>
+                        viewLandscapes.map((landscape, i) =>
                         // onClick={this.handlesLandscapeClick.bind(this, landscape)}
                         <Card key={i} className={cx({ 'landscape-card': true })} >
                                 {/* header */}

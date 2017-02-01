@@ -204,6 +204,11 @@ class EditUser extends Component {
         )
     }
 
+    handleRoleChange = event => {
+        event.preventDefault()
+        // should add some validator before setState in real use cases
+        this.setState({ role: event.target.value })
+    }
     handlesOnEmailChange = event => {
         event.preventDefault()
         // should add some validator before setState in real use cases
@@ -239,10 +244,13 @@ class EditUser extends Component {
         this.setState({loading: true})
 
         // let userToCreate = this.props.form.getFieldsValue()
+        console.log('this.state.role------', this.state.role)
+
         let userToEdit = {
           _id: this.state._id,
           username: this.state.username,
           email: this.state.email,
+          role: this.state.role,
           firstName: this.state.firstName,
           lastName: this.state.lastName
         };
