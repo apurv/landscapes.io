@@ -43,28 +43,30 @@ const TabPane = Tabs.TabPane;
 class GroupDetails extends Component {
 
     state = {
-        animated: true,
-        viewEntersAnim: true,
-        checkedList: defaultCheckedList,
-        indeterminate: true,
-        successOpen: false,
-        failOpen: false,
-        checkAll: false,
-          permissionC: false,
-          permissionU: false,
-          permissionD: false,
-          permissionX: false,
+      animated: true,
+      viewEntersAnim: true,
+      checkedList: defaultCheckedList,
+      indeterminate: true,
+      successOpen: false,
+      failOpen: false,
+      checkAll: false,
+        permissionC: false,
+        permissionU: false,
+        permissionD: false,
+        permissionX: false,
+        name: '',
+        description: '',
 
-          fixedHeader: true,
-          fixedFooter: true,
-          stripedRows: true,
-          showRowHover: true,
-          selectable: true,
-          multiSelectable: true,
-          enableSelectAll: true,
-          deselectOnClickaway: true,
-          showCheckboxes: true,
-          height:'300',
+        fixedHeader: true,
+        fixedFooter: true,
+        stripedRows: true,
+        showRowHover: true,
+        selectable: true,
+        multiSelectable: true,
+        enableSelectAll: true,
+        deselectOnClickaway: true,
+        showCheckboxes: true,
+        height:'300',
           currentGroup: {}
     }
 
@@ -80,22 +82,86 @@ class GroupDetails extends Component {
           }
       }
     componentDidMount() {
-        const { enterGroupDetails, groups, params } = this.props
-        if(groups){
-          let currentGroup = groups.find(ls => { return ls._id === params.id })
-          this.setState({currentGroup: currentGroup})
-        }
-        console.log('groups- ---- componentDidMount', groups)
+        const { enterGroupDetails } = this.props
         enterGroupDetails()
+    }
+
+    componentWillMount(){
+      const { enterGroupDetails, groups, users, landscapes, params } = this.props
+      let currentGroup = {};
+      if(groups){
+        currentGroup = groups.find(ls => { return ls._id === params.id })
+        this.setState({currentGroup: currentGroup})
+      }
+      let groupLandscapes = []
+      let groupUsers = []
+        if(currentGroup.landscapes){
+          for(var i = 0; i< currentGroup.landscapes.length; i++){
+            landscapes.find(ls => {
+              console.log('ls', ls)
+              console.log('currentGroup.landscapes[i]', currentGroup.landscapes[i])
+              if(currentGroup.landscapes[i] === ls._id){
+                ls.selected = true;
+                groupLandscapes.push(ls)
+              }
+            })
+          }
+      }
+      this.setState({groupLandscapes: groupLandscapes})
+
+        if(currentGroup.users){
+          for(var i = 0; i< currentGroup.users.length; i++){
+            users.find(user => {
+              console.log('user', user)
+              console.log('currentGroup.users[i]', currentGroup.users[i])
+              if(currentGroup.users[i].userId === user._id){
+                user.selected = true;
+                groupUsers.push(user)
+              }
+            })
+          }
+      }
+      this.setState({groupUsers: groupUsers})
+      console.log('groups- ---- componentWillMount', groups)
     }
 
     componentWillReceiveProps(nextProps) {
       // use the name from nextProps to get the profile
-      const { enterGroupDetails, groups, params } = nextProps
+      const { enterGroupDetails, groups, users, landscapes, params } = nextProps
+      let currentGroup = {};
       if(groups){
-        let currentGroup = groups.find(ls => { return ls._id === params.id })
+        currentGroup = groups.find(ls => { return ls._id === params.id })
         this.setState({currentGroup: currentGroup})
       }
+      let groupLandscapes = []
+      let groupUsers = []
+        if(currentGroup.landscapes){
+          for(var i = 0; i< currentGroup.landscapes.length; i++){
+            landscapes.find(ls => {
+              console.log('ls', ls)
+              console.log('currentGroup.landscapes[i]', currentGroup.landscapes[i])
+              if(currentGroup.landscapes[i] === ls._id){
+                ls.selected = true;
+                groupLandscapes.push(ls)
+              }
+            })
+          }
+      }
+      this.setState({groupLandscapes: groupLandscapes})
+
+        if(currentGroup.users){
+          for(var i = 0; i< currentGroup.users.length; i++){
+            users.find(user => {
+              console.log('user', user)
+              console.log('currentGroup.users[i]', currentGroup.users[i])
+              if(currentGroup.users[i].userId === user._id){
+                user.selected = true;
+                groupUsers.push(user)
+              }
+            })
+          }
+      }
+      this.setState({groupUsers: groupUsers})
       console.log('groups- ---- componentWillMount', groups)
     }
 
@@ -147,65 +213,67 @@ class GroupDetails extends Component {
                     </GridTile>
                     <GridTile>
                         <Table height={this.state.height} fixedHeader={this.state.fixedHeader} fixedFooter={this.state.fixedFooter}
-                            selectable={this.state.selectable} multiSelectable={this.state.multiSelectable}
+                            selectable={false} multiSelectable={false}
                             onRowSelection={this.handleOnRowSelection}>
-                              <TableHeader displaySelectAll={this.state.showCheckboxes} adjustForCheckbox={this.state.showCheckboxes}
-                                enableSelectAll={this.state.enableSelectAll} >
+                              <TableHeader displaySelectAll={false} adjustForCheckbox={false}
+                                enableSelectAll={false} >
                                 <TableRow>
-                                  <TableHeaderColumn colSpan="3" tooltip="Landscapes" style={{textAlign: 'center'}}>
+                                  <TableHeaderColumn colSpan="3" tooltip="Landscapes" style={{textAlign: 'center', fontSize:18}}>
                                     Landscapes
                                   </TableHeaderColumn>
                                 </TableRow>
                                 <TableRow>
+                                  <TableHeaderColumn tooltip="Image"></TableHeaderColumn>
                                   <TableHeaderColumn tooltip="Name">Name</TableHeaderColumn>
+                                  <TableHeaderColumn tooltip="Description">Description</TableHeaderColumn>
                                 </TableRow>
                               </TableHeader>
-                              <TableBody displayRowCheckbox={this.state.showCheckboxes} deselectOnClickaway={this.state.deselectOnClickaway}
-                                showRowHover={this.state.showRowHover} stripedRows={this.state.stripedRows}>
-                                {groups.map( (row, index) => (
-                                  <TableRow key={index} selected={row.selected}>
+                              <TableBody displayRowCheckbox={false}
+                                showRowHover={this.state.showRowHover} stripedRows={false}>
+                                {this.state.groupLandscapes.map( (row, index) => (
+                                  <TableRow key={row._id} >
+                                    <TableRowColumn><img src={row.imageUri} style={{width: 50}} /></TableRowColumn>
                                     <TableRowColumn>{row.name}</TableRowColumn>
+                                    <TableRowColumn>{row.description}</TableRowColumn>
                                   </TableRow>
                                   ))}
                               </TableBody>
                               <TableFooter
-                                adjustForCheckbox={this.state.showCheckboxes}
+                                adjustForCheckbox={false}
                               >
-                                <TableRow>
-                                  <TableRowColumn>Name</TableRowColumn>
-                                </TableRow>
                               </TableFooter>
                             </Table>
                     </GridTile>
                     <GridTile>
-                        <Table height={this.state.height} fixedHeader={this.state.fixedHeader} fixedFooter={this.state.fixedFooter}
-                            selectable={this.state.selectable} multiSelectable={this.state.multiSelectable}
-                            onRowSelection={this.handleOnRowSelection}>
-                              <TableHeader displaySelectAll={this.state.showCheckboxes} adjustForCheckbox={this.state.showCheckboxes}
-                                enableSelectAll={this.state.enableSelectAll} >
+                    <Table height={this.state.height} fixedHeader={this.state.fixedHeader} fixedFooter={this.state.fixedFooter}
+                        selectable={false} multiSelectable={false}
+                        onRowSelection={this.handleOnRowSelection}>
+                          <TableHeader displaySelectAll={false} adjustForCheckbox={false}
+                            enableSelectAll={false} >
                                 <TableRow>
-                                  <TableHeaderColumn colSpan="3" tooltip="Users" style={{textAlign: 'center'}}>
+                                  <TableHeaderColumn colSpan="3" tooltip="Users" style={{textAlign: 'center', fontSize:18}}>
                                     Users
                                   </TableHeaderColumn>
                                 </TableRow>
                                 <TableRow>
+                                  <TableHeaderColumn tooltip="Email">Email</TableHeaderColumn>
                                   <TableHeaderColumn tooltip="Name">Name</TableHeaderColumn>
+                                  <TableHeaderColumn tooltip="Role">Role</TableHeaderColumn>
                                 </TableRow>
                               </TableHeader>
-                              <TableBody displayRowCheckbox={this.state.showCheckboxes} deselectOnClickaway={this.state.deselectOnClickaway}
-                                showRowHover={this.state.showRowHover} stripedRows={this.state.stripedRows}>
-                                {groups.map( (row, index) => (
-                                  <TableRow key={index} selected={row.selected}>
-                                    <TableRowColumn>{row.name}</TableRowColumn>
+                              <TableBody displayRowCheckbox={false} deselectOnClickaway={this.state.deselectOnClickaway}
+                                showRowHover={this.state.showRowHover} stripedRows={false}>
+                                {this.state.groupUsers.map( (row, index) => (
+                                  <TableRow key={row._id} >
+                                    <TableRowColumn>{row.email}</TableRowColumn>
+                                    <TableRowColumn>{row.firstName} {row.lastName}</TableRowColumn>
+                                    <TableRowColumn>{row.role}</TableRowColumn>
                                   </TableRow>
                                   ))}
                               </TableBody>
                               <TableFooter
-                                adjustForCheckbox={this.state.showCheckboxes}
+                                adjustForCheckbox={false}
                               >
-                                <TableRow>
-                                  <TableRowColumn>Name</TableRowColumn>
-                                </TableRow>
                               </TableFooter>
                             </Table>
                     </GridTile>

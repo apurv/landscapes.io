@@ -319,7 +319,7 @@ class EditGroup extends Component {
                               enableSelectAll={this.state.enableSelectAll} >
                               <TableRow>
                                 <TableHeaderColumn tooltip="Email">Email</TableHeaderColumn>
-                                <TableHeaderColumn tooltip="Name">Username</TableHeaderColumn>
+                                <TableHeaderColumn tooltip="Name">Name</TableHeaderColumn>
                                 <TableHeaderColumn tooltip="Role">Role</TableHeaderColumn>
                               </TableRow>
                             </TableHeader>

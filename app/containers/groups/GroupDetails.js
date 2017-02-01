@@ -9,32 +9,84 @@ import * as viewsActions from '../../redux/modules/views'
   GraphQL - Apollo client
  ------------------------------------------*/
 
-const GroupQuery = gql `
-    query getGroups {
-        groups {
-            _id,
-            name,
-            users{
-              isAdmin,
-              userId
-            },
-            description,
-            landscapes,
-            permissions
-        }
-    }
+ const editGroupMutation = gql `
+     mutation updateGroup($group: GroupInput!) {
+         updateGroup(group: $group) {
+             name
+         }
+     }
  `
- // infoLinkText,
- // img,
- // createdBy
 
-// 1- add queries:
-const GroupsWithQuery = graphql(GroupQuery, {
-    props: ({ data: { loading, groups } }) => ({
-        groups,
-        loading
-    })
-})(GroupDetails)
+ // const CreateGroupWithMutation = graphql(editGroupMutation)(CreateGroup)
+ const UserQuery = gql `
+     query getUsers {
+         users {
+             _id,
+             username,
+             email,
+             firstName,
+             lastName,
+             role
+         }
+     }
+  `
+
+ const GroupQuery = gql `
+     query getGroups {
+         groups {
+             _id,
+             name,
+             users{
+               isAdmin,
+               userId
+             },
+             description,
+             landscapes,
+             permissions
+         }
+     }
+  `
+
+ const LandscapeQuery = gql `
+     query getLandscapes {
+       landscapes {
+           _id,
+           name,
+           version,
+           imageUri,
+           infoLink,
+           createdAt,
+           description,
+           cloudFormationTemplate
+       }
+     }
+  `
+ // 1- add queries:
+ const GroupsWithQuery = graphql(GroupQuery, {
+     props: ({ data: { loading, groups, refetch } }) => ({
+         groups,
+         loading,
+         refetchGroups: refetch
+     })
+ })
+ (graphql(LandscapeQuery, {
+     props: ({ data: { loading, landscapes } }) => ({
+         landscapes,
+         loading
+     })
+   }
+ )
+ (graphql(UserQuery, {
+     props: ({ data: { loading, users } }) => ({
+         users,
+         loading
+     })
+   }
+ )
+ (
+   graphql(editGroupMutation, {name: 'EditGroupWithMutation'})
+ (GroupDetails))))
+
 
 
 /* -----------------------------------------
