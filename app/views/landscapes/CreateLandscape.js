@@ -49,11 +49,17 @@ class CreateLandscape extends Component {
         return (
             <Row center='xs' middle='xs' className={cx({ 'screen-height': true, 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
                 <Col xs={6} lg={9} className={cx( { 'create-landscape': true } )}>
+                    <Row middle='xs'>
+                        <Col xs={4} style={{ textAlign: 'left' }}>
+                            <h4>New Landscape</h4>
+                        </Col>
+                        <Col xs={8}>
+                            <RaisedButton label='Save' onClick={this.handlesCreateClick}
+                                style={{ float: 'right', margin: '30px 0px' }}
+                                labelStyle={{ fontSize: '11px' }}/>
+                        </Col>
+                    </Row>
                     <Paper zDepth={1} rounded={false}>
-
-                        <RaisedButton label='Save' onClick={this.handlesCreateClick}
-                            style={{ margin: 50, float: 'right' }}
-                            labelStyle={{ textTransform: 'none' }}/>
 
                         <TextField id='name' ref='name' floatingLabelText='Name' className={cx( { 'two-field-row': true } )}/>
                         <TextField id='version' ref='version' floatingLabelText='Version' className={cx( { 'two-field-row': true } )}/>

@@ -2,6 +2,7 @@ import cx from 'classnames'
 import React, { Component, PropTypes } from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { Row, Col } from 'react-flexbox-grid'
+import { IoIosCloudUploadOutline } from 'react-icons/lib/io'
 import { Card, CardHeader, CardText, MenuItem, RaisedButton, SelectField, TextField, Toggle } from 'material-ui'
 
 import './deployments.style.scss'
@@ -57,10 +58,18 @@ class CreateDeployment extends Component {
 
         return (
             <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
-                <h5>Deploy</h5>
-
                 <Row center='xs' middle='xs'>
                     <Col xs={6} lg={9} className={cx( { 'create-deployment': true } )}>
+                        <Row middle='xs'>
+                            <Col xs={4} style={{ textAlign: 'left' }}>
+                                <h4>New Deployment</h4>
+                            </Col>
+                            <Col xs={8}>
+                                <RaisedButton label='Deploy' onClick={this.handlesDeployClick}
+                                    style={{ float: 'right', margin: '30px 0px' }}
+                                    labelStyle={{ fontSize: '11px' }} icon={<IoIosCloudUploadOutline/>}/>
+                            </Col>
+                        </Row>
                         <Card>
                             <TextField id='stackName' ref='stackName' floatingLabelText='Stack Name' className={cx( { 'two-field-row': true } )}/>
 
@@ -127,10 +136,6 @@ class CreateDeployment extends Component {
                                 </Card>
                             </Col>
                         </Row>
-
-                        <RaisedButton label='Deploy' onClick={this.handlesDeployClick}
-                            style={{ margin: 50, float: 'left' }}
-                            labelStyle={{ textTransform: 'none' }}/>
                     </Col>
                 </Row>
             </div>

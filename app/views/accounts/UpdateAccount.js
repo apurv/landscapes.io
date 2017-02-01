@@ -56,10 +56,18 @@ class UpdateAccount extends Component {
 
         return (
             <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
-                <h5>Update Account</h5>
-
                 <Row center='xs' middle='xs'>
                     <Col xs={6} lg={9} className={cx( { 'create-account': true } )}>
+                        <Row middle='xs'>
+                            <Col xs={4} style={{ textAlign: 'left' }}>
+                                <h4>Edit Account</h4>
+                            </Col>
+                            <Col xs={8}>
+                                <RaisedButton label='Save' onClick={this.handlesCreateClick}
+                                    style={{ float: 'right', margin: '30px 0px' }}
+                                    labelStyle={{ fontSize: '11px' }}/>
+                            </Col>
+                        </Row>
                         <Card>
 
                             <TextField id='name' ref='name' defaultValue={currentAccount.name} floatingLabelText='Name' className={cx( { 'two-field-row': true } )}/>
@@ -94,10 +102,6 @@ class UpdateAccount extends Component {
                                     floatingLabelText='Signature Block' floatingLabelStyle={{ left: '0px' }}/>
                             </CardText>
                         </Card>
-
-                        <RaisedButton label='Update' onClick={this.handlesUpdateClick}
-                            style={{ margin: 50, float: 'left' }}
-                            labelStyle={{ textTransform: 'none' }}/>
                     </Col>
                 </Row>
             </div>
