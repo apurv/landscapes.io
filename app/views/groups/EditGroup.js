@@ -246,7 +246,7 @@ class EditGroup extends Component {
 
         console.log('CURRENT GROUP', stateCurrentGroup)
 
-        if (loading) {
+        if (loading || this.state.loading) {
             return (
                 <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
                     <Loader/>
@@ -468,7 +468,7 @@ class EditGroup extends Component {
     }
     handlesCreateClick = event => {
         const { router } = this.context
-
+        this.setState({loading: true})
         event.preventDefault()
 
         let groupToCreate = {
@@ -509,15 +509,23 @@ class EditGroup extends Component {
             variables: { group: groupToCreate }
          }).then(({ data }) => {
             console.log('got data', data)
+            this.props.refetchGroups({
+            }).then(({ data }) =>{
+              console.log('got MORE data', data);
+              this.setState({
+                successOpen: true
+              })
 
-            this.setState({
-              successOpen: true
+              router.push({ pathname: '/groups' })
+            }).catch((error) => {
+                this.setState({loading: false})
+                console.log('there was an error sending the SECOND query', error)
             })
-            router.push({ pathname: '/groups' })
         }).catch((error) => {
             this.setState({
               failOpen: true
             })
+            this.setState({loading: false})
             console.log('there was an error sending the query', error)
         })
 
@@ -553,7 +561,8 @@ class EditGroup extends Component {
 EditGroup.propTypes = {
     currentView: PropTypes.string.isRequired,
     enterGroups: PropTypes.func.isRequired,
-    leaveGroups: PropTypes.func.isRequired
+    leaveGroups: PropTypes.func.isRequired,
+    refetchGroups: PropTypes.func
 }
 
 EditGroup.contextTypes = {

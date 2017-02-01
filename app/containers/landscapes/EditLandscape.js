@@ -27,9 +27,10 @@ import * as viewsActions from '../../redux/modules/views'
 
  // 1- add queries:
  const EditLandscapeWithQuery = graphql(LandscapeQuery, {
-     props: ({ data: { loading, landscapes } }) => ({
+     props: ({ data: { loading, landscapes, refetch } }) => ({
          landscapes,
-         loading
+         loading,
+         refetchLandscapes: refetch
      })
  })
 

@@ -62,9 +62,10 @@ import * as viewsActions from '../../redux/modules/views'
   `
  // 1- add queries:
  const GroupsWithQuery = graphql(GroupQuery, {
-     props: ({ data: { loading, groups } }) => ({
+     props: ({ data: { loading, groups, refetch } }) => ({
          groups,
-         loading
+         loading,
+         refetchGroups: refetch
      })
  })
  (graphql(LandscapeQuery, {

@@ -37,7 +37,7 @@ class EditLandscape extends Component {
         const { loading, landscapes, params } = this.props
         const currentLandscape = landscapes.find(ls => { return ls._id === params.id })
 
-        if (loading) {
+        if (loading || this.state.loading) {
             return (
                 <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
                     <Loader/>
@@ -141,6 +141,8 @@ class EditLandscape extends Component {
 
     handlesUpdateClick = event => {
         event.preventDefault()
+        this.setState({loading: true})
+
         const { mutate, params, landscapes } = this.props
         const { router } = this.context
         const currentLandscape = landscapes.find(ls => { return ls._id === params.id })
@@ -159,8 +161,19 @@ class EditLandscape extends Component {
             variables: { landscape: landscapeToUpdate }
          }).then(({ data }) => {
             console.log('landscape updated', data)
-            router.push({ pathname: '/landscapes' })
+            this.props.refetchLandscapes({}).then(({ data }) =>{
+              console.log('got data', data);
+              this.setState({
+                successOpen: true,
+                loading: false
+              })
+              router.push({ pathname: '/landscapes' })
+            }).catch((error) => {
+              this.setState({loading: false})
+                console.log('there was an error sending the SECOND query', error)
+            })
         }).catch((error) => {
+            this.setState({loading: false})
             console.log('there was an error sending the query', error)
         })
     }
@@ -175,7 +188,8 @@ class EditLandscape extends Component {
 EditLandscape.propTypes = {
     currentView: PropTypes.string.isRequired,
     enterLandscapes: PropTypes.func.isRequired,
-    leaveLandscapes: PropTypes.func.isRequired
+    leaveLandscapes: PropTypes.func.isRequired,
+    refetchLandscapes: PropTypes.func
 }
 
 EditLandscape.contextTypes = {

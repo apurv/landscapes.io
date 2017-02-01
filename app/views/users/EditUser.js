@@ -125,7 +125,7 @@ class EditUser extends Component {
             wrapperCol: { span: 12 }
         }
 
-        if (loading) {
+        if (loading || this.state.loading) {
             return (
                 <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
                     <Loader/>
@@ -233,8 +233,10 @@ class EditUser extends Component {
     }
 
     handlesCreateClick = event => {
+        const { router } = this.context
 
         event.preventDefault()
+        this.setState({loading: true})
 
         // let userToCreate = this.props.form.getFieldsValue()
         let userToEdit = {
@@ -246,17 +248,24 @@ class EditUser extends Component {
         };
         console.log('UPDATING user -', userToEdit)
         console.log('this.props -', this.props)
-        
+
         this.props.EditUserWithMutation({
             variables: { user: userToEdit }
-         }).then(({ data }) => {
-           const { router } = this.context
+         }).then(({ data }) => {           const { router } = this.context
 
-            console.log('got data', data)
-            this.setState({
-              successOpen: true
-            })
-            router.push({ pathname: '/users' })
+           this.props.refetchUsers({
+           }).then(({ data }) =>{
+             console.log('got MORE data', data);
+             this.setState({
+               successOpen: true
+             })
+             this.setState({loading: false})
+
+             router.push({ pathname: '/users' })
+           }).catch((error) => {
+               this.setState({loading: false})
+               console.log('there was an error sending the SECOND query', error)
+           })
         }).catch((error) => {
           this.setState({
             failOpen: true
@@ -276,7 +285,8 @@ class EditUser extends Component {
 EditUser.propTypes = {
     currentView: PropTypes.string.isRequired,
     enterUsers: PropTypes.func.isRequired,
-    leaveUsers: PropTypes.func.isRequired
+    leaveUsers: PropTypes.func.isRequired,
+    refetchUsers: PropTypes.func
 }
 
 EditUser.contextTypes = {
