@@ -15,6 +15,7 @@ import Slider from 'material-ui/Slider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import FlatButton from 'material-ui/FlatButton';
 import defaultImage from '../../style/empty.png'
+import defaultGroupImage from '../../style/empty-group.png'
 
 
 
@@ -72,6 +73,9 @@ class UserDetails extends Component {
             if(group.users){
               group.users.map(user => {
                 if(user.userId === params.id){
+                  if(!group.imageUri){
+                    group.imageUri = defaultGroupImage
+                  }
                   userGroups.push(group)
                 }
               })
@@ -98,6 +102,9 @@ class UserDetails extends Component {
             if(group.users){
               group.users.map(user => {
                 if(user.userId === params.id){
+                  if(!group.imageUri){
+                    group.imageUri = defaultGroupImage
+                  }
                   userGroups.push(group)
                 }
               })
@@ -174,7 +181,7 @@ class UserDetails extends Component {
                                     </TableHeaderColumn>
                                   </TableRow>
                                   <TableRow>
-                                    {/*<TableHeaderColumn tooltip="Image"></TableHeaderColumn> */}
+                                    <TableHeaderColumn tooltip="Image"></TableHeaderColumn>
                                     <TableHeaderColumn tooltip="Name">Name</TableHeaderColumn>
                                     <TableHeaderColumn tooltip="Description">Description</TableHeaderColumn>
                                     <TableHeaderColumn tooltip="Button"></TableHeaderColumn>
@@ -184,7 +191,7 @@ class UserDetails extends Component {
                                   showRowHover={true} stripedRows={false}>
                                   {this.state.userGroups.map( (row, index) => (
                                     <TableRow key={row._id} onClick={this.handleOnClick}>
-                                    {/*  <TableRowColumn><img src={row.imageUri} style={{width: 50}} /></TableRowColumn>*/}
+                                    <TableRowColumn><img src={row.imageUri} style={{width: 40, borderRadius: 50}} /></TableRowColumn>
                                       <TableRowColumn>{row.name}</TableRowColumn>
                                       <TableRowColumn>{row.description}</TableRowColumn>
                                       <TableRowColumn><FlatButton onClick={() => { this.handleOnClick(row._id) }} label="View"/></TableRowColumn>

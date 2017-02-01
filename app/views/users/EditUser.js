@@ -34,7 +34,7 @@ const styles = {
   gridList: {
     width: 500,
     overflowY: 'auto'
-  },
+  }
 };
 
 class EditUser extends Component {
@@ -134,7 +134,8 @@ class EditUser extends Component {
         }
 
         return (
-            <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
+          <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
+              <h4><strong>Edit User:</strong> {this.state.firstName} {this.state.lastName}</h4><br/>
             <Snackbar
               open={this.state.successOpen}
               message="User successfully updated."
@@ -151,8 +152,8 @@ class EditUser extends Component {
               console.log('this.state.username', this.state.username)
             }
 
-                <h4>Edit User</h4><br/>
                   <div style={styles.root}>
+                  <Card style={{padding:20}}>
                   <GridList
                     cols={1}
                     cellHeight='auto'
@@ -196,9 +197,11 @@ class EditUser extends Component {
                     <GridTile
                       key='SubmitButton'
                     >
-                    <RaisedButton style={{width:450, margin: 5}} primary={true} disabled={loading} label="Submit" onClick={this.handlesCreateClick} />
+                    <RaisedButton style={{width:450, margin: 5}} primary={true} disabled={loading} label="Save" onClick={this.handlesCreateClick} />
                     </GridTile>
                   </GridList>
+                  </Card>
+
                   </div>
             </div>
         )
