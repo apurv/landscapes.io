@@ -13,7 +13,7 @@ class RightNavButton extends Component {
         const { link, label } = this.props
         return (
             <Link to={link} onClick={this.handleRightNavItemClick}>
-                <FlatButton label={label} labelStyle={{ fontSize: '12px', fontWeight: 'bold' }}/>
+                <FlatButton label={label} hoverColor={'none'} labelStyle={{ fontSize: '12px', fontWeight: 'bold' }}/>
             </Link>
         )
     }

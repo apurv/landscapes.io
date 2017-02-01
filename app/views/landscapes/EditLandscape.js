@@ -47,18 +47,24 @@ class EditLandscape extends Component {
 
         return (
             <Row center='xs' middle='xs' className={cx({ 'screen-height': true, 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
-                <Col xs={6} lg={9} className={cx( { 'create-landscape': true } )}>
+                <Col xs={6} lg={9} className={cx( { 'edit-landscape': true } )}>
+                    <Row middle='xs'>
+                        <Col xs={4} style={{ textAlign: 'left' }}>
+                            <h4>Edit Landscape</h4>
+                        </Col>
+                        <Col xs={8}>
+                            <RaisedButton label='Save' onClick={this.handlesUpdateClick}
+                                style={{ float: 'right', margin: '30px 0px' }}
+                                labelStyle={{ fontSize: '11px' }}/>
+                        </Col>
+                    </Row>
                     <Paper zDepth={1} rounded={false}>
-
-                        <RaisedButton label='Update' onClick={this.handlesUpdateClick}
-                            style={{ margin: 50, float: 'right' }}
-                            labelStyle={{ textTransform: 'none' }}/>
 
                         <TextField id='name' ref='name' defaultValue={currentLandscape.name} floatingLabelText='Name' className={cx( { 'two-field-row': true } )}/>
                         <TextField id='version' ref='version' defaultValue={currentLandscape.version} floatingLabelText='Version' className={cx( { 'two-field-row': true } )}/>
 
-                        <TextField id='description' ref='description' defaultValue={currentLandscape.description} multiLine={true} rows={4} floatingLabelText='Description' fullWidth={true}
-                            floatingLabelStyle={{ left: '0px' }}/>
+                        <TextField id='description' ref='description' defaultValue={currentLandscape.description} multiLine={true} rows={4}
+                            floatingLabelText='Description' fullWidth={true} floatingLabelStyle={{ left: '0px' }} textareaStyle={{ width: '95%' }}/>
 
                         <TextField id='infoLink' ref='infoLink' defaultValue={currentLandscape.infoLink} floatingLabelText='Info Link' fullWidth={true}/>
                         <TextField id='infoLinkText' ref='infoLinkText' defaultValue={currentLandscape.infoLinkText} floatingLabelText='Link Test' fullWidth={true}/>

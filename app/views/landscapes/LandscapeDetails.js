@@ -4,8 +4,8 @@ import { Loader } from '../../components'
 import React, { Component, PropTypes } from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { Row, Col } from 'react-flexbox-grid'
-import { IoEdit, IoAndroidClose } from 'react-icons/lib/io'
-import { Card, CardHeader, CardText, FlatButton, Tab, Tabs, TextField } from 'material-ui'
+import { IoEdit, IoAndroidClose, IoIosCloudUploadOutline } from 'react-icons/lib/io'
+import { Card, CardHeader, CardText, FlatButton, RaisedButton, Tab, Tabs, TextField } from 'material-ui'
 import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table'
 
 class LandscapeDetails extends Component {
@@ -90,12 +90,18 @@ class LandscapeDetails extends Component {
 
         return (
             <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
+                <Row middle='xs'>
+                    <Col xs={4} style={{ textAlign: 'left' }}>
+                        <h4>Landscape Details - {currentLandscape.name}</h4>
+                    </Col>
+                    <Col xs={8}>
+                        <RaisedButton label='Deploy' onClick={this.handlesDeployClick}
+                            style={{ float: 'right', marginBottom: '30px' }}
+                            labelStyle={{ fontSize: '11px' }} icon={<IoIosCloudUploadOutline/>}/>
+                    </Col>
+                </Row>
                 <Tabs>
                     <Tab label='Deployments'>
-                        <FlatButton onTouchTap={this.handlesDeployClick}>
-                            + Deploy
-                        </FlatButton>
-
                         <CardHeader style={{ background: '#e6e6e6' }}>
                             <Row between='xs'>
                                 <Col xs={3}><label>Deployment Name</label></Col>

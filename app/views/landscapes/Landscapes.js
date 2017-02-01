@@ -1,14 +1,13 @@
-
 import cx from 'classnames'
 import React, { Component, PropTypes } from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { Row, Col } from 'react-flexbox-grid'
-import { IoEdit, IoLoadC, IoIosPlusEmpty } from 'react-icons/lib/io'
-import { Card , CardHeader, CardActions, CardText } from 'material-ui'
-import { auth } from '../../services/auth'
+import { IoEdit, IoIosCloudUploadOutline, IoIosPlusEmpty } from 'react-icons/lib/io'
+import { Paper , CardHeader, CardActions, CardText, FlatButton } from 'material-ui'
 
 import './landscapes.style.scss'
 import { Loader } from '../../components'
+import { auth } from '../../services/auth'
 
 class Landscapes extends Component {
 
@@ -35,40 +34,34 @@ class Landscapes extends Component {
         const { animated, viewEntersAnim } = this.state
         const { loading, landscapes, users, groups } = this.props
 
-        var viewLandscapes = landscapes || []
-        const user = auth.getUserInfo();
+        let viewLandscapes = landscapes || []
+        const user = auth.getUserInfo()
         var userGroups = []
-        let userLandscapes = {};
-        if(user.role !== 'admin'){
-          if(groups){
-            groups.map(group => group.users.map(user => {
-              console.log(user.userId)
-              if(user.userId === auth.getUserInfo()._id){
-                userGroups.push(group)
-                if(landscapes){
-                  landscapes.map(landscape => {
-                      group.landscapes.map(landscapeId =>{
-                        if(landscapeId === landscape._id){
-                          userLandscapes[landscapeId] = landscape;
+        let userLandscapes = {}
+
+        if (user.role !== 'admin') {
+            if (groups) {
+                groups.map(group => group.users.map(user => {
+                    console.log(user.userId)
+                    if (user.userId === auth.getUserInfo()._id) {
+                        userGroups.push(group)
+                        if (landscapes) {
+                            landscapes.map(landscape => {
+                                group.landscapes.map(landscapeId => {
+                                    if (landscapeId === landscape._id) {
+                                        userLandscapes[landscapeId] = landscape
+                                    }
+                                })
+                            })
                         }
-                      })
-                  })
-                }
-              }
-            })
-          )
-          // viewLandscapes.filter(landscape)
-          console.log('userGroups', userGroups)
-          console.log('userLandscapes', userLandscapes)
-          viewLandscapes = Object.keys(userLandscapes).map(key => {return userLandscapes[key]})
+                    }
+                }))
+
+                viewLandscapes = Object.keys(userLandscapes).map(key => {
+                    return userLandscapes[key]
+                })
+            }
         }
-        }
-
-        console.log(viewLandscapes)
-
-        console.log(this.props)
-
-        console.log('user', user)
 
         if (loading) {
             return (
@@ -88,8 +81,8 @@ class Landscapes extends Component {
                 <ul>
                     {
                         viewLandscapes.map((landscape, i) =>
-                        // onClick={this.handlesLandscapeClick.bind(this, landscape)}
-                        <Card key={i} className={cx({ 'landscape-card': true })} >
+
+                        <Paper key={i} className={cx({ 'landscape-card': true })} zDepth={3} rounded={false} onClick={this.handlesLandscapeClick.bind(this, landscape)}>
                                 {/* header */}
                                 <Row start='xs' middle='xs' style={{ padding: '20px 0px' }}>
                                     <Col xs={4}>
@@ -99,23 +92,17 @@ class Landscapes extends Component {
                                         <span>{landscape.name}</span>
                                     </Col>
                                     <Col xs={4}>
+                                        <FlatButton id='landscape-edit' onTouchTap={this.handlesEditLandscapeClick.bind(this, landscape)}
+                                            label='Edit' labelStyle={{ fontSize: '10px' }} icon={<IoEdit/>}/>
+                                        <FlatButton id='landscape-deploy' onTouchTap={this.handlesDeployClick.bind(this, landscape)}
+                                            label='Deploy' labelStyle={{ fontSize: '10px' }} icon={<IoIosCloudUploadOutline/>}/>
                                     </Col>
                                 </Row>
-                                <CardActions>
-                                    <div>
-                                        <a style={{zIndex:5}} onClick={this.handlesEditLandscapeClick.bind(this, landscape)}>
-                                            <IoEdit/>
-                                        </a>
-                                        <a style={{zIndex:5}} onClick={this.handlesLandscapeClick.bind(this, landscape)}>
-                                            <IoLoadC/>
-                                        </a>
-                                    </div>
-                                </CardActions>
 
-                                <CardText>
+                                <CardText id='landscape-description' style={{ fontSize: '12px' }}>
                                     {landscape.description}
                                 </CardText>
-                        </Card>)
+                        </Paper>)
                     }
                 </ul>
             </div>
@@ -135,6 +122,11 @@ class Landscapes extends Component {
     handlesLandscapeClick = (landscape, event) => {
         const { router } = this.context
         router.push({ pathname: '/landscape/' + landscape._id })
+    }
+
+    handlesDeployClick = (landscape, event) => {
+        const { router } = this.context
+        router.push({ pathname: `/landscape/${landscape._id}/deployments/create` })
     }
 }
 
