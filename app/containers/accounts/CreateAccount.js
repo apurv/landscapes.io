@@ -16,8 +16,31 @@ const createAccountMutation = gql `
         }
     }
 `
+const AccountsQuery = gql `
+    query getAccounts {
+        accounts {
+            _id,
+            name,
+            region,
+            createdAt,
+            endpoint,
+            caBundlePath,
+            rejectUnauthorizedSsl,
+            signatureBlock,
+            isOtherRegion,
+            accessKeyId,
+            secretAccessKey
+        }
+    }
+ `
 
-const CreateAccountWithMutation = graphql(createAccountMutation)(CreateAccount)
+const CreateAccountWithMutation = graphql(createAccountMutation)(graphql(AccountsQuery, {
+    props: ({ data: { loading, accounts, refetch } }) => ({
+        accounts,
+        loading,
+        refetchAccounts: refetch
+    })
+})(CreateAccount))
 
 /* -----------------------------------------
   Redux
