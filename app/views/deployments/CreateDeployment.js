@@ -198,7 +198,6 @@ class CreateDeployment extends Component {
         deploymentToCreate.cloudFormationTemplate = currentLandscape.cloudFormationTemplate
         deploymentToCreate.cloudFormationParameters = this.state.templateParameters
 
-
         console.log('%c deploymentToCreate ', 'background: #1c1c1c; color: limegreen', deploymentToCreate)
 
         mutate({

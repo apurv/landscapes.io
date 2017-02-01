@@ -3,7 +3,13 @@
 .create-landscape #version,
 .create-landscape #description,
 .create-landscape #infoLink,
-.create-landscape #infoLinkText {
+.create-landscape #infoLinkText,
+.edit-landscape label,
+.edit-landscape #name,
+.edit-landscape #version,
+.edit-landscape #description,
+.edit-landscape #infoLink,
+.edit-landscape #infoLinkText {
     margin-left: 20px;
 }
 
@@ -44,7 +50,7 @@
     background: linear-gradient(to left, #141E30 , #243B55); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 
     color: rgba(255, 255, 255, 0.9) !important;
-    
+
     #landscapeIcon {
         width: 50px;
         margin: 0px 20px;

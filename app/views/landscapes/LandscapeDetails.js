@@ -39,11 +39,11 @@ class LandscapeDetails extends Component {
         const { animated, viewEntersAnim, currentDeployment, deleteType } = this.state
         const { loading, landscapes, deploymentsByLandscapeId, params } = this.props
 
-        console.log('%c this.props ', 'background: #1c1c1c; color: limegreen', this.props)
 
         const currentLandscape = landscapes.find(ls => { return ls._id === params.id })
-        console.log('%c currentLandscape ', 'background: #1c1c1c; color: deepskyblue', currentLandscape)
         const parsedCFTemplate = JSON.parse(currentLandscape.cloudFormationTemplate)
+        // console.log('%c this.props ', 'background: #1c1c1c; color: limegreen', this.props)
+        // console.log('%c currentLandscape ', 'background: #1c1c1c; color: deepskyblue', currentLandscape)
         let currentDeployments = []
         let paramDetails = []
 
@@ -99,6 +99,9 @@ class LandscapeDetails extends Component {
                         <RaisedButton label='Deploy' onClick={this.handlesDeployClick}
                             style={{ float: 'right', marginBottom: '30px' }}
                             labelStyle={{ fontSize: '11px' }} icon={<IoIosCloudUploadOutline/>}/>
+                        <RaisedButton label='Edit' onClick={this.handlesEditLandscapeClick}
+                            style={{ float: 'right', marginBottom: '30px' }}
+                            labelStyle={{ fontSize: '11px' }} icon={<IoEdit/>}/>
                     </Col>
                 </Row>
                 <Tabs>
@@ -131,9 +134,6 @@ class LandscapeDetails extends Component {
                                                 <Col xs={2}>{deployment.createdAt}</Col>
                                                 <Col xs={4}></Col>
                                                 <Col xs={2}>
-                                                    <FlatButton label='Edit' icon={<IoEdit/>} labelStyle={{ fontSize: '11px' }}
-                                                        onTouchTap={this.handlesEditDeploymentClick}/>
-
                                                     <FlatButton label={deployment.isDeleted ? 'Purge' : 'Delete'} icon={<IoAndroidClose/>} labelStyle={{ fontSize: '11px' }}
                                                         onTouchTap={this.handlesDialogToggle.bind(this, deployment)}/>
                                                 </Col>
@@ -229,6 +229,12 @@ class LandscapeDetails extends Component {
             showDialog: !this.state.showDialog,
             deleteType: deployment.isDeleted ? 'purge' : 'delete'
         })
+    }
+
+    handlesEditLandscapeClick = (deployment, event) => {
+        const { params } = this.props
+        const { router } = this.context
+        router.push({ pathname: '/landscapes/edit/' + params.id })
     }
 
     handlesDeleteDeploymentClick = (deployment, event) => {
