@@ -82,7 +82,7 @@ class Landscapes extends Component {
             <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
 
                 <a onClick={this.handlesCreateLandscapeClick}>
-                    <IoIosPlusEmpty size={30}/> New Landscape
+                    <p style={{ fontSize: '20px' }}><IoIosPlusEmpty size={30}/>Add Landscape</p>
                 </a>
 
                 <ul>
