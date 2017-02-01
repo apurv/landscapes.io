@@ -14,6 +14,8 @@ import TextField from 'material-ui/TextField';
 import Slider from 'material-ui/Slider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import FlatButton from 'material-ui/FlatButton';
+import defaultImage from '../../style/empty.png'
+import defaultGroupImage from '../../style/empty-group.png'
 
 
 
@@ -54,17 +56,6 @@ class UserDetails extends Component {
         enterUsers()
     }
 
-    // Necessary for case: hard refresh or route from no other state
-    componentWillReceiveProps(nextProps){
-      console.log('nextProps', nextProps)
-      const { loading, users, params } = nextProps
-
-      if(users){
-        let currentUser = users.find(ls => { return ls._id === params.id })
-        this.setState({currentUser: currentUser})
-      }
-    }
-
     // Necessary for case: routes from another state
     componentWillMount(){
       const { loading, users, landscapes, groups, params } = this.props
@@ -72,6 +63,9 @@ class UserDetails extends Component {
       let userGroups = []
       if(users){
         currentUser = users.find(ls => { return ls._id === params.id })
+        if(!currentUser.imageUri){
+          currentUser.imageUri = defaultImage
+        }
         this.setState({currentUser: currentUser})
       }
       if(groups){
@@ -79,6 +73,9 @@ class UserDetails extends Component {
             if(group.users){
               group.users.map(user => {
                 if(user.userId === params.id){
+                  if(!group.imageUri){
+                    group.imageUri = defaultGroupImage
+                  }
                   userGroups.push(group)
                 }
               })
@@ -88,12 +85,16 @@ class UserDetails extends Component {
       this.setState({userGroups: userGroups})
     }
 
+    // Necessary for case: hard refresh or route from no other state
     componentWillReceiveProps(nextProps){
       const { loading, users, landscapes, groups, params } = nextProps
       let currentUser = {}
       let userGroups = []
       if(users){
         currentUser = users.find(ls => { return ls._id === params.id })
+        if(!currentUser.imageUri){
+          currentUser.imageUri = defaultImage
+        }
         this.setState({currentUser: currentUser})
       }
       if(groups){
@@ -101,6 +102,9 @@ class UserDetails extends Component {
             if(group.users){
               group.users.map(user => {
                 if(user.userId === params.id){
+                  if(!group.imageUri){
+                    group.imageUri = defaultGroupImage
+                  }
                   userGroups.push(group)
                 }
               })
@@ -131,6 +135,8 @@ class UserDetails extends Component {
                 wrapperCol: { span: 12 }
             }
 
+            console.log('this.state.currentUser', this.state.currentUser)
+
             if (loading) {
                 return (
                     <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
@@ -145,17 +151,18 @@ class UserDetails extends Component {
                     <div style={styles.root}>
 
                     <Card style={{padding:20}}>
+                    <CardHeader
+                      title={this.state.currentUser.firstName + ' ' +  this.state.currentUser.lastName}
+                      subtitle={this.state.currentUser.email}
+                      avatar={this.state.currentUser.imageUri}
+                    />
+                    <CardActions>
+
                     <GridList
                       cols={1}
                       cellHeight='auto'
                       style={styles.gridList}
                     >
-                        <GridTile key='name'>
-                        <p>First Name:  {this.state.currentUser.firstName} {this.state.currentUser.lastName}</p>
-                        </GridTile>
-                        <GridTile key='email' >
-                        <p>Email:  {this.state.currentUser.email}</p>
-                        </GridTile>
                         <GridTile key='username'>
                         <p>Username:  {this.state.currentUser.username}</p>
                       </GridTile>
@@ -184,7 +191,7 @@ class UserDetails extends Component {
                                   showRowHover={true} stripedRows={false}>
                                   {this.state.userGroups.map( (row, index) => (
                                     <TableRow key={row._id} onClick={this.handleOnClick}>
-                                      <TableRowColumn><img src={row.imageUri} style={{width: 50}} /></TableRowColumn>
+                                    <TableRowColumn><img src={row.imageUri} style={{width: 40, borderRadius: 50}} /></TableRowColumn>
                                       <TableRowColumn>{row.name}</TableRowColumn>
                                       <TableRowColumn>{row.description}</TableRowColumn>
                                       <TableRowColumn><FlatButton onClick={() => { this.handleOnClick(row._id) }} label="View"/></TableRowColumn>
@@ -231,6 +238,8 @@ class UserDetails extends Component {
                               </Table>
                       </GridTile>*/}
                     </GridList>
+                    </CardActions>
+
                     </Card>
                     </div>
               </div>

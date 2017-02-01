@@ -1,12 +1,15 @@
 import cx from 'classnames'
 import { IoEdit, IoLoadC, IoIosPlusEmpty } from 'react-icons/lib/io'
-import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
-import FlatButton from 'material-ui/FlatButton';
 import { Loader } from '../../components'
+import { Row, Col } from 'react-flexbox-grid'
+
 import React, { Component, PropTypes } from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import defaultImage from '../../style/empty.png'
+import { Paper , CardHeader, CardActions, CardText, FlatButton } from 'material-ui'
+
+import '../landscapes/landscapes.style.scss'
 
 
 class Users extends Component {
@@ -85,34 +88,31 @@ getChildContext()
                 </a>
 
                 <ul>
-                    {
-                        this.state.users.map((user, i) =>
-                        <Card key={i} style={{ width: 300, margin: '20px', float: 'left' }}>
-                            <CardHeader
-                              title={user.username}
-                              subtitle={user.email}
-                              avatar={user.imageUri}
-                              onClick={this.handlesGroupClick.bind(this, user)}
-                            />
-                            <CardText onClick={this.handlesGroupClick.bind(this, user)}>
-                                  Name: {user.firstName} {user.lastName} <br></br>
-                                  Role: {user.role}
+                {
+                    this.state.users.map((user, i) =>
+
+                    <Paper key={i} className={cx({ 'landscape-card': true })} zDepth={3} rounded={false} onClick={this.handlesGroupClick.bind(this, user)}>
+                            {/* header */}
+                            <Row start='xs' middle='xs' style={{ padding: '20px 0px' }}>
+                                <Col xs={4}>
+                                    <img id='landscapeIcon' src={user.imageUri} style={{width:50, borderRadius:50}}/>
+                                </Col>
+                                <Col xs={4}>
+                                    <span>{user.username}</span><br/>
+                                </Col>
+                                <Col xs={4}>
+                                    <FlatButton id='landscape-edit' onTouchTap={this.handlesEditGroupClick.bind(this, user)}
+                                        label='Edit' labelStyle={{ fontSize: '10px' }} icon={<IoEdit/>}/>
+                                </Col>
+                            </Row>
+
+                            <CardText  style={{ fontSize: '12px' }}>
+                              Name:  {user.firstName} {user.lastName} <br/>
+                              Email: {user.email}<br/>
+                              Role:  {user.role}
                             </CardText>
-                            <CardActions>
-                              <FlatButton onClick={this.handlesEditGroupClick.bind(this, user)}>
-                                <a onClick={this.handlesEditGroupClick.bind(this, user)}>
-                                  <IoEdit size={20}/> EDIT
-                                </a>
-                              </FlatButton>
-                              {/*<FlatButton onClick={this.handlesGroupClick.bind(this, user)}>
-                                <a onClick={this.handlesGroupClick.bind(this, user)}>
-                                  <Icon style={{ fontSize: '20px' }} type='select'/>
-                                </a>
-                              </FlatButton>*/}
-                            </CardActions>
-                        </Card>
-                      )
-                    }
+                    </Paper>)
+                }
                 </ul>
             </div>
         )

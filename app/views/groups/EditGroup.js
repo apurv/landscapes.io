@@ -18,6 +18,7 @@ import Slider from 'material-ui/Slider';
 import {RadioButtonGroup, RadioButton} from 'material-ui/RadioButton';
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import FlatButton from 'material-ui/FlatButton';
+import defaultUserImage from '../../style/empty.png'
 
 import { Loader } from '../../components'
 
@@ -87,8 +88,10 @@ class EditGroup extends Component {
           let currentGroup = {};
           if(groups){
             currentGroup = groups.find(ls => { return ls._id === params.id })
-            this.setState({description: currentGroup.description})
-            this.setState({name: currentGroup.name})
+            if(currentGroup){
+              this.setState({description: currentGroup.description})
+              this.setState({name: currentGroup.name})
+            }
           }
         console.log('%c currentGroup ', 'background: #1c1c1c; color: rgb(209, 29, 238)', currentGroup)
         this.setState({users: users})
@@ -105,9 +108,10 @@ class EditGroup extends Component {
                   ls.selected = true;
                   selectedLandscapeRows.push(i)
                 }
-                this.setState({landscapes: landscapes})
               })
             }
+            this.setState({landscapes: landscapes})
+
         }
           if(currentGroup.users){
             for(var i = 0; i< currentGroup.users.length; i++){
@@ -118,9 +122,20 @@ class EditGroup extends Component {
                   user.selected = true;
                   selectedUserRows.push(i)
                 }
-                this.setState({users: users})
               })
             }
+        }
+        let stateUsers = []
+
+        if(users){
+          users.map(user =>{
+            if(!user.imageUri){
+              user.imageUri = defaultUserImage
+            }
+            stateUsers.push(user)
+          })
+          this.setState({users: stateUsers})
+
         }
 
         this.setState({selectedLandscapeRows: selectedLandscapeRows})
@@ -162,6 +177,7 @@ class EditGroup extends Component {
         this.setState({landscapes: landscapes})
         let selectedLandscapeRows = []
         let selectedUserRows = []
+        let userImageUsers = []
           if(currentGroup.landscapes){
             for(var i = 0; i< currentGroup.landscapes.length; i++){
               landscapes.find(ls => {
@@ -171,9 +187,10 @@ class EditGroup extends Component {
                   ls.selected = true;
                   selectedLandscapeRows.push(i)
                 }
-                this.setState({landscapes: landscapes})
               })
             }
+            this.setState({landscapes: landscapes})
+
         }
           if(currentGroup.users){
             for(var i = 0; i< currentGroup.users.length; i++){
@@ -184,9 +201,22 @@ class EditGroup extends Component {
                   user.selected = true;
                   selectedUserRows.push(i)
                 }
-                this.setState({users: users})
+                if(!user.imageUri){
+                  user.imageUri = defaultUserImage
+                }
               })
             }
+        }
+        let stateUsers = []
+        if(users){
+          users.map(user =>{
+            if(!user.imageUri){
+              user.imageUri = defaultUserImage
+            }
+            stateUsers.push(user)
+          })
+          this.setState({users: stateUsers})
+
         }
 
         this.setState({selectedLandscapeRows: selectedLandscapeRows})
@@ -318,6 +348,7 @@ class EditGroup extends Component {
                             <TableHeader displaySelectAll={this.state.showCheckboxes} adjustForCheckbox={this.state.showCheckboxes}
                               enableSelectAll={this.state.enableSelectAll} >
                               <TableRow>
+                                <TableHeaderColumn tooltip="Image"></TableHeaderColumn>
                                 <TableHeaderColumn tooltip="Email">Email</TableHeaderColumn>
                                 <TableHeaderColumn tooltip="Name">Name</TableHeaderColumn>
                                 <TableHeaderColumn tooltip="Role">Role</TableHeaderColumn>
@@ -328,6 +359,7 @@ class EditGroup extends Component {
                               {
                                 stateUsers.map( (row, index) => (
                                 <TableRow key={row._id} selected={row.selected}>
+                                  <TableRowColumn><img src={row.imageUri} style={{width: 40, borderRadius:50}} /></TableRowColumn>
                                   <TableRowColumn>{row.email}</TableRowColumn>
                                   <TableRowColumn>{row.firstName} {row.lastName}</TableRowColumn>
                                   <TableRowColumn>{row.role}</TableRowColumn>
@@ -337,11 +369,6 @@ class EditGroup extends Component {
                             <TableFooter
                               adjustForCheckbox={this.state.showCheckboxes}
                             >
-                              <TableRow>
-                                <TableRowColumn>Email</TableRowColumn>
-                                <TableRowColumn>Username</TableRowColumn>
-                                <TableRowColumn>Role</TableRowColumn>
-                              </TableRow>
                             </TableFooter>
                           </Table>
 
@@ -353,7 +380,7 @@ class EditGroup extends Component {
                             <TableHeader displaySelectAll={this.state.showCheckboxes} adjustForCheckbox={this.state.showCheckboxes}
                               enableSelectAll={this.state.enableSelectAll} >
                               <TableRow>
-                                <TableHeaderColumn tooltip="Image">Image</TableHeaderColumn>
+                                <TableHeaderColumn tooltip="Image"></TableHeaderColumn>
                                 <TableHeaderColumn tooltip="Name">Name</TableHeaderColumn>
                                 <TableHeaderColumn tooltip="Description">Description</TableHeaderColumn>
                               </TableRow>
@@ -372,10 +399,6 @@ class EditGroup extends Component {
                             <TableFooter
                               adjustForCheckbox={this.state.showCheckboxes}
                             >
-                              <TableRow>
-                                <TableRowColumn>Name</TableRowColumn>
-                                <TableRowColumn>Description</TableRowColumn>
-                              </TableRow>
                             </TableFooter>
                           </Table>
                   </Tab>

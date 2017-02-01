@@ -18,6 +18,8 @@ import Slider from 'material-ui/Slider';
 import {RadioButtonGroup, RadioButton} from 'material-ui/RadioButton';
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import FlatButton from 'material-ui/FlatButton';
+import defaultImage from '../../style/empty-group.png'
+import defaultUserImage from '../../style/empty.png'
 
 import { Loader } from '../../components'
 
@@ -91,6 +93,28 @@ class GroupDetails extends Component {
       let currentGroup = {};
       if(groups){
         currentGroup = groups.find(ls => { return ls._id === params.id })
+        var readablePermissions = []
+        currentGroup.permissions.map(permission =>{
+          if(permission === 'c'){
+            readablePermissions.push(' Create')
+          }
+          if(permission === 'r'){
+            readablePermissions.push(' Read')
+          }
+          if(permission === 'u'){
+            readablePermissions.push(' Update')
+          }
+          if(permission === 'd'){
+            readablePermissions.push(' Delete')
+          }
+          if(permission === 'x'){
+            readablePermissions.push(' Deploy')
+          }
+        })
+        currentGroup.readablePermissions = readablePermissions;
+        if(!currentGroup.imageUri){
+          currentGroup.imageUri = defaultImage
+        }
         this.setState({currentGroup: currentGroup})
       }
       let groupLandscapes = []
@@ -116,6 +140,9 @@ class GroupDetails extends Component {
               console.log('currentGroup.users[i]', currentGroup.users[i])
               if(currentGroup.users[i].userId === user._id){
                 user.selected = true;
+                if(!user.imageUri){
+                  user.imageUri = defaultUserImage
+                }
                 groupUsers.push(user)
               }
             })
@@ -131,6 +158,28 @@ class GroupDetails extends Component {
       let currentGroup = {};
       if(groups){
         currentGroup = groups.find(ls => { return ls._id === params.id })
+        var readablePermissions = []
+        currentGroup.permissions.map(permission =>{
+          if(permission === 'c'){
+            readablePermissions.push(' Create')
+          }
+          if(permission === 'r'){
+            readablePermissions.push(' Read')
+          }
+          if(permission === 'u'){
+            readablePermissions.push(' Update')
+          }
+          if(permission === 'd'){
+            readablePermissions.push(' Delete')
+          }
+          if(permission === 'x'){
+            readablePermissions.push(' Deploy')
+          }
+        })
+        currentGroup.readablePermissions = readablePermissions;
+        if(!currentGroup.imageUri){
+          currentGroup.imageUri = defaultImage
+        }
         this.setState({currentGroup: currentGroup})
       }
       let groupLandscapes = []
@@ -156,6 +205,9 @@ class GroupDetails extends Component {
               console.log('currentGroup.users[i]', currentGroup.users[i])
               if(currentGroup.users[i].userId === user._id){
                 user.selected = true;
+                if(!user.imageUri){
+                  user.imageUri = defaultUserImage
+                }
                 groupUsers.push(user)
               }
             })
@@ -197,19 +249,18 @@ class GroupDetails extends Component {
                   <div style={styles.root}>
 
                   <Card style={{padding:20}}>
+                  <CardHeader
+                    title={this.state.currentGroup.name}
+                    subtitle={"Permissions: " + this.state.currentGroup.readablePermissions}
+                    avatar={this.state.currentGroup.imageUri}
+                  />
                   <GridList
                     cols={1}
                     cellHeight='auto'
                     style={styles.gridList}
                   >
-                      <GridTile key='name'>
-                        <p>Name: {this.state.currentGroup.name} </p>
-                      </GridTile>
-                      <GridTile key='description' >
+                    <GridTile key='description' >
                         <p>Description: {this.state.currentGroup.description} </p>
-                      </GridTile>
-                      <GridTile key='permissions'>
-                      <p> Permissions: {this.state.currentGroup.permissions} </p>
                     </GridTile>
                     <GridTile>
                         <Table height={this.state.height} fixedHeader={this.state.fixedHeader} fixedFooter={this.state.fixedFooter}
@@ -256,6 +307,7 @@ class GroupDetails extends Component {
                                   </TableHeaderColumn>
                                 </TableRow>
                                 <TableRow>
+                                  <TableHeaderColumn tooltip="image"></TableHeaderColumn>
                                   <TableHeaderColumn tooltip="Email">Email</TableHeaderColumn>
                                   <TableHeaderColumn tooltip="Name">Name</TableHeaderColumn>
                                   <TableHeaderColumn tooltip="Role">Role</TableHeaderColumn>
@@ -265,6 +317,7 @@ class GroupDetails extends Component {
                                 showRowHover={this.state.showRowHover} stripedRows={false}>
                                 {this.state.groupUsers.map( (row, index) => (
                                   <TableRow key={row._id} >
+                                  <TableRowColumn><img src={row.imageUri} style={{width: 40, borderRadius:50}} /></TableRowColumn>
                                     <TableRowColumn>{row.email}</TableRowColumn>
                                     <TableRowColumn>{row.firstName} {row.lastName}</TableRowColumn>
                                     <TableRowColumn>{row.role}</TableRowColumn>

@@ -13,6 +13,7 @@ import TextField from 'material-ui/TextField';
 import Slider from 'material-ui/Slider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import FlatButton from 'material-ui/FlatButton';
+import defaultUserImage from '../../style/empty.png'
 
 import { Loader } from '../../components'
 
@@ -136,22 +137,15 @@ class CreateGroup extends Component {
             labelCol: { span: 8 },
             wrapperCol: { span: 12 }
         }
-
-        const rowSelection = {
-          onChange: (selectedRowKeys, selectedRows) => {
-            this.setState({ selectedRows: selectedRows})
-            console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-          },
-          onSelect: (record, selected, selectedRows) => {
-            console.log(record, selected, selectedRows);
-          },
-          onSelectAll: (selected, selectedRows, changeRows) => {
-            console.log(selected, selectedRows, changeRows);
-          },
-          getCheckboxProps: record => ({
-            disabled: record.name === 'Disabled User',    // Column configuration not to be checked
-          }),
-        };
+        var stateUsers = []
+        if(users){
+          users.map(user =>{
+            if(!user.imageUri){
+              user.imageUri = defaultUserImage
+            }
+            stateUsers.push(user)
+          })
+        }
 
         if(landscapes){
           console.log('landscapes', landscapes)
@@ -225,6 +219,7 @@ class CreateGroup extends Component {
                           <TableHeader displaySelectAll={this.state.showCheckboxes} adjustForCheckbox={this.state.showCheckboxes}
                             enableSelectAll={this.state.enableSelectAll} >
                             <TableRow>
+                              <TableHeaderColumn tooltip="Image"></TableHeaderColumn>
                               <TableHeaderColumn tooltip="Email">Email</TableHeaderColumn>
                               <TableHeaderColumn tooltip="Name">Username</TableHeaderColumn>
                               <TableHeaderColumn tooltip="Role">Role</TableHeaderColumn>
@@ -235,6 +230,7 @@ class CreateGroup extends Component {
                             {
                               users.map( (row, index) => (
                               <TableRow key={row._id} selected={row.selected}>
+                                <TableRowColumn><img src={row.imageUri} style={{width: 40, borderRadius:50}} /></TableRowColumn>
                                 <TableRowColumn>{row.email}</TableRowColumn>
                                 <TableRowColumn>{row.firstName} {row.lastName}</TableRowColumn>
                                 <TableRowColumn>{row.role}</TableRowColumn>
@@ -264,7 +260,7 @@ class CreateGroup extends Component {
                           <TableHeader displaySelectAll={this.state.showCheckboxes} adjustForCheckbox={this.state.showCheckboxes}
                             enableSelectAll={this.state.enableSelectAll} >
                             <TableRow>
-                              <TableHeaderColumn tooltip="Image">Image</TableHeaderColumn>
+                              <TableHeaderColumn tooltip="Image"></TableHeaderColumn>
                               <TableHeaderColumn tooltip="Name">Name</TableHeaderColumn>
                               <TableHeaderColumn tooltip="Description">Description</TableHeaderColumn>
                             </TableRow>

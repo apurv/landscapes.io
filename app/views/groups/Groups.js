@@ -1,13 +1,17 @@
 
 import cx from 'classnames'
 import { IoEdit, IoLoadC, IoIosPlusEmpty } from 'react-icons/lib/io'
-import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
-import FlatButton from 'material-ui/FlatButton';
+import { Row, Col } from 'react-flexbox-grid'
+import { Paper , CardHeader, CardActions, CardText, FlatButton } from 'material-ui'
+
 import { Loader } from '../../components'
 import React, { Component, PropTypes } from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { auth } from '../../services/auth'
+import defaultImage from '../../style/empty-group.png'
+
+import '../landscapes/landscapes.style.scss'
 
 class Groups extends Component {
 
@@ -56,6 +60,8 @@ class Groups extends Component {
             groups.map(group => group.users.map(user => {
               console.log('userID', user.userId)
               if(user.userId === auth.getUserInfo()._id){
+                if(!group.imageUri)
+                group.imageUri = defaultImage;
                 stateGroups.push(group)
               }
               })
@@ -63,6 +69,13 @@ class Groups extends Component {
           // viewLandscapes.filter(landscape)
             console.log('stateGroups', stateGroups)
           }
+        }
+        else{
+          stateGroups.map(group => {
+            if(!group.imageUri){
+              group.imageUri = defaultImage;
+            }
+          })
         }
 
 
@@ -82,26 +95,29 @@ class Groups extends Component {
                 </a>
 
                 <ul>
-                    {
-                      stateGroups.map((group, i) =>
-                      <Card key={i} style={{ width: 300, margin: '20px', float: 'left' }}>
-                          <CardHeader
-                            title={group.name}
-                            onClick={this.handlesGroupClick.bind(this, group)}
-                          />
-                          <CardText onClick={this.handlesGroupClick.bind(this, group)}>
-                                {group.description}
-                          </CardText>
-                          <CardActions>
-                            <FlatButton onClick={this.handlesEditGroupClick.bind(this, group)}>
-                              <a onClick={this.handlesEditGroupClick.bind(this, group)}>
-                                <IoEdit size={20}/> EDIT
-                              </a>
-                            </FlatButton>
-                          </CardActions>
-                      </Card>
-                      )
-                    }
+                {
+                    stateGroups.map((group, i) =>
+
+                    <Paper key={i} className={cx({ 'landscape-card': true })} zDepth={3} rounded={false} onClick={this.handlesGroupClick.bind(this, group)}>
+                            {/* header */}
+                            <Row start='xs' middle='xs' style={{ padding: '20px 0px' }}>
+                                <Col xs={4}>
+                                    <img id='landscapeIcon' src={group.imageUri} style={{width:50, borderRadius:50}}/>
+                                </Col>
+                                <Col xs={4}>
+                                    <span>{group.name}</span><br/>
+                                </Col>
+                                <Col xs={4}>
+                                    <FlatButton id='landscape-edit' onTouchTap={this.handlesEditGroupClick.bind(this, group)}
+                                        label='Edit' labelStyle={{ fontSize: '10px' }} icon={<IoEdit/>}/>
+                                </Col>
+                            </Row>
+
+                            <CardText id="landscape-description" style={{ fontSize: '12px' }}>
+                              {group.description}
+                            </CardText>
+                    </Paper>)
+                }
                 </ul>
             </div>
         )
