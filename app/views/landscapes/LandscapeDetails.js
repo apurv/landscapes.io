@@ -5,14 +5,15 @@ import React, { Component, PropTypes } from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { Row, Col } from 'react-flexbox-grid'
 import { IoEdit, IoAndroidClose, IoIosCloudUploadOutline } from 'react-icons/lib/io'
-import { Card, CardHeader, CardText, FlatButton, RaisedButton, Tab, Tabs, TextField } from 'material-ui'
+import { Card, CardHeader, CardText, Dialog, FlatButton, RaisedButton, Tab, Tabs, TextField } from 'material-ui'
 import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table'
 
 class LandscapeDetails extends Component {
 
     state = {
         animated: true,
-        viewEntersAnim: true
+        viewEntersAnim: true,
+        showDialog: false
     }
 
     componentWillMount() {
@@ -35,7 +36,7 @@ class LandscapeDetails extends Component {
     }
 
     render() {
-        const { animated, viewEntersAnim } = this.state
+        const { animated, viewEntersAnim, currentDeployment, deleteType } = this.state
         const { loading, landscapes, deploymentsByLandscapeId, params } = this.props
 
         console.log('%c this.props ', 'background: #1c1c1c; color: limegreen', this.props)
@@ -104,11 +105,20 @@ class LandscapeDetails extends Component {
                     <Tab label='Deployments'>
                         <CardHeader style={{ background: '#e6e6e6' }}>
                             <Row between='xs'>
-                                <Col xs={3}><label>Deployment Name</label></Col>
-                                <Col xs={3}><label>Region</label></Col>
-                                <Col xs={3}><label>Date Created</label></Col>
-                                <Col xs={3}><label>Status</label></Col>
+                                <Col xs={2}><label>Deployment Name</label></Col>
+                                <Col xs={2}><label>Region</label></Col>
+                                <Col xs={2}><label>Date Created</label></Col>
+                                <Col xs={4}><label>Status</label></Col>
+                                <Col xs={2}></Col>
                             </Row>
+                            <Dialog title={deleteType + ' Deployment'} modal={false} open={this.state.showDialog}
+                                titleStyle={{ textTransform: 'uppercase', fontSize: '16px', fontWeight: 'bold' }}
+                                onRequestClose={this.handlesDialogToggle.bind(this, currentDeployment)}
+                                actions={[
+                                    <FlatButton label='Cancel' primary={true} onTouchTap={this.handlesDialogToggle.bind(this, currentDeployment)}/>,
+                                    <FlatButton label={deleteType + ''} primary={true} onTouchTap={this.handlesDeleteDeploymentClick.bind(this, currentDeployment)}/>
+                                ]}> Are you sure you want to {deleteType} {currentDeployment ? currentDeployment.stackName : ''}?
+                            </Dialog>
                         </CardHeader>
                         {
                             currentDeployments.map((deployment, index) => {
@@ -116,23 +126,21 @@ class LandscapeDetails extends Component {
                                     <Card key={index}>
                                         <CardHeader actAsExpander={true} showExpandableButton={true}>
                                             <Row between='xs'>
-                                                <Col xs={3}>{deployment.stackName}</Col>
-                                                <Col xs={3}>{deployment.location}</Col>
-                                                <Col xs={3}>{deployment.createdAt}</Col>
-                                                <Col xs={3}>
-                                                    <FlatButton onTouchTap={this.handlesEditDeploymentClick}>
-                                                        <IoEdit/>
-                                                    </FlatButton>
-                                                    <FlatButton onTouchTap={this.handlesDialogToggle}>
-                                                        <IoAndroidClose/>
-                                                    </FlatButton>
+                                                <Col xs={2}>{deployment.stackName}</Col>
+                                                <Col xs={2}>{deployment.location}</Col>
+                                                <Col xs={2}>{deployment.createdAt}</Col>
+                                                <Col xs={4}></Col>
+                                                <Col xs={2}>
+                                                    <FlatButton label='Edit' icon={<IoEdit/>} labelStyle={{ fontSize: '11px' }}
+                                                        onTouchTap={this.handlesEditDeploymentClick}/>
+
+                                                    <FlatButton label={deployment.isDeleted ? 'Purge' : 'Delete'} icon={<IoAndroidClose/>} labelStyle={{ fontSize: '11px' }}
+                                                        onTouchTap={this.handlesDialogToggle.bind(this, deployment)}/>
                                                 </Col>
                                             </Row>
                                         </CardHeader>
                                         <CardText key={index} expandable={true}>
-                                            {
-                                                getDeploymentInfo(deployment)
-                                            }
+                                            { getDeploymentInfo(deployment) }
                                         </CardText>
                                     </Card>
                                 )
@@ -213,6 +221,32 @@ class LandscapeDetails extends Component {
                 </Tabs>
             </div>
         )
+    }
+
+    handlesDialogToggle = (deployment, event) => {
+        this.setState({
+            currentDeployment: deployment,
+            showDialog: !this.state.showDialog,
+            deleteType: deployment.isDeleted ? 'purge' : 'delete'
+        })
+    }
+
+    handlesDeleteDeploymentClick = (deployment, event) => {
+        event.preventDefault()
+
+        const { mutate } = this.props
+        const { router } = this.context
+
+        this.handlesDialogToggle('delete')
+
+        mutate({
+            variables: { deployment }
+         }).then(({ data }) => {
+            console.log('deleted', data)
+            router.push({ pathname: '/landscapes' })
+        }).catch((error) => {
+            console.log('there was an error sending the query', error)
+        })
     }
 
     handlesDeployClick = event => {
