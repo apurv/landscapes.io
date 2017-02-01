@@ -118,6 +118,7 @@ function requireAuth(nextState, replace) {
 }
 
 function logOutUser(nextState, replace) {
+    auth.clearAllAppStorage()
     replace({
         pathname: '/login',
         state: {

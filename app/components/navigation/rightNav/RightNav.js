@@ -4,11 +4,23 @@ import RightNavButton from './rightNavButton/RightNavButton'
 import { Row, Col } from 'react-flexbox-grid'
 import { IoPerson } from 'react-icons/lib/io'
 import { FlatButton, IconMenu, IconButton, MenuItem } from 'material-ui'
+import { auth } from '../../../services/auth'
 
 class RightNav extends Component {
 
     state = {
         userMenu: false
+    }
+    componentWillMount() {
+      const { userIsAuthenticated } = this.props
+      this.setState({userIsAuthenticated})
+    }
+    componentWillReceiveProps(nextProps) {
+      const isAuthenticated = (auth.getToken() && this.props.user && this.props.user._id && (this.props.user._id.length > 0))
+          ? true
+          : false
+      const { userIsAuthenticated } = nextProps
+      this.setState({userIsAuthenticated: isAuthenticated})
     }
 
     render() {
@@ -17,7 +29,7 @@ class RightNav extends Component {
         return (
             <Row between='xs'>
                 {
-                    userIsAuthenticated
+                    (userIsAuthenticated && this.state.userIsAuthenticated)
                     ?
                         rightLinks.filter(btnLink => ((btnLink.showWhenUserAuth === true) && (btnLink.showOnUserDropdown === false))).map((aLinkBtn, index) => {
                             return (
@@ -33,28 +45,46 @@ class RightNav extends Component {
                                 )
                         })
                 }
-                <FlatButton onTouchTap={this.handleUsernameClick}
-                    label={user.username} hoverColor={'none'}
-                    labelStyle={{ fontSize: '12px', fontWeight: 'bold' }}
-                    icon={<IoPerson/>}
-                />
-                <IconMenu
-                    open={this.state.userMenu}
-                    iconButtonElement={<span></span>}
-                    onRequestChange={this.handleOnRequestChange}
-                    anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-                    targetOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-                    >
-                        {
-                            rightLinks.filter(btnLink => ((btnLink.showWhenUserAuth === true) && (btnLink.showOnUserDropdown === true))).map((aLinkBtn, index) => {
-                                return (
-                                    <Link key={index} to={aLinkBtn.link} onClick={this.handleRightNavItemClick}>
-                                        <MenuItem primaryText={aLinkBtn.label}/>
-                                    </Link>
-                                )
-                            })
-                        }
-                </IconMenu>
+                {
+                    (userIsAuthenticated && this.state.userIsAuthenticated)
+                    ?
+                    <div>
+                    <FlatButton onTouchTap={this.handleUsernameClick}
+                        label={user.username} hoverColor={'none'}
+                        labelStyle={{ fontSize: '12px', fontWeight: 'bold' }}
+                        icon={<IoPerson/>}
+                    />
+                    <IconMenu
+                        open={this.state.userMenu}
+                        iconButtonElement={<span></span>}
+                        onRequestChange={this.handleOnRequestChange}
+                        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                        targetOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                        >
+                            {
+                                rightLinks.filter(btnLink => ((btnLink.showWhenUserAuth === true) && (btnLink.showOnUserDropdown === true))).map((aLinkBtn, index) => {
+                                    if(aLinkBtn.label === 'Logout'){
+                                      return (
+                                          <Link key={index} to={aLinkBtn.link} onClick={this.handleLogout}>
+                                              <MenuItem primaryText={aLinkBtn.label}/>
+                                          </Link>
+                                      )
+                                    }
+                                    else{
+                                      return (
+                                          <Link key={index} to={aLinkBtn.link} onClick={this.handleRightNavItemClick}>
+                                              <MenuItem primaryText={aLinkBtn.label}/>
+                                          </Link>
+                                      )
+                                    }
+                                })
+                            }
+                    </IconMenu>
+                    </div>
+                    :
+                        <div>
+                        </div>
+                }
             </Row>
         )
     }
@@ -72,6 +102,12 @@ class RightNav extends Component {
     handleUsernameClick = event => {
         const { userMenu } = this.state
         this.setState({ userMenu: !userMenu })
+    }
+    handleLogout = event => {
+        auth.clearAllAppStorage()
+
+        console.log('fetched')
+        this.setState({userIsAuthenticated: false})
     }
 }
 
