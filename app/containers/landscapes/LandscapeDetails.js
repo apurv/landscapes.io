@@ -1,8 +1,8 @@
 import gql from 'graphql-tag'
-import { LandscapeDetails } from '../../views'
 import { connect } from 'react-redux'
 import { compose, graphql } from 'react-apollo'
 import { bindActionCreators } from 'redux'
+import { LandscapeDetails } from '../../views'
 import * as viewsActions from '../../redux/modules/views'
 
 /* -----------------------------------------
@@ -28,8 +28,8 @@ const LandscapeQuery = gql `
  // createdBy
 
 const DeploymentByLandscapeIdQuery = gql `
-    query getDeploymentsByLandscapeId {
-        deploymentsByLandscapeId {
+    query getDeploymentsByLandscapeId($landscapeId: String) {
+        deploymentsByLandscapeId(landscapeId: $landscapeId) {
             _id,
             createdAt,
             stackName,
@@ -60,10 +60,16 @@ const LandscapesWithQuery = graphql(LandscapeQuery, {
     })
 })
 
+let tempId
+
 const DeploymentsWithQuery = graphql(DeploymentByLandscapeIdQuery, {
     props: ({ data: { loading, deploymentsByLandscapeId } }) => ({
+        loading,
         deploymentsByLandscapeId,
-        loading
+        passLandscape(landscapeId) {
+            tempId = landscapeId
+        },
+        landscapeId: tempId
     })
 })
 
@@ -76,9 +82,12 @@ const composedRequest = compose(
 /* -----------------------------------------
   Redux
  ------------------------------------------*/
-
+// TODO: figure out how to do this properly
 const mapStateToProps = state => {
-    return { currentView: state.views.currentView }
+    return {
+        currentView: state.views.currentView,
+        landscapeId: tempId
+    }
 }
 
 const mapDispatchToProps = dispatch => {

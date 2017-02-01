@@ -8,7 +8,6 @@ const Group = require('./models/group')
 const Account = require('./models/account')
 const User = require('../auth/models/user.server.model')
 
-
 const resolveFunctions = {
     Query: {
         landscapes() {
@@ -17,18 +16,25 @@ const resolveFunctions = {
                 return landscapes
             })
         },
+        landscapeById(root, args, context) {
+            console.log('root, args, context', root, args, context)
+            return Landscape.findById(args.id).exec((err, landscape) => {
+                if (err) return err
+                return landscape
+            })
+        },
+        // TODO: should be with landscapeId
+        deploymentsByLandscapeId(root, args, context) {
+            console.log('root, args, context', root, args, context)
+            return Deployment.find({ landscapeId: args.landscapeId }).sort('-created').exec((err, deployments) => {
+                if (err) return err
+                return deployments
+            })
+        },
         accounts() {
             return Account.find().sort('-created').exec((err, accounts) => {
                 if (err) return err
                 return accounts
-            })
-        },
-        // TODO: should be with landscapeId
-        deploymentsByLandscapeId() {
-            return Deployment.find().sort('-created').exec((err, deployments) => {
-                console.log('deployments', deployments)
-                if (err) return err
-                return deployments
             })
         },
         groups() {
@@ -177,8 +183,7 @@ const resolveFunctions = {
                     return doc
                 }
             })
-        }
-        ,
+        },
         createGroup(_, { group }) {
             console.log('inside resolver to create group', group)
 

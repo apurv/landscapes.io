@@ -141,8 +141,9 @@ class EditLandscape extends Component {
 
     handlesUpdateClick = event => {
         event.preventDefault()
-        const { mutate, params } = this.props
+        const { mutate, params, landscapes } = this.props
         const { router } = this.context
+        const currentLandscape = landscapes.find(ls => { return ls._id === params.id })
 
         let landscapeToUpdate = {}
         // map all fields to landscapeToUpdate
@@ -150,9 +151,9 @@ class EditLandscape extends Component {
             landscapeToUpdate[key] = this.refs[key].getValue()
         }
         // attach imageUri and cloudFormationTemplate
-        landscapeToUpdate._id = params._id
-        landscapeToUpdate.imageUri = this.state.imageUri || ''
-        landscapeToUpdate.cloudFormationTemplate = this.state.cloudFormationTemplate || ''
+        landscapeToUpdate._id = params.id
+        landscapeToUpdate.imageUri = this.state.imageUri || currentLandscape.imageUri
+        landscapeToUpdate.cloudFormationTemplate = this.state.cloudFormationTemplate || currentLandscape.cloudFormationTemplate
 
         mutate({
             variables: { landscape: landscapeToUpdate }

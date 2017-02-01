@@ -1,6 +1,5 @@
 
 import cx from 'classnames'
-// import { Row, Col, Button, Tabs, Icon, Table } from 'antd'
 import { Loader } from '../../components'
 import React, { Component, PropTypes } from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
@@ -9,13 +8,16 @@ import { IoEdit, IoAndroidClose } from 'react-icons/lib/io'
 import { Card, CardHeader, CardText, FlatButton, Tab, Tabs, TextField } from 'material-ui'
 import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table'
 
-const TabPane = Tabs.TabPane
-
 class LandscapeDetails extends Component {
 
     state = {
         animated: true,
         viewEntersAnim: true
+    }
+
+    componentWillMount() {
+        const { passLandscape, params } = this.props
+        passLandscape(params.id)
     }
 
     componentDidMount() {
@@ -36,7 +38,10 @@ class LandscapeDetails extends Component {
         const { animated, viewEntersAnim } = this.state
         const { loading, landscapes, deploymentsByLandscapeId, params } = this.props
 
+        console.log('%c this.props ', 'background: #1c1c1c; color: limegreen', this.props)
+
         const currentLandscape = landscapes.find(ls => { return ls._id === params.id })
+        console.log('%c currentLandscape ', 'background: #1c1c1c; color: deepskyblue', currentLandscape)
         const parsedCFTemplate = JSON.parse(currentLandscape.cloudFormationTemplate)
         let currentDeployments = []
         let paramDetails = []
@@ -44,8 +49,6 @@ class LandscapeDetails extends Component {
         if (deploymentsByLandscapeId) {
             currentDeployments = deploymentsByLandscapeId.filter(d => { return d.landscapeId === params.id })
         }
-
-        console.log('%c currentLandscape ', 'background: #1c1c1c; color: rgb(209, 29, 238)', currentDeployments)
 
         function getDeploymentInfo(deployment) {
 

@@ -92,7 +92,8 @@ const Query = `
         groups: [Group]
         accounts: [Account]
         landscapes: [Landscape]
-        deploymentsByLandscapeId: [Deployment]
+        landscapeById(id: String): [Landscape]
+        deploymentsByLandscapeId(landscapeId: String): [Deployment]
         users: [User]
     }
 `
