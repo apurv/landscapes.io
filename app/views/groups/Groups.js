@@ -7,6 +7,7 @@ import FlatButton from 'material-ui/FlatButton';
 import { Loader } from '../../components'
 import React, { Component, PropTypes } from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
+import { auth } from '../../services/auth'
 
 class Groups extends Component {
 
@@ -45,7 +46,27 @@ class Groups extends Component {
         const { animated, viewEntersAnim } = this.state
         const { loading, groups } = this.props
         console.log('GROUPS - ', groups)
+
         let stateGroups = groups || []
+        const user = auth.getUserInfo();
+
+        if(user.role !== 'admin'){
+          if(groups){
+            stateGroups = []
+            groups.map(group => group.users.map(user => {
+              console.log('userID', user.userId)
+              if(user.userId === auth.getUserInfo()._id){
+                stateGroups.push(group)
+              }
+              })
+            )
+          // viewLandscapes.filter(landscape)
+            console.log('stateGroups', stateGroups)
+          }
+        }
+
+
+
         if (loading) {
             return (
                 <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
