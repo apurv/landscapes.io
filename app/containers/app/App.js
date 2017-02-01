@@ -13,20 +13,19 @@ class App extends Component {
     }
 
     componentDidMount() {
-        const {actions: {
-                checkIfUserIsAuthenticated
-            }} = this.props
+        const { actions: { checkIfUserIsAuthenticated } } = this.props
 
         checkIfUserIsAuthenticated()
     }
 
     render() {
-        const {navModel} = this.state
-        const {children, userIsAuthenticated} = this.props
+        const { navModel } = this.state
+        const { children, user, userIsAuthenticated } = this.props
 
         return (
             <div id='appContainer'>
-                <NavigationBar brand={navModel.brand} navModel={navModel} userIsAuthenticated={userIsAuthenticated} handleLeftNavItemClick={this.handleLeftNavItemClick} handleRightNavItemClick={this.handleRightNavItemClick}/>
+                <NavigationBar brand={navModel.brand} navModel={navModel} user={user} userIsAuthenticated={userIsAuthenticated}
+                    handleLeftNavItemClick={this.handleLeftNavItemClick} handleRightNavItemClick={this.handleRightNavItemClick}/>
                 <h1></h1>
                 <div className='container-fluid'>
                     {children}
@@ -61,17 +60,19 @@ App.propTypes = {
     location: PropTypes.object,
     actions: PropTypes.object,
 
+    user: PropTypes.object,
     userIsAuthenticated: PropTypes.bool.isRequired
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
     return {
         // userAuth:
+        user: state.userAuth,
         userIsAuthenticated: state.userAuth.isAuthenticated
     }
 }
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
     return {
         actions: bindActionCreators({
             ...viewsActions,

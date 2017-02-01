@@ -17,6 +17,7 @@ import * as viewsActions from '../../redux/modules/views'
              version,
              imageUri,
              infoLink,
+             infoLinkText,
              createdAt,
              description,
              cloudFormationTemplate

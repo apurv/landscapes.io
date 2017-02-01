@@ -1,11 +1,13 @@
 
 import cx from 'classnames'
-import { Icon } from 'antd'
-import { IoEdit, IoLoadC, IoIosPlusEmpty } from 'react-icons/lib/io'
-import { Loader } from '../../components'
 import React, { Component, PropTypes } from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
+import { Row, Col } from 'react-flexbox-grid'
+import { IoEdit, IoLoadC, IoIosPlusEmpty } from 'react-icons/lib/io'
 import { Card , CardHeader, CardActions, CardText } from 'material-ui'
+
+import './landscapes.style.scss'
+import { Loader } from '../../components'
 
 class Landscapes extends Component {
 
@@ -32,6 +34,8 @@ class Landscapes extends Component {
         const { animated, viewEntersAnim } = this.state
         const { loading, landscapes } = this.props
 
+        console.log(landscapes)
+
         if (loading) {
             return (
                 <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
@@ -50,17 +54,25 @@ class Landscapes extends Component {
                 <ul>
                     {
                         landscapes.map((landscape, i) =>
-                        <Card key={i} style={{ width: 300, margin: '20px', float: 'left' }}>
-                                <CardHeader
-                                    title={landscape.name}
-                                    subtitle="Subtitle"
-                                />
+                        // onClick={this.handlesLandscapeClick.bind(this, landscape)}
+                        <Card key={i} className={cx({ 'landscape-card': true })} >
+                                {/* header */}
+                                <Row start='xs' middle='xs' style={{ padding: '20px 0px' }}>
+                                    <Col xs={4}>
+                                        <img id='landscapeIcon' src={landscape.imageUri}/>
+                                    </Col>
+                                    <Col xs={4}>
+                                        <span>{landscape.name}</span>
+                                    </Col>
+                                    <Col xs={4}>
+                                    </Col>
+                                </Row>
                                 <CardActions>
                                     <div>
-                                        <a onClick={this.handlesEditLandscapeClick.bind(this, landscape)}>
+                                        <a style={{zIndex:5}} onClick={this.handlesEditLandscapeClick.bind(this, landscape)}>
                                             <IoEdit/>
                                         </a>
-                                        <a onClick={this.handlesLandscapeClick.bind(this, landscape)}>
+                                        <a style={{zIndex:5}} onClick={this.handlesLandscapeClick.bind(this, landscape)}>
                                             <IoLoadC/>
                                         </a>
                                     </div>

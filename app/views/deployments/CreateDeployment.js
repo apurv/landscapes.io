@@ -33,6 +33,8 @@ class CreateDeployment extends Component {
         const { animated, viewEntersAnim } = this.state
         const { loading, accounts } = this.props
 
+        console.log('%c this.props ', 'background: #1c1c1c; color: deeppink', this.props)
+
         const menuItems = [
             { text: 'Gov Cloud', value: 'us-gov-west-1' },
             { text: 'US East (Northern Virginia) Region', value: 'us-east-1' },
@@ -180,14 +182,14 @@ class CreateDeployment extends Component {
 
         console.log('%c deploymentToCreate ', 'background: #1c1c1c; color: limegreen', deploymentToCreate)
 
-        // mutate({
-        //     variables: { deployment: deploymentToCreate }
-        //  }).then(({ data }) => {
-        //     console.log('deployment created', data)
-        //     router.push({ pathname: '/accounts' })
-        // }).catch(error => {
-        //     console.log('there was an error sending the query', error)
-        // })
+        mutate({
+            variables: { deployment: deploymentToCreate }
+         }).then(({ data }) => {
+            console.log('deployment created', data)
+            router.push({ pathname: '/accounts' })
+        }).catch(error => {
+            console.log('there was an error sending the query', error)
+        })
     }
 }
 

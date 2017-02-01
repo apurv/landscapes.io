@@ -28,6 +28,18 @@ const AccountsQuery = gql `
  `
  // createdBy
 
+let tempId
+ const LandscapeWithQuery = graphql(AccountsQuery, {
+     props: ({ data: { loading, landscape } }) => ({
+         landscape,
+         loading,
+         passLandscape(landscapeId) {
+             tempId = landscapeId
+         },
+         landscapeId: tempId
+     })
+ })
+
 const AccountsWithQuery = graphql(AccountsQuery, {
     props: ({ data: { loading, accounts } }) => ({
         accounts,
@@ -54,7 +66,10 @@ const composedRequest = compose(
  ------------------------------------------*/
 
 const mapStateToProps = state => {
-    return { currentView: state.views.currentView }
+    return {
+        currentView: state.views.currentView,
+        id: tempId
+    }
 }
 
 const mapDispatchToProps = (dispatch) => {

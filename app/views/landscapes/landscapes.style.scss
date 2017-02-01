@@ -12,3 +12,15 @@
     float: left;
     margin: 0 1%;
 }
+
+.landscape-card {
+    z-index: 1;
+    width: 300px;
+    float: left;
+    margin: 20px;
+    cursor: pointer;
+    #landscapeIcon {
+        width: 50px;
+        margin: 0px 20px;
+    }
+}
