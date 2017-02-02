@@ -241,6 +241,8 @@ const resolveFunctions = {
 
             console.log(' ---> creating Deployment')
 
+            let _cloudFormationParameters = JSON.parse(deployment.cloudFormationParameters)
+
             function _setCABundle(pathToCertDotPemFile, rejectUnauthorized) {
                 let filePath = path.join(process.cwd(), pathToCertDotPemFile)
                 winston.info('## rejectUnauthorizedSsl -->', deployment.rejectUnauthorizedSsl)
@@ -327,7 +329,8 @@ const resolveFunctions = {
                         // TODO: update with username
                         newDeployment.createdBy = 'tempAdmin'
 
-                        let tags = Object.keys(deployment.tags)
+                        let tags = Object.keys({})
+                        // let tags = Object.keys(deployment.tags)
                         newDeployment.tags = []
                         for (let i = 0; i < tags.length; i++) {
                             let tag = {
@@ -336,17 +339,19 @@ const resolveFunctions = {
                             }
                             newDeployment.tags.push(tag)
                         }
-                        winston.info('## Tags:', JSON.stringify(newDeployment.tags))
+                        // winston.info('## Tags:', JSON.stringify(newDeployment.tags))
 
                         newDeployment.cloudFormationParameters = [] //
-                        let keys = Object.keys(deployment.cloudFormationParameters)
+                        let keys = Object.keys(_cloudFormationParameters)
                         for (let j = 0; j < keys.length; j++) {
                             let cloudFormationParameter = {
                                 ParameterKey: keys[j],
-                                ParameterValue: deployment.cloudFormationParameters[keys[j]]
+                                ParameterValue: _cloudFormationParameters[keys[j]]
                             }
                             newDeployment.cloudFormationParameters.push(cloudFormationParameter)
                         }
+
+                        console.log('newDeployment.cloudFormationParameters', newDeployment.cloudFormationParameters)
 
                         newDeployment.save(function(err, deployment) {
                             if (err) {
@@ -388,10 +393,10 @@ const resolveFunctions = {
                             stackParams.Tags = newDeployment.tags
 
                             if (newDeployment.description) {
-                                stackParams.Tags.push({Key: 'Description', Value: newDeployment.description})
+                                stackParams.Tags.push({ Key: 'Description', Value: newDeployment.description })
                             }
                             if (newDeployment.billingCode) {
-                                stackParams.Tags.push({Key: 'Billing Code', Value: newDeployment.billingCode})
+                                stackParams.Tags.push({ Key: 'Billing Code', Value: newDeployment.billingCode })
                             }
 
                             winston.info('---> async.series >> stack parameters set!')
@@ -425,7 +430,7 @@ const resolveFunctions = {
 
                     // fix single quote issue...
                     let cleanStackParams = JSON.parse(JSON.stringify(stackParams))
-
+                    console.log('cleanStackParams', cleanStackParams)
                     let awsRequest = cloudFormation.createStack(cleanStackParams, function(err, deployment) {
                         if (err) {
                             callback(err)

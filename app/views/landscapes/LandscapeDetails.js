@@ -240,16 +240,16 @@ class LandscapeDetails extends Component {
     handlesDeleteDeploymentClick = (deployment, event) => {
         event.preventDefault()
 
-        const { mutate } = this.props
+        const { mutate, params } = this.props
         const { router } = this.context
 
-        this.handlesDialogToggle('delete')
+        this.handlesDialogToggle(deployment)
 
         mutate({
             variables: { deployment }
          }).then(({ data }) => {
             console.log('deleted', data)
-            router.push({ pathname: '/landscapes' })
+            router.push({ pathname: `/landscape/${params.id}` })
         }).catch((error) => {
             console.log('there was an error sending the query', error)
         })
