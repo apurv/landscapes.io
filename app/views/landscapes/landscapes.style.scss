@@ -3,7 +3,13 @@
 .create-landscape #version,
 .create-landscape #description,
 .create-landscape #infoLink,
-.create-landscape #infoLinkText {
+.create-landscape #infoLinkText,
+.edit-landscape label,
+.edit-landscape #name,
+.edit-landscape #version,
+.edit-landscape #description,
+.edit-landscape #infoLink,
+.edit-landscape #infoLinkText {
     margin-left: 20px;
 }
 
@@ -17,6 +23,14 @@
 #landscape-edit > div,
 #landscape-deploy > div {
     float: left;
+}
+
+.success-status {
+    border-radius: 15px;
+    border: 1px solid rgba(158, 158, 158, 0.5);
+    padding: 10px;
+    width: 40px;
+    height: 0px;
 }
 
 .landscape-card {
@@ -44,7 +58,7 @@
     background: linear-gradient(to left, #141E30 , #243B55); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 
     color: rgba(255, 255, 255, 0.9) !important;
-    
+
     #landscapeIcon {
         width: 50px;
         margin: 0px 20px;

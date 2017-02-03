@@ -31,10 +31,8 @@ class CreateDeployment extends Component {
 
     render() {
 
-        const { animated, viewEntersAnim } = this.state
         const { loading, accounts } = this.props
-
-        console.log('%c this.props ', 'background: #1c1c1c; color: deeppink', this.props)
+        const { animated, viewEntersAnim, templateParameters, templateDescription, secretAccessKey, signatureBlock } = this.state
 
         const menuItems = [
             { text: 'Gov Cloud', value: 'us-gov-west-1' },
@@ -84,7 +82,7 @@ class CreateDeployment extends Component {
                                 }
                             </SelectField>
 
-                            <TextField id='description' ref='description' value={this.state.templateDescription} multiLine={true} rows={4}
+                            <TextField id='description' ref='description' value={ templateDescription ? templateDescription.substring(0, 255) : '' } multiLine={true} rows={4} maxLength={255}
                                 floatingLabelText='Description' fullWidth={true} floatingLabelStyle={{ left: '0px' }} textareaStyle={{ width: '95%' }}/>
 
                             <SelectField id='location' floatingLabelText='Region' value={this.state.location} onChange={this.handlesRegionChange}
@@ -103,8 +101,8 @@ class CreateDeployment extends Component {
 
                             <TextField id='accessKeyId' ref='accessKeyId' value={this.state.accessKeyId} floatingLabelText='Access Key ID' fullWidth={true}/>
 
-                            <TextField id='secretAccessKey' ref='secretAccessKey' value={this.state.secretAccessKey} multiLine={true} rows={4} floatingLabelText='Secret Access Key' fullWidth={true}
-                                floatingLabelStyle={{ left: '0px' }}/>
+                            <TextField id='secretAccessKey' ref='secretAccessKey' value={ secretAccessKey ? secretAccessKey.substring(0, 255) : '' } multiLine={true} rows={4}
+                                maxLength={255} floatingLabelStyle={{ left: '0px' }} floatingLabelText='Secret Access Key' fullWidth={true}/>
 
                             <CardHeader title='Advanced' titleStyle={{ fontSize: '13px', paddingRight: 0 }} actAsExpander={true} showExpandableButton={true}/>
 
@@ -116,25 +114,48 @@ class CreateDeployment extends Component {
                                 <Toggle id='rejectUnauthorizedSsl' ref='rejectUnauthorizedSsl' defaultToggled={this.state.rejectUnauthorizedSsl} label='Reject Unauthorized SSL'
                                     style={{ marginTop: '25px' }} labelStyle={{ width: 'none' }}/>
 
-                                <TextField id='signatureBlock' ref='signatureBlock' value={this.state.signatureBlock} multiLine={true} rows={4} fullWidth={true}
+                                <TextField id='signatureBlock' ref='signatureBlock' value={ signatureBlock ? signatureBlock.substring(0, 255) : '' } multiLine={true} rows={4} fullWidth={true} maxLength={255}
                                     floatingLabelText='Signature Block' floatingLabelStyle={{ left: '0px' }}/>
                             </CardText>
                         </Card>
 
-                        <Row>
-                            <Col xs={6}>
-                                <Card>
-                                    <CardHeader title='Tags'/>
-                                    {/* TODO: add tags capability */}
-                                    <CardText>
-                                    </CardText>
-                                </Card>
+                        <Row style={{ height: '50vh' }}>
+                            <Col xs={4}>
+                                <label style={{ paddingTop: '30px', fontSize: '14px' }}>Tags</label>
+                                <Row>
+                                    <Col xs={3}>
+                                    </Col>
+                                    <Col xs={6}>
+                                    </Col>
+                                </Row>
                             </Col>
-                            <Col xs={6}>
-                                <Card>
-                                    <CardHeader title='Parameters'/>
-                                    <CardText></CardText>
-                                </Card>
+                            <Col xs={8}>
+                                <label style={{ paddingTop: '30px', fontSize: '14px' }}>Parameters</label>
+                                <Row>
+                                    <Col xs={3}>
+                                        {
+                                            Object.keys(templateParameters || {}).map((param, index) => {
+                                                return (
+                                                    <Row bottom='xs' style={{ height: 72 }}>
+                                                        <label style={{ marginBottom: '12px' }}>{param}</label>
+                                                    </Row>
+                                                )
+                                            })
+                                        }
+                                    </Col>
+                                    <Col xs={6}>
+                                        {
+                                            Object.keys(templateParameters || {}).map((param, index) => {
+                                                return (
+                                                    <Row bottom='xs' style={{ height: 72 }}>
+                                                        <TextField id={'_p'+param} ref={'_p'+param} fullWidth={true} defaultValue={templateParameters[param].Default}
+                                                            hintText={templateParameters[param].Description} hintStyle={{ opacity: 1, fontSize: '10px', bottom: '-20px', textAlign: 'left' }}/>
+                                                    </Row>
+                                                )
+                                            })
+                                        }
+                                    </Col>
+                                </Row>
                             </Col>
                         </Row>
                     </Col>
@@ -144,20 +165,18 @@ class CreateDeployment extends Component {
     }
 
     handlesAccountChange = (event, index, accountName) => {
-        const { accounts, landscapes, params } = this.props
 
+        const { accounts, landscapes, params } = this.props
         const account = accounts.find(acc => { return acc.name === accountName })
         const currentLandscape = landscapes.find(ls => { return ls._id === params.landscapeId })
         const template = JSON.parse(currentLandscape.cloudFormationTemplate)
-
-        console.log('%c currentLandscape ', 'background: #1c1c1c; color: deeppink', currentLandscape)
-        console.log('%c template ', 'background: #1c1c1c; color: limegreen', template)
 
         this.setState({
             accountName: accountName,
             accessKeyId: account.accessKeyId || '',
             secretAccessKey: account.secretAccessKey || '',
             endpoint: account.endpoint || '',
+            location: account.region || '',
             caBundlePath: account.caBundlePath || '',
             rejectUnauthorizedSsl: account.rejectUnauthorizedSsl || '',
             signatureBlock: account.signatureBlock || '',
@@ -177,13 +196,16 @@ class CreateDeployment extends Component {
         event.preventDefault()
         const { mutate, landscapes, params } = this.props
         const { router } = this.context
-        const currentLandscape = landscapes.find(ls => { return ls._id === params.landscapeId })
 
-        let deploymentToCreate = {}
+        let deploymentToCreate = {
+            cloudFormationParameters: {}
+        }
 
         // map all fields to deploymentToCreate
         for (let key in this.refs) {
-            if (key === 'rejectUnauthorizedSsl') {
+            if (key.indexOf('_p') === 0) {
+                deploymentToCreate.cloudFormationParameters[key.replace('_p', '')] = this.refs[key].getValue()
+            } else if (key === 'rejectUnauthorizedSsl') {
                 deploymentToCreate[key] = this.refs[key].isToggled()
             } else {
                 deploymentToCreate[key] = this.refs[key].getValue()
@@ -195,11 +217,9 @@ class CreateDeployment extends Component {
         deploymentToCreate.location = this.state.location
         deploymentToCreate.accountName = this.state.accountName
         deploymentToCreate.landscapeId = params.landscapeId
-        deploymentToCreate.cloudFormationTemplate = currentLandscape.cloudFormationTemplate
-        deploymentToCreate.cloudFormationParameters = this.state.templateParameters
 
-
-        console.log('%c deploymentToCreate ', 'background: #1c1c1c; color: limegreen', deploymentToCreate)
+        let JSONString = JSON.stringify(deploymentToCreate.cloudFormationParameters)
+        deploymentToCreate.cloudFormationParameters = JSONString
 
         mutate({
             variables: { deployment: deploymentToCreate }

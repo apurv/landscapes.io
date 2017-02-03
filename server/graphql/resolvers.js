@@ -241,6 +241,8 @@ const resolveFunctions = {
 
             console.log(' ---> creating Deployment')
 
+            let _cloudFormationParameters = JSON.parse(deployment.cloudFormationParameters)
+
             function _setCABundle(pathToCertDotPemFile, rejectUnauthorized) {
                 let filePath = path.join(process.cwd(), pathToCertDotPemFile)
                 winston.info('## rejectUnauthorizedSsl -->', deployment.rejectUnauthorizedSsl)
@@ -327,7 +329,8 @@ const resolveFunctions = {
                         // TODO: update with username
                         newDeployment.createdBy = 'tempAdmin'
 
-                        let tags = Object.keys(deployment.tags)
+                        let tags = Object.keys({})
+                        // let tags = Object.keys(deployment.tags)
                         newDeployment.tags = []
                         for (let i = 0; i < tags.length; i++) {
                             let tag = {
@@ -336,17 +339,19 @@ const resolveFunctions = {
                             }
                             newDeployment.tags.push(tag)
                         }
-                        winston.info('## Tags:', JSON.stringify(newDeployment.tags))
+                        // winston.info('## Tags:', JSON.stringify(newDeployment.tags))
 
                         newDeployment.cloudFormationParameters = [] //
-                        let keys = Object.keys(deployment.cloudFormationParameters)
+                        let keys = Object.keys(_cloudFormationParameters)
                         for (let j = 0; j < keys.length; j++) {
                             let cloudFormationParameter = {
                                 ParameterKey: keys[j],
-                                ParameterValue: deployment.cloudFormationParameters[keys[j]]
+                                ParameterValue: _cloudFormationParameters[keys[j]]
                             }
                             newDeployment.cloudFormationParameters.push(cloudFormationParameter)
                         }
+
+                        console.log('newDeployment.cloudFormationParameters', newDeployment.cloudFormationParameters)
 
                         newDeployment.save(function(err, deployment) {
                             if (err) {
@@ -388,10 +393,10 @@ const resolveFunctions = {
                             stackParams.Tags = newDeployment.tags
 
                             if (newDeployment.description) {
-                                stackParams.Tags.push({Key: 'Description', Value: newDeployment.description})
+                                stackParams.Tags.push({ Key: 'Description', Value: newDeployment.description })
                             }
                             if (newDeployment.billingCode) {
-                                stackParams.Tags.push({Key: 'Billing Code', Value: newDeployment.billingCode})
+                                stackParams.Tags.push({ Key: 'Billing Code', Value: newDeployment.billingCode })
                             }
 
                             winston.info('---> async.series >> stack parameters set!')
@@ -425,7 +430,7 @@ const resolveFunctions = {
 
                     // fix single quote issue...
                     let cleanStackParams = JSON.parse(JSON.stringify(stackParams))
-
+                    console.log('cleanStackParams', cleanStackParams)
                     let awsRequest = cloudFormation.createStack(cleanStackParams, function(err, deployment) {
                         if (err) {
                             callback(err)
@@ -460,6 +465,79 @@ const resolveFunctions = {
                     return results
                 }
             }) // end - async.series
+        },
+        deleteDeployment(_, { deployment }) {
+
+            console.log(deployment)
+
+            if (deployment.isDeleted) {
+                console.log(' ---> purging deployment')
+
+                return Deployment.remove({ stackName: deployment.stackName }, (err, result) => {
+                    if (err) {
+                        console.log(err)
+                        reject(err)
+                    }
+                    console.log('result', result)
+                    return result
+                })
+            } else {
+
+                console.log(' ---> deleting deployment')
+
+                let cloudformation = new AWS.CloudFormation()
+
+                let params = {
+                    StackName: deployment.stackName
+                }
+
+                return new Promise((resolve, reject) => {
+                    Account.findOne({ name: deployment.accountName }, (err, account) => {
+                        if (err) {
+                            console.log(err)
+                            throw err
+                        }
+
+                        cloudformation.config.update({
+                            region: deployment.location
+                        })
+
+                        if (account && account.accessKeyId && account.secretAccessKey) {
+                            winston.info('---> setting AWS security credentials');
+
+                            cloudformation.config.update({
+                                accessKeyId: account.accessKeyId,
+                                secretAccessKey: account.secretAccessKey
+                            })
+
+                        } else {
+                            winston.info(' ---> No AWS security credentials set - assuming Server IAM Role');
+                        }
+
+                        resolve(deployment.accountName)
+                    })
+                }).then(accountName => {
+                    return cloudformation.deleteStack(params, (err, data) => {
+                        if (err) {
+                            console.log(err, err.stack)
+                            throw err
+                        }
+                        return data
+                    })
+                }).then(response => {
+                    return Deployment.findOneAndUpdate({ stackName: deployment.stackName },
+                        { $set: { isDeleted: true } }, { new: true }, (err, doc) => {
+                            if (err) {
+                                console.log(err)
+                                reject(err)
+                            }
+                        return doc
+                    })
+                }).catch(err => {
+                    console.log('ERROR:', err)
+                    throw err
+                })
+            }
         }
     },
     Subscription: {

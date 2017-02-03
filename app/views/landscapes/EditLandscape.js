@@ -9,6 +9,8 @@ import shallowCompare from 'react-addons-shallow-compare'
 import UploadIcon from 'material-ui/svg-icons/file/file-upload'
 import { Paper, FlatButton, RaisedButton, Checkbox, TextField } from 'material-ui'
 
+import { Loader } from '../../components'
+
 class EditLandscape extends Component {
 
     state = {
