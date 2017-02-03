@@ -302,7 +302,7 @@ class GroupDetails extends Component {
                           <TableHeader displaySelectAll={false} adjustForCheckbox={false}
                             enableSelectAll={false} >
                                 <TableRow>
-                                  <TableHeaderColumn colSpan="3" tooltip="Users" style={{textAlign: 'center', fontSize:18}}>
+                                  <TableHeaderColumn colSpan="4" tooltip="Users" style={{textAlign: 'center', fontSize:18}}>
                                     Users
                                   </TableHeaderColumn>
                                 </TableRow>

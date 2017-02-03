@@ -10,7 +10,16 @@
         "showWhenUserAuth": false,
         "showOnUserDropdown": false,
         "hideWhenUserAuth": true
-    },  {
+    },{
+        "label": "Landscapes",
+        "link": "/landscapes",
+        "view": "landscapes",
+        "isRouteBtn": true,
+        "alwaysShows": false,
+        "showWhenUserAuth": true,
+        "showOnUserDropdown": false,
+        "hideWhenUserAuth": false
+    },{
         "label": "Groups",
         "link": "/groups",
         "view": "groups",
@@ -23,15 +32,6 @@
         "label": "Users",
         "link": "/users",
         "view": "users",
-        "isRouteBtn": true,
-        "alwaysShows": false,
-        "showWhenUserAuth": true,
-        "showOnUserDropdown": false,
-        "hideWhenUserAuth": false
-    }, {
-        "label": "Landscapes",
-        "link": "/landscapes",
-        "view": "landscapes",
         "isRouteBtn": true,
         "alwaysShows": false,
         "showWhenUserAuth": true,

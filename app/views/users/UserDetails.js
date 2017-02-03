@@ -63,8 +63,9 @@ class UserDetails extends Component {
       let userGroups = []
       if(users){
         currentUser = users.find(ls => { return ls._id === params.id })
+        console.log('CURRENT USER', currentUser)
         if(!currentUser.imageUri){
-          currentUser.imageUri = defaultImage
+          // currentUser.imageUri = defaultImage
         }
         this.setState({currentUser: currentUser})
       }
@@ -92,8 +93,9 @@ class UserDetails extends Component {
       let userGroups = []
       if(users){
         currentUser = users.find(ls => { return ls._id === params.id })
+        console.log('CURRENT USER', currentUser)
         if(!currentUser.imageUri){
-          currentUser.imageUri = defaultImage
+          // currentUser.imageUri = defaultImage
         }
         this.setState({currentUser: currentUser})
       }

@@ -7,6 +7,7 @@ const User = `
         username: String!
         email: String!
         password: String!
+        imageUri: String
         firstName: String
         lastName: String
         role: String!

@@ -11,6 +11,7 @@ const Group = `
         permissions: [String!]
         createdAt: String
         createdBy: User
+        imageUri: String
 
         name: String!
         description: String

@@ -25,6 +25,7 @@ const Query = `
         username: String
         email: String
         role: String
+        imageUri: String
         password: String
         firstName: String
         lastName: String
@@ -87,6 +88,7 @@ const Query = `
       landscapes: [String]
       users: [userInput]
       permissions: [String]
+      imageUri: String
       name: String
       description: String
     }

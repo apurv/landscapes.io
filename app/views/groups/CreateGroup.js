@@ -9,61 +9,38 @@ import {Table, TableBody, TableFooter, TableHeader, TableHeaderColumn, TableRow,
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import {Tabs, Tab} from 'material-ui/Tabs';
 import TextField from 'material-ui/TextField';
+import Dropzone from 'react-dropzone'
+import UploadIcon from 'material-ui/svg-icons/file/file-upload'
+import IconButton from 'material-ui/IconButton'
+import Chip from 'material-ui/Chip';
+import Avatar from 'material-ui/Avatar';
+import AvatarCropper from "react-avatar-cropper";
+import ReactDom from "react-dom";
 
 import Slider from 'material-ui/Slider';
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import FlatButton from 'material-ui/FlatButton';
 import defaultUserImage from '../../style/empty.png'
+import defaultImage from '../../style/empty-group.png'
 
 import { Loader } from '../../components'
 
+import '../../style/avatar-cropper.style.scss'
 const CheckboxGroup = Checkbox.Group;
 
-const plainOptions = [{label:'Create', value: 'c'}, {label:'Read', value: 'r', disabled: true}, {label:'Update', value: 'u'}, {label:'Delete', value: 'd'}, {label:'Execute', value: 'x'}];
 const defaultCheckedList = ['r'];
 const allChecked = ['c', 'r', 'u', 'd', 'x'];
 
-
-const landscapeColumns = [{
-  title: 'Name',
-  dataIndex: 'name',
-  render: text => <a href="#">{text}</a>,
-}, {
-  title: 'Description',
-  dataIndex: 'description',
-}];
-
-const columns = [{
-  title: 'Name',
-  dataIndex: 'name',
-  render: text => <a href="#">{text}</a>,
-}, {
-  title: 'Age',
-  dataIndex: 'age',
-}, {
-  title: 'Address',
-  dataIndex: 'address',
-}];
-const data = [];
-for (let i = 0; i < 46; i++) {
-  data.push({
-    key: i,
-    name: `Edward King ${i}`,
-    age: 32,
-    address: `London, Park Lane no. ${i}`,
-  });
-}
-
-const pagination = {
-  total: data.length,
-  showSizeChanger: true,
-  onShowSizeChange: (current, pageSize) => {
-    console.log('Current: ', current, '; PageSize: ', pageSize);
+const styles = {
+  chip: {
+    margin: 4,
   },
-  onChange: (current) => {
-    console.log('Current: ', current);
+  wrapper: {
+    display: 'flex',
+    flexWrap: 'wrap',
   },
 };
+
 
 const FormItem = Form.Item
 const Dragger = Upload.Dragger
@@ -116,6 +93,12 @@ class CreateGroup extends Component {
     shouldComponentUpdate(nextProps, nextState) {
         return shallowCompare(this, nextProps, nextState)
     }
+    componentWillMount(){
+      this.setState({imageUri: defaultImage})
+    }
+    componentWillReceiveProps(nextProps){
+      this.setState({imageUri: defaultImage})
+    }
 
     componentWillUnmount() {
         const { leaveGroups } = this.props
@@ -129,17 +112,13 @@ class CreateGroup extends Component {
         const { loading, groups, landscapes, users } = this.props
         const { getFieldDecorator } = this.props.form
 
-
-        console.log('GROUPS', groups)
-        console.log('landscapes', landscapes)
-        console.log('users', users)
         const formItemLayout = {
             labelCol: { span: 8 },
             wrapperCol: { span: 12 }
         }
         var stateUsers = []
         if(users){
-          users.map(user =>{
+          users.map(user => {
             if(!user.imageUri){
               user.imageUri = defaultUserImage
             }
@@ -202,6 +181,27 @@ class CreateGroup extends Component {
                             <Checkbox label="Delete" checked={this.state.permissionD} onCheck={this.handlesPermissionClickD}/>
                             <Checkbox label="Execute" checked={this.state.permissionX} onCheck={this.handlesPermissionClickX}/>
                             </FormItem>
+                            <Dropzone id='imageUri' onDrop={this.handlesImageUpload} multiple={false} accept='image/*'
+                              style={{ marginLeft: '10px', width: '180px', padding: '15px 0px' }}>
+                              <div className="avatar-photo">
+                                <div className="avatar-edit">
+                                  <span>Click to Choose Image</span>
+                                  <i className="fa fa-camera"></i>
+                                </div>
+                                <img src={this.state.croppedImg || this.state.imageUri} style={{width: 200}} />
+                              </div>
+                              {
+                                this.state.cropperOpen &&
+                                <AvatarCropper
+                                  onRequestHide={this.handleRequestHide}
+                                  cropperOpen={this.state.cropperOpen}
+                                  onCrop={this.handleCrop}
+                                  image={this.state.img}
+                                  width={400}
+                                  height={400}
+                                />
+                              }
+                              </Dropzone>
                           <FormItem wrapperCol={{ span: 12, offset: 6 }}>
                               <RaisedButton primary={true} disabled={loading} label="Create" onClick={this.handlesCreateClick} />
                           </FormItem>
@@ -209,6 +209,26 @@ class CreateGroup extends Component {
 
                   </Tab>
                   <Tab label="Users" key="2">
+                  <div style={styles.wrapper}>
+
+                      {
+                        users.map( (row, index) => {
+
+                          if(row.selected){
+                            return(
+                              <Chip
+                                style={styles.chip}
+                                onRequestDelete={this.handleRequestDelete}
+                              ><Avatar src={row.imageUri} />
+
+                                {row.firstName} {row.lastName}
+                              </Chip>
+                            )
+                          }
+
+                        })
+                      }
+                          </div>
                   <Table
                             height={this.state.height}
                             fixedHeader={this.state.fixedHeader}
@@ -235,7 +255,8 @@ class CreateGroup extends Component {
                                 <TableRowColumn>{row.firstName} {row.lastName}</TableRowColumn>
                                 <TableRowColumn>{row.role}</TableRowColumn>
                               </TableRow>
-                              ))}
+                              ))
+                            }
                           </TableBody>
                             <TableFooter
                               adjustForCheckbox={this.state.showCheckboxes}
@@ -290,6 +311,59 @@ class CreateGroup extends Component {
                 </Form>
             </div>
         )
+    }
+
+    getInitialState = () => {
+        return {
+          cropperOpen: false,
+          img: null,
+          croppedImg: defaultImage
+        };
+      }
+      handleFileChange = (dataURI) => {
+        this.setState({
+          img: dataURI,
+          croppedImg: this.state.croppedImg,
+          cropperOpen: true
+        });
+      }
+      handleCrop = (dataURI) => {
+        this.setState({
+          cropperOpen: false,
+          img: null,
+          croppedImg: dataURI
+        });
+      }
+      handleRequestHide = () =>{
+        this.setState({
+          cropperOpen: false
+        });
+      }
+    handleRequestDelete = () => {
+      alert('You clicked the delete button.');
+    }
+
+    handleTouchTap = () => {
+      alert('You clicked the Chip.');
+    }
+
+    handlesImageUpload = (acceptedFiles, rejectedFiles) => {
+        let reader = new FileReader()
+
+        reader.readAsDataURL(acceptedFiles[0])
+        reader.onload = () => {
+            this.setState({
+                imageUri: reader.result,
+                img: reader.result,
+                croppedImg: this.state.croppedImg,
+                cropperOpen: true,
+                imageFileName: acceptedFiles[0].name
+            })
+        }
+
+        reader.onerror = error => {
+            console.log('Error: ', error)
+        }
     }
 
     handlesGroupClick = event => {
@@ -384,6 +458,7 @@ class CreateGroup extends Component {
         else{
           groupToCreate.landscapes = []
         }
+        groupToCreate.imageUri = this.state.croppedImg
 
         console.log('creating group -', groupToCreate)
         console.log('this.props -', this.props)
