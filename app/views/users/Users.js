@@ -19,18 +19,6 @@ class Users extends Component {
         viewEntersAnim: true
     }
 
-    static childContextTypes =
-{
-    muiTheme: React.PropTypes.object
-}
-
-getChildContext()
-{
-    return {
-        muiTheme: getMuiTheme()
-    }
-}
-
     componentDidMount() {
         const { enterUsers } = this.props
         enterUsers()

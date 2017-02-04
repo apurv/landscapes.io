@@ -13,7 +13,6 @@
   padding-right: 15px;
   padding-left: 15px;
 }
-
 .avatar-photo {
   position: relative;
   background-color: #666;
@@ -91,83 +90,4 @@
 
 .m-top {
   margin-top: 2em;
-}
-
-#demo {
-  background-color: #2196f3;
-  text-align: center;
-  font-size: 40px;
-  text-transform: uppercase;
-  padding: 0.5em;
-  color: whitesmoke;
-  margin:0;
-}
-
-#content {
-  background-color: #2196f3;
-  text-align: center;
-  font-size: 40px;
-  text-transform: uppercase;
-  padding: 0.5em;
-  color: whitesmoke;
-  margin:0;
-}
-
-#usage {
-  background-color: #2196f3;
-  text-align: center;
-  font-size: 40px;
-  text-transform: uppercase;
-  padding: 0.5em;
-  color: whitesmoke;
-  margin:0;
-}
-#installation {
-  background-color: #2196f3;
-  text-align: center;
-  font-size: 40px;
-  text-transform: uppercase;
-  padding: 0.5em;
-  color: whitesmoke;
-  margin:0;
-}
-#contributing {
-  background-color: #2196f3;
-  text-align: center;
-  font-size: 40px;
-  text-transform: uppercase;
-  padding: 0.5em;
-  color: whitesmoke;
-  margin:0;
-}
-
-/*////////////STARS LOL LOOK AT THOSE STYLES!////////////////*/
-
-#title {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  color: #FFF;
-  text-align: center;
-  font-family: "lato", sans-serif;
-  font-weight: 300;
-  font-size: 50px;
-  letter-spacing: 10px;
-  margin-top: -60px;
-  padding-left: 10px;
-}
-#title span {
-  background: -webkit-linear-gradient(white, #38495a);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-@keyframes animStar {
-  from {
-    transform: translateY(0px);
-  }
-  to {
-    transform: translateY(-2000px);
-  }
 }

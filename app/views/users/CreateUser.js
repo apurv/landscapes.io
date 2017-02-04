@@ -65,19 +65,6 @@ class CreateUser extends Component {
         height:'300'
     }
 
-    static childContextTypes =
-      {
-          muiTheme: React.PropTypes.object
-      }
-
-      getChildContext()
-      {
-          return {
-              muiTheme: getMuiTheme()
-          }
-      }
-
-
     componentDidMount() {
         const { enterUsers } = this.props
         enterUsers()

@@ -72,17 +72,6 @@ class GroupDetails extends Component {
           currentGroup: {}
     }
 
-    static childContextTypes =
-      {
-          muiTheme: React.PropTypes.object
-      }
-
-      getChildContext()
-      {
-          return {
-              muiTheme: getMuiTheme()
-          }
-      }
     componentDidMount() {
         const { enterGroupDetails } = this.props
         enterGroupDetails()

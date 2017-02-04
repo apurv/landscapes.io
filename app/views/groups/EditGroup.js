@@ -9,23 +9,8 @@ import Subheader from 'material-ui/Subheader';
 import IconButton from 'material-ui/IconButton';
 import StarBorder from 'material-ui/svg-icons/toggle/star-border';
 import Snackbar from 'material-ui/Snackbar';
-import {
-    Table,
-    TableBody,
-    TableFooter,
-    TableHeader,
-    TableHeaderColumn,
-    TableRow,
-    TableRowColumn
-} from 'material-ui/Table';
-import {
-    Card,
-    CardActions,
-    CardHeader,
-    CardMedia,
-    CardTitle,
-    CardText
-} from 'material-ui/Card';
+import { Table, TableBody, TableFooter, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table';
+import { Card, CardActions, CardHeader, CardMedia, CardTitle, CardText } from 'material-ui/Card';
 import {Tabs, Tab} from 'material-ui/Tabs';
 import TextField from 'material-ui/TextField';
 import Slider from 'material-ui/Slider';
@@ -40,6 +25,7 @@ import defaultUserImage from '../../style/empty.png'
 import defaultImage from '../../style/empty-group.png'
 import AvatarCropper from "react-avatar-cropper";
 import ReactDom from "react-dom";
+
 
 import {Loader} from '../../components'
 
@@ -99,15 +85,6 @@ class EditGroup extends Component {
         height: '300'
     }
 
-    static childContextTypes = {
-        muiTheme: React.PropTypes.object
-    }
-
-    getChildContext()
-    {
-        return {muiTheme: getMuiTheme()}
-    }
-
     componentWillMount() {
         const {loading, groups, landscapes, users, params} = this.props
 
@@ -134,10 +111,10 @@ class EditGroup extends Component {
         let selectedUserRows = []
         if (currentGroup.landscapes) {
             for (var i = 0; i < currentGroup.landscapes.length; i++) {
-                landscapes.find(ls => {
+                landscapes.find((ls, index) => {
                     if (currentGroup.landscapes[i] === ls._id) {
                         ls.selected = true;
-                        selectedLandscapeRows.push(i)
+                        selectedLandscapeRows.push(index)
                     }
                 })
             }
@@ -146,10 +123,10 @@ class EditGroup extends Component {
         }
         if (currentGroup.users) {
             for (var i = 0; i < currentGroup.users.length; i++) {
-                users.find(user => {
+                users.find((user, index) => {
                     if (currentGroup.users[i].userId === user._id) {
                         user.selected = true;
-                        selectedUserRows.push(i)
+                        selectedUserRows.push(index)
                     }
                 })
             }
@@ -189,6 +166,7 @@ class EditGroup extends Component {
                 }
             })
         }
+        this.setState({stateLandscapes: this.state.landscapes || [], stateUsers})
     }
 
     componentWillReceiveProps(nextProps) {
@@ -217,10 +195,10 @@ class EditGroup extends Component {
         let userImageUsers = []
         if (currentGroup.landscapes) {
             for (var i = 0; i < currentGroup.landscapes.length; i++) {
-                landscapes.find(ls => {
+                landscapes.find((ls, index) => {
                     if (currentGroup.landscapes[i] === ls._id) {
                         ls.selected = true;
-                        selectedLandscapeRows.push(i)
+                        selectedLandscapeRows.push(index)
                     }
                 })
             }
@@ -229,10 +207,10 @@ class EditGroup extends Component {
         }
         if (currentGroup.users) {
             for (var i = 0; i < currentGroup.users.length; i++) {
-                users.find(user => {
+                users.find((user, index) => {
                     if (currentGroup.users[i].userId === user._id) {
                         user.selected = true;
-                        selectedUserRows.push(i)
+                        selectedUserRows.push(index)
                     }
                     if (!user.imageUri) {
                         user.imageUri = defaultUserImage
@@ -274,6 +252,7 @@ class EditGroup extends Component {
                 }
             })
         }
+        this.setState({stateLandscapes: this.state.landscapes || [], stateUsers})
     }
 
     componentDidMount() {
@@ -295,8 +274,6 @@ class EditGroup extends Component {
         let self = this
         const {animated, viewEntersAnim} = this.state
         const {loading, groups, landscapes, users, params} = this.props
-        let stateLandscapes = this.state.landscapes || []
-        let stateUsers = this.state.users || []
         let stateCurrentGroup = this.state.currentGroup || {
             name: '',
             description: ''
@@ -323,8 +300,8 @@ class EditGroup extends Component {
                     <RaisedButton primary={true} label="Save" onClick={this.handlesCreateClick}/>
                 </Row>
                 <Row center='xs' middle='xs' className={cx({'animatedViews': animated, 'view-enter': viewEntersAnim})}>
-                    {console.log('stateLandscapes', stateLandscapes)}
-                    {console.log('stateUsers', stateUsers)}
+                    {console.log('this.state.stateLandscapes', this.state.stateLandscapes)}
+                    {console.log('this.state.stateUsers', this.state.stateUsers)}
                     <Snackbar open={this.state.successOpen} message="Group successfully updated." autoHideDuration={3000} onRequestClose={this.handleRequestClose}/>
                     <Snackbar open={this.state.failOpen} message="Error updating group" autoHideDuration={3000} onRequestClose={this.handleRequestClose}/>
                     <Tabs >
@@ -385,14 +362,14 @@ class EditGroup extends Component {
                         <Tab label="Users" key="2">
                             <div style={styles.wrapper}>
                                 {
-                                  stateUsers.map((row, index) => {
-                                    < Chip
-                                    style = { styles.chip } onRequestDelete = {this.handleRequestDelete} >
-                                    <Avatar src={stateUsers.imageUri}/>
-                                    {row.firstName}
-                                    {row.lastName}
-                                    < /Chip>
-                                })
+                                  this.state.selectedUserRows.map((row, index) => (
+                                    <Chip style = {styles.chip} key={index} onRequestDelete={() => {
+                                        this.handleRequestDelete(row, index)
+                                      }} >
+                                      <Avatar src={this.state.stateUsers[row].imageUri}/>
+                                      {row} {this.state.stateUsers[row].firstName} {this.state.stateUsers[row].lastName}
+                                    </Chip>
+                                ))
                               }
                             </div>
                             <Table height={this.state.height} fixedHeader={this.state.fixedHeader} fixedFooter={this.state.fixedFooter} selectable={this.state.selectable} multiSelectable={this.state.multiSelectable} onRowSelection={this.handleOnRowSelectionUsers}>
@@ -405,17 +382,16 @@ class EditGroup extends Component {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody displayRowCheckbox={this.state.showCheckboxes} deselectOnClickaway={false} showRowHover={this.state.showRowHover} stripedRows={false}>
-                                    {stateUsers.map((row, index) => (
-                                        <TableRow key={row._id} selected={row.selected}>
-                                            <TableRowColumn><img src={row.imageUri} style={{
-                                            width: 40,
-                                            borderRadius: 50
-                                        }}/></TableRowColumn>
-                                            <TableRowColumn>{row.email}</TableRowColumn>
-                                            <TableRowColumn>{row.firstName} {row.lastName}</TableRowColumn>
-                                            <TableRowColumn>{row.role}</TableRowColumn>
-                                        </TableRow>
-                                    ))}
+                                    {
+                                      this.state.stateUsers.map((row, index) => (
+                                          <TableRow key={row._id} selected={this.state.selectedUserRows.indexOf(index) !== -1}>
+                                              <TableRowColumn><img src={row.imageUri} style={{width: 40, borderRadius: 50}}/></TableRowColumn>
+                                              <TableRowColumn>{row.email}</TableRowColumn>
+                                              <TableRowColumn>{row.firstName} {row.lastName}</TableRowColumn>
+                                              <TableRowColumn>{row.role}</TableRowColumn>
+                                          </TableRow>
+                                      ))
+                                    }
                                 </TableBody>
                                 <TableFooter adjustForCheckbox={this.state.showCheckboxes}></TableFooter>
                             </Table>
@@ -431,7 +407,7 @@ class EditGroup extends Component {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody displayRowCheckbox={this.state.showCheckboxes} deselectOnClickaway={false} showRowHover={this.state.showRowHover} stripedRows={false}>
-                                    {stateLandscapes.map((row, index) => (
+                                    {this.state.stateLandscapes.map((row, index) => (
                                         <TableRow key={row._id} selected={row.selected}>
                                             <TableRowColumn><img src={row.imageUri} style={{
                                             width: 50
@@ -464,8 +440,17 @@ class EditGroup extends Component {
         this.setState({cropperOpen: false});
     }
 
-    handleRequestDelete = () => {
-        alert('You clicked the delete button.');
+    handleRequestDelete = (row, index) => {
+      console.log('this.state.selectedUserRows before', this.state.selectedUserRows)
+      console.log('this.state.selectedUserRows index', index)
+      console.log('this.state.selectedUserRows index', row)
+      var userSelected = this.state.selectedUserRows.splice(index, 1)
+      console.log('this.state.selectedUserRows spliced', userSelected)
+      this.state.stateUsers[userSelected[0]].selected = false;
+      this.setState({stateUsers: [...this.state.stateUsers]})
+      this.setState({selectedUserRows: [...this.state.selectedUserRows]})
+      console.log('this.state.selectedUserRows after', this.state.selectedUserRows)
+      this.render()
     }
 
     handleTouchTap = () => {

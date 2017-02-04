@@ -28,19 +28,6 @@ class Password extends Component {
         verifyPassword: ''
     }
 
-    static childContextTypes =
-      {
-          muiTheme: React.PropTypes.object
-      }
-
-      getChildContext()
-      {
-          return {
-              muiTheme: getMuiTheme()
-          }
-      }
-
-
     componentDidMount() {
       console.log('THIS PROPS ----->', this.props)
         const { enterPasswordChange } = this.props

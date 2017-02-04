@@ -20,18 +20,6 @@ class Groups extends Component {
         viewEntersAnim: true
     }
 
-    static childContextTypes =
-      {
-          muiTheme: React.PropTypes.object
-      }
-
-      getChildContext()
-      {
-          return {
-              muiTheme: getMuiTheme()
-          }
-      }
-
     componentDidMount() {
         const { enterGroups } = this.props
         enterGroups()
