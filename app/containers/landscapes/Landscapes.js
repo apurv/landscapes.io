@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 import { Landscapes } from '../../views'
 import { connect } from 'react-redux'
-import { graphql } from 'react-apollo'
+import { graphql, compose } from 'react-apollo'
 import { bindActionCreators } from 'redux'
 import * as viewsActions from '../../redux/modules/views'
 
@@ -55,24 +55,72 @@ const LandscapeQuery = gql `
  // img,
  // createdBy
 
-// 1- add queries:
+const DeploymentByLandscapeIdMutation = gql `
+    mutation getDeploymentsByLandscapeId($landscapeId: String!) {
+        deploymentsByLandscapeId(landscapeId: $landscapeId) {
+            _id,
+            createdAt,
+            stackName,
+            accountName,
+            landscapeId,
+            isDeleted,
+            description,
+            location,
+            billingCode,
+            flavor,
+            cloudFormationTemplate,
+            cloudFormationParameters,
+            tags,
+            notes,
+            stackId,
+            stackStatus,
+            stackLastUpdate,
+            awsErrors
+        }
+    }
+`
+
+const DeploymentStatusMutation = gql `
+    mutation getDeploymentsStatus($deployment: DeploymentInput!) {
+        deploymentStatus(deployment: $deployment) {
+            _id,
+            stackStatus
+        }
+    }
+`
+
 const LandscapesWithQuery = graphql(LandscapeQuery, {
     props: ({ data: { loading, landscapes } }) => ({
-        landscapes,
-        loading
+        loading,
+        landscapes
     })
-})(graphql(UserQuery, {
+})
+
+const UsersWithQuery = graphql(UserQuery, {
     props: ({ data: { loading, users } }) => ({
         users,
         loading
     })
-})(graphql(GroupQuery, {
+})
+
+const GroupsWithQuery = graphql(GroupQuery, {
     props: ({ data: { loading, groups, refetch } }) => ({
         groups,
         loading,
         refetchGroups: refetch
     })
-})(Landscapes)))
+})
+
+const DeploymentsWithMutation = graphql(DeploymentByLandscapeIdMutation, { name: 'deploymentsByLandscapeId' })
+const DeploymentStatusWithMutation = graphql(DeploymentStatusMutation, { name: 'deploymentStatus' })
+
+const composedRequest = compose(
+    LandscapesWithQuery,
+    UsersWithQuery,
+    GroupsWithQuery,
+    DeploymentsWithMutation,
+    DeploymentStatusWithMutation
+)(Landscapes)
 
 
 /* -----------------------------------------
@@ -90,4 +138,4 @@ const mapDispatchToProps = (dispatch) => {
     }, dispatch)
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LandscapesWithQuery)
+export default connect(mapStateToProps, mapDispatchToProps)(composedRequest)

@@ -96,7 +96,7 @@ const Query = `
         accounts: [Account]
         landscapes: [Landscape]
         landscapeById(id: String): [Landscape]
-        deploymentsByLandscapeId(landscapeId: String): [Deployment]
+        landscapesWithDeploymentStatus: [Landscape]
         users: [User]
     }
 `
@@ -124,6 +124,8 @@ const Mutation = `
         createDeployment ( deployment: DeploymentInput! ): Deployment
         updateDeployment ( deployment: DeploymentInput! ): Deployment
         deleteDeployment ( deployment: DeploymentInput! ): Deployment
+        deploymentStatus ( deployment: DeploymentInput! ): Deployment
+        deploymentsByLandscapeId ( landscapeId: String! ): [Deployment]
     }
 `
 

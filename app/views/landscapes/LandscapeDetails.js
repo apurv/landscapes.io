@@ -13,12 +13,21 @@ class LandscapeDetails extends Component {
     state = {
         animated: true,
         viewEntersAnim: true,
-        showDialog: false
+        showDialog: false,
+        currentDeployments: []
     }
 
     componentWillMount() {
-        const { passLandscape, params } = this.props
-        passLandscape(params.id)
+        let self = this
+        const { deploymentsByLandscapeId, params } = this.props
+
+        deploymentsByLandscapeId({
+            variables: { landscapeId: params.id }
+        }).then(({ data }) => {
+            self.setState({
+                currentDeployments: data.deploymentsByLandscapeId.filter(d => { return d.landscapeId === params.id })
+            })
+        })
     }
 
     componentDidMount() {
@@ -36,20 +45,13 @@ class LandscapeDetails extends Component {
     }
 
     render() {
-        const { animated, viewEntersAnim, currentDeployment, deleteType } = this.state
+        const { animated, viewEntersAnim, currentDeployment, currentDeployments, deleteType } = this.state
         const { loading, landscapes, deploymentsByLandscapeId, params } = this.props
-
 
         const currentLandscape = landscapes.find(ls => { return ls._id === params.id })
         const parsedCFTemplate = JSON.parse(currentLandscape.cloudFormationTemplate)
-        // console.log('%c this.props ', 'background: #1c1c1c; color: limegreen', this.props)
-        // console.log('%c currentLandscape ', 'background: #1c1c1c; color: deepskyblue', currentLandscape)
-        let currentDeployments = []
-        let paramDetails = []
 
-        if (deploymentsByLandscapeId) {
-            currentDeployments = deploymentsByLandscapeId.filter(d => { return d.landscapeId === params.id })
-        }
+        let paramDetails = []
 
         function getDeploymentInfo(deployment) {
 

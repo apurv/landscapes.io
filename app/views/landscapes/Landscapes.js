@@ -1,4 +1,5 @@
 import cx from 'classnames'
+import axios from 'axios'
 import React, { Component, PropTypes } from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
 import { Row, Col } from 'react-flexbox-grid'
@@ -21,6 +22,79 @@ class Landscapes extends Component {
         enterLandscapes()
     }
 
+    componentWillReceiveProps(nextProps) {
+        console.log('componentWillReceiveProps invoked', nextProps)
+
+        const { landscapes } = nextProps
+        let viewLandscapes = landscapes || []
+
+        function StatusModel() {
+            this.pending = 0
+            this.running = 0
+            this.errored = 0
+            this.deleted = 0
+        }
+
+        console.log('%c viewLandscapes ', 'background: #1c1c1c; color: yellow', viewLandscapes)
+
+        if (viewLandscapes.length) {
+
+            // instantiate statuses
+            // viewLandscapes.forEach(landscape => {
+            //     landscape.status = new StatusModel()
+            // })
+
+            // let _promises = viewLandscapes.map(landscape => {
+            //     return this.props.deploymentsByLandscapeId({
+            //         variables: { landscapeId: landscape._id }
+            //     })
+            // })
+
+            // return Promise.all(_promises).then(data => {
+            //     console.log('%c fata ', 'background: #1c1c1c; color: limegreen', data)
+            //     data.forEach((_data, i) => {
+            //         viewLandscapes[i].deployments = _data.data.deploymentsByLandscapeId
+            //     })
+            //
+            //     viewLandscapes.forEach(ls => {
+            //         let statusPromises = ls.deployments.map(deployment => {
+            //             return this.props.deploymentStatus({
+            //                 variables: { deployment }
+            //             })
+            //         })
+            //     })
+            //
+            // })
+
+            /////////// STATUS ////////////
+
+            // let landscapesDetails = []
+            //
+            // // instantiate statuses
+            // viewLandscapes.forEach(landscape => {
+            //     landscape.status = new StatusModel()
+            // })
+            //
+            // // create promise array to gather all deployments
+            // var _promises = viewLandscapes.map((landscape, index) => {
+            //     return new Promise(function (resolve, reject) {
+            //         axios.get('http://localhost:9000/api/landscapes/' + landscape._id + '/deployments').then(res => {
+            //             console.log('%c RES ', 'background: #1c1c1c; color: limegreen', res)
+            //             resolve(res)
+            //         }).catch(err => {
+            //             console.log(err)
+            //             reject(err)
+            //         })
+            //     })
+            // })
+            //
+            // Promise.all(_promises).then(function (landscapes) {
+            //     console.log('%c LAND ', 'background: #1c1c1c; color: limegreen', landscapes)
+            //     landscapesDetails = landscapes
+            // })
+        }
+    }
+
     shouldComponentUpdate(nextProps, nextState) {
         return shallowCompare(this, nextProps, nextState)
     }
@@ -33,11 +107,12 @@ class Landscapes extends Component {
     render() {
         const { animated, viewEntersAnim } = this.state
         const { loading, landscapes, users, groups } = this.props
+        const user = auth.getUserInfo()
+
+        let userGroups = [],
+            userLandscapes = {}
 
         let viewLandscapes = landscapes || []
-        const user = auth.getUserInfo()
-        var userGroups = []
-        let userLandscapes = {}
 
         if (user.role !== 'admin') {
             if (groups) {
@@ -71,6 +146,8 @@ class Landscapes extends Component {
             )
         }
 
+        console.log('%c viewLandscapes ', 'background: #1c1c1c; color: rgb(209, 29, 238)', viewLandscapes)
+
         return (
             <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
 
@@ -99,9 +176,38 @@ class Landscapes extends Component {
                                     </Col>
                                 </Row>
 
-                                <CardText id='landscape-description' style={{ fontSize: '12px' }}>
-                                    {landscape.description}
-                                </CardText>
+                                <Row bottom='xs' style={{ margin: '0px', fontSize: '12px', minHeight: '76px' }}>
+                                    {/* {landscape.description} */}
+                                    <Col xs={9}>
+                                        <Row center='xs'>
+                                            <Col xs={2} style={{ fontSize: '10px', color: 'grey' }}>
+                                                99
+                                                <div style={{ background: 'limegreen', width: '100%', height: '5px' }} />
+                                            </Col>
+                                            <Col xs={2} style={{ fontSize: '10px', color: 'grey' }}>
+                                                99
+                                                <div style={{ background: 'deepskyblue', width: '100%', height: '5px' }} />
+                                            </Col>
+                                            <Col xs={2} style={{ fontSize: '10px', color: 'grey' }}>
+                                                99
+                                                <div style={{ background: 'yellow', width: '100%', height: '5px' }} />
+                                            </Col>
+                                            <Col xs={2} style={{ fontSize: '10px', color: 'grey' }}>
+                                                99
+                                                <div style={{ background: 'red', width: '100%', height: '5px' }} />
+                                            </Col>
+                                            <Col xs={2} style={{ fontSize: '10px', color: 'grey' }}>
+                                                99
+                                                <div style={{ background: 'grey', width: '100%', height: '5px' }} />
+                                            </Col>
+                                            <Col xs={2} style={{ fontSize: '10px', color: 'grey' }}></Col>
+                                        </Row>
+                                    </Col>
+                                    <Col xs={3}>
+                                        {/* <img style={{ filter: 'hue-rotate(-30deg) brightness(1)' }} height='50px' src='/public/untitled.png'/> */}
+                                    </Col>
+                                </Row>
+
                         </Paper>)
                     }
                 </ul>

@@ -60,19 +60,6 @@ const LandscapesWithQuery = graphql(LandscapeQuery, {
     })
 })
 
-let tempId
-
-const DeploymentsWithQuery = graphql(DeploymentByLandscapeIdQuery, {
-    props: ({ data: { loading, deploymentsByLandscapeId } }) => ({
-        loading,
-        deploymentsByLandscapeId,
-        passLandscape(landscapeId) {
-            tempId = landscapeId
-        },
-        landscapeId: tempId
-    })
-})
-
 const deleteDeploymentMutation = gql `
     mutation deleteDeployment($deployment: DeploymentInput!) {
         deleteDeployment(deployment: $deployment) {
@@ -81,22 +68,43 @@ const deleteDeploymentMutation = gql `
     }
 `
 
+const DeploymentByLandscapeIdMutation = gql `
+    mutation getDeploymentsByLandscapeId($landscapeId: String!) {
+        deploymentsByLandscapeId(landscapeId: $landscapeId) {
+            _id,
+            createdAt,
+            stackName,
+            accountName,
+            landscapeId,
+            isDeleted,
+            description,
+            location,
+            billingCode,
+            flavor,
+            cloudFormationTemplate,
+            cloudFormationParameters,
+            tags,
+            notes,
+            stackId,
+            stackStatus,
+            stackLastUpdate,
+            awsErrors
+        }
+    }
+`
+
 const composedRequest = compose(
     LandscapesWithQuery,
-    DeploymentsWithQuery,
-    graphql(deleteDeploymentMutation)
+    graphql(deleteDeploymentMutation),
+    graphql(DeploymentByLandscapeIdMutation, { name: 'deploymentsByLandscapeId' })
 )(LandscapeDetails)
 
 
 /* -----------------------------------------
   Redux
  ------------------------------------------*/
-// TODO: figure out how to do this properly
 const mapStateToProps = state => {
-    return {
-        currentView: state.views.currentView,
-        landscapeId: tempId
-    }
+    return { currentView: state.views.currentView }
 }
 
 const mapDispatchToProps = dispatch => {

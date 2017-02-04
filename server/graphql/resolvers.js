@@ -1,5 +1,6 @@
 import * as fs from 'fs'
 import * as path from 'path'
+import _ from 'lodash'
 import passport from 'passport'
 import async from 'async'
 import https from 'https'
@@ -14,46 +15,232 @@ const Group = require('./models/group')
 const Account = require('./models/account')
 const User = require('../auth/models/user.server.model')
 
+// FIX: Attempts to resolve 'UnknownEndpoint' error experienced on GovCloud
+// AWS.events.on('httpError', () => {
+//     if (this.response.error && this.response.error.code === 'UnknownEndpoint') {
+//         this.response.error.retryable = true;
+//     } else if (this.response.error && this.response.error.code === 'NetworkingError') {
+//         this.response.error.retryable = true;
+//     }
+// })
+
 const resolveFunctions = {
     Query: {
-        landscapes() {
+        landscapes(root, args, context) {
             return Landscape.find().sort('-created').populate('user', 'displayName').exec((err, landscapes) => {
                 if (err) return err
                 return landscapes
             })
         },
+        landscapesWithDeploymentStatus(root, args, context) {
+
+            let cloudformation = new AWS.CloudFormation()
+
+            cloudformation.config.update({
+                region: 'us-east-1'
+            })
+
+            cloudformation.endpoint = new AWS.Endpoint(`https://cloudformation.us-east-1.amazonaws.com`)
+
+            cloudformation.config.update({
+                accessKeyId: '',
+                secretAccessKey: ''
+            })
+
+            // console.log(cloudformation.endpoint)
+
+            return new Promise((resolve, reject) => {
+                cloudformation.describeStacks({ StackName: 'anp-test-017' }, (err, data) => {
+                    if (err) {
+                        console.log(err, err.stack)
+                        reject(err)
+                    }
+                    console.log(data)
+                    resolve(data)
+                })
+            })
+
+            // function StatusModel() {
+            //     this.pending = 0
+            //     this.running = 0
+            //     this.failed = 0
+            //     this.deleted = 0
+            // }
+            //
+            // function describeStacks(stackName, region, accountName) {
+            //
+            //     let cloudformation = new AWS.CloudFormation()
+            //
+            //     return new Promise((resolve, reject) => {
+            //         Account.findOne({ name: accountName }, (err, account) => {
+            //
+            //             if (err) {
+            //                 console.log(err)
+            //                 reject(err)
+            //             }
+            //
+            //             cloudformation.config.update({
+            //                 region: region
+            //             })
+            //
+            //             if (account && account.accessKeyId && account.secretAccessKey) {
+            //                 winston.info('---> setting AWS security credentials');
+            //
+            //                 cloudformation.config.update({
+            //                     accessKeyId: account.accessKeyId,
+            //                     secretAccessKey: account.secretAccessKey
+            //                 })
+            //
+            //             } else {
+            //                 winston.info(' ---> No AWS security credentials set - assuming Server IAM Role');
+            //             }
+            //
+            //             resolve(accountName)
+            //         })
+            //     }).then(accountName => {
+            //
+            //         let params = {
+            //             StackName: stackName
+            //         }
+            //
+            //         console.log(params)
+            //
+            //         return cloudformation.describeStacks(params, (err, data) => {
+            //             if (err) {
+            //                 console.log(err, err.stack)
+            //                 return err
+            //             }
+            //             return data
+            //         })
+            //     })
+            // }
+            //
+            // let landscapesDetails = []
+            //
+            // return Landscape.find().exec((err, landscapes) => {
+            //
+            //     if (err) return err
+            //     return landscapes
+            //
+            // }).then(landscapes => {
+            //
+            //     // instantiate statuses
+            //     landscapes.forEach(landscape => {
+            //         landscape.status = new StatusModel()
+            //     })
+            //
+            //     // create promise array to gather all deployments
+            //     let _promises = landscapes.map(landscape => {
+            //         return new Promise((resolve, reject) => {
+            //             Deployment.find({ landscapeId: landscape._id }).exec((err, deployments) => {
+            //                 if (err) return reject(err)
+            //                 landscape.deployments = deployments
+            //                 resolve(landscape)
+            //             })
+            //         })
+            //     })
+            //
+            //     return Promise.all(_promises)
+            //
+            // }).then(landscapes => {
+            //
+            //     // return landscapes
+            //
+            //     landscapesDetails = landscapes
+            //
+            //     // count deleted/purged/failed landscapes
+            //     landscapes.forEach(ls => {
+            //         ls.deployments.forEach(deployment => {
+            //             if (deployment && deployment.isDeleted) {
+            //                 ls.status.deleted++
+            //             } else if (deployment && deployment.awsErrors) {
+            //                 ls.status.failed++
+            //             }
+            //         })
+            //     })
+            //
+            //     // gather statuses for running/pending landscapes
+            //     let _promises = []
+            //
+            //     let _promiseAll = landscapes.map((landscape, x) => {
+            //         if (landscape.deployments.length) {
+            //             _promises[x] = landscape.deployments.map(stack => {
+            //                 if (!stack.isDeleted && !stack.awsErrors) {
+            //                     return describeStacks(stack.stackName, stack.location, stack.accountName)
+            //                 }
+            //                 return []
+            //             })
+            //             return Promise.all(_promises[x])
+            //         }
+            //         return []
+            //     })
+            //
+            //     return Promise.all(_promiseAll)
+            //
+            // }).then(landscapesStatus => {
+
+                // console.log('landscapesStatus', landscapesStatus)
+
+                // landscapesStatus.forEach(ls => console.log(ls))
+
+                // // flatten deployments in landscapesStatus
+                // landscapesStatus = landscapesStatus.map(stack => {
+                //     return _.compact(stack.map(deployment => {
+                //             return deployment[0]
+                //     }))
+                // })
+                //
+                // // loop through each deployment and increment the running/pending statuses
+                // landscapesStatus.forEach((ls, index) => {
+                //     ls.forEach(deployment => {
+                //
+                //         if (runningStatus.indexOf(deployment.StackStatus) > -1) {
+                //             vm.landscapes[index].status.running++
+                //         } else if (pendingStatus.indexOf(deployment.StackStatus) > -1) {
+                //             vm.landscapes[index].status.pending++
+                //
+                //             // derive the index of the pending deployment and poll AWS until its resolved
+                //             let _pendingIndex = _.findIndex(landscapesDetails[index], { stackName: deployment.StackName })
+                //             let _pendingDeployment = landscapesDetails[index][_pendingIndex]
+                //             poll(index, 5000, _pendingDeployment.stackName, _pendingDeployment.location, _pendingDeployment.accountName)
+                //         }
+                //     })
+                // })
+
+            //
+            // }).catch(err => {
+            //     console.log(err)
+            // })
+
+        },
         landscapeById(root, args, context) {
-            console.log('root, args, context', root, args, context)
             return Landscape.findById(args.id).exec((err, landscape) => {
                 if (err) return err
                 return landscape
             })
         },
         // TODO: should be with landscapeId
-        deploymentsByLandscapeId(root, args, context) {
-            console.log('root, args, context', root, args, context)
-            return Deployment.find({ landscapeId: args.landscapeId }).sort('-created').exec((err, deployments) => {
-                if (err) return err
-                return deployments
-            })
-        },
-        accounts() {
-            console.log('accounts invoked')
+        // deploymentsByLandscapeId(root, args, context) {
+        //     console.log('root, args, context', root, args, context)
+        //     return Deployment.find({ landscapeId: args.landscapeId }).exec((err, deployments) => {
+        //         if (err) return err
+        //         return deployments
+        //     })
+        // },
+        accounts(root, args, context) {
             return Account.find().sort('-created').exec((err, accounts) => {
                 if (err) return err
                 return accounts
             })
         },
-        groups() {
+        groups(root, args, context) {
             return Group.find().sort('-created').populate('user', 'displayName').exec((err, groups) => {
-                console.log('groups ---', groups)
                 if (err) return err
                 return groups
             })
         },
-        users() {
+        users(root, args, context) {
             return User.find().sort('-created').populate('user', 'displayName').exec((err, groups) => {
-                console.log('users ---', groups)
                 if (err) return err
                 return groups
             })
@@ -235,6 +422,53 @@ const resolveFunctions = {
                     console.log(' ---> Account deleted: ', doc)
                     return doc
                 }
+            })
+        },
+        deploymentStatus(_, { deployment }) {
+            console.log('deployment', deployment)
+            return {
+                stackStatus: 'running'
+            }
+
+            // count deleted/purged/failed landscapes
+            // landscapes.forEach(ls => {
+            //     ls.deployments.forEach(deployment => {
+            //         if (deployment && deployment.isDeleted) {
+            //             ls.status.deleted++
+            //         } else if (deployment && deployment.awsErrors) {
+            //             ls.status.failed++
+            //         }
+            //     })
+            // })
+            //
+            // // gather statuses for running/pending landscapes
+            // let _promises = []
+            //
+            // let _promiseAll = landscapes.map((landscape, x) => {
+            //     if (landscape.deployments.length) {
+            //         _promises[x] = landscape.deployments.map(stack => {
+            //             if (!stack.isDeleted && !stack.awsErrors) {
+            //                 return describeStacks(stack.stackName, stack.location, stack.accountName)
+            //             }
+            //             return []
+            //         })
+            //         return Promise.all(_promises[x])
+            //     }
+            //     return []
+            // })
+
+
+
+
+            // return Deployment.find({ landscapeId: landscapeId }).exec((err, deployments) => {
+            //     if (err) return err
+            //     return deployments
+            // })
+        },
+        deploymentsByLandscapeId(_, { landscapeId }) {
+            return Deployment.find({ landscapeId: landscapeId }).exec((err, deployments) => {
+                if (err) return err
+                return deployments
             })
         },
         createDeployment(_, { deployment }) {
@@ -495,7 +729,7 @@ const resolveFunctions = {
                     Account.findOne({ name: deployment.accountName }, (err, account) => {
                         if (err) {
                             console.log(err)
-                            throw err
+                            return err
                         }
 
                         cloudformation.config.update({
@@ -520,7 +754,7 @@ const resolveFunctions = {
                     return cloudformation.deleteStack(params, (err, data) => {
                         if (err) {
                             console.log(err, err.stack)
-                            throw err
+                            return err
                         }
                         return data
                     })
@@ -535,7 +769,7 @@ const resolveFunctions = {
                     })
                 }).catch(err => {
                     console.log('ERROR:', err)
-                    throw err
+                    return err
                 })
             }
         }
