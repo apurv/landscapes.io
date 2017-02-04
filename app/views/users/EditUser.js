@@ -1,6 +1,7 @@
 import cx from 'classnames'
 import React, { Component, PropTypes } from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
+import Dropzone from 'react-dropzone'
 
 import { Checkbox, RaisedButton} from 'material-ui'
 import {GridList, GridTile} from 'material-ui/GridList';
@@ -18,6 +19,8 @@ import Slider from 'material-ui/Slider';
 import {RadioButtonGroup, RadioButton} from 'material-ui/RadioButton';
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import FlatButton from 'material-ui/FlatButton';
+import AvatarCropper from "react-avatar-cropper";
+import defaultUserImage from '../../style/empty.png'
 
 import { Loader } from '../../components'
 
@@ -181,6 +184,31 @@ class EditUser extends Component {
                       <TextField style={{width:450}} id="lastName" floatingLabelText="Last Name" value={this.state.lastName} onChange={this.handlesOnLastNameChange} placeholder='Last Name' />
                       </GridTile>
                       <GridTile
+                        key='image'
+                      >
+                      <Dropzone id='imageUri' onDrop={this.handlesImageUpload} multiple={false} accept='image/*'
+                        style={{ marginLeft: '10px', width: '180px', padding: '15px 0px' }}>
+                        <div className="avatar-photo">
+                          <div className="avatar-edit">
+                            <span>Click to Choose Image</span>
+                            <i className="fa fa-camera"></i>
+                          </div>
+                          <img src={this.state.croppedImg || this.state.imageUri || defaultUserImage} style={{width: 200}} />
+                        </div>
+                        {
+                          this.state.cropperOpen &&
+                          <AvatarCropper
+                            onRequestHide={this.handleRequestHide}
+                            cropperOpen={this.state.cropperOpen}
+                            onCrop={this.handleCrop}
+                            image={this.state.img}
+                            width={400}
+                            height={400}
+                          />
+                        }
+                        </Dropzone>
+                    </GridTile>
+                      <GridTile
                         key='role'
                       >
                       <RadioButtonGroup style={{width:450, margin: 5}} name="role" id="role" valueSelected={this.state.role} onChange={this.handleRoleChange}>
@@ -206,7 +234,58 @@ class EditUser extends Component {
             </div>
         )
     }
+    getInitialState = () => {
+        return {
+          cropperOpen: false,
+          img: null,
+          croppedImg: defaultImage
+        };
+      }
+      handleFileChange = (dataURI) => {
+        this.setState({
+          img: dataURI,
+          croppedImg: this.state.croppedImg,
+          cropperOpen: true
+        });
+      }
+      handleCrop = (dataURI) => {
+        this.setState({
+          cropperOpen: false,
+          img: null,
+          croppedImg: dataURI
+        });
+      }
+      handleRequestHide = () =>{
+        this.setState({
+          cropperOpen: false
+        });
+      }
+    handleRequestDelete = () => {
+      alert('You clicked the delete button.');
+    }
 
+    handleTouchTap = () => {
+      alert('You clicked the Chip.');
+    }
+
+    handlesImageUpload = (acceptedFiles, rejectedFiles) => {
+        let reader = new FileReader()
+
+        reader.readAsDataURL(acceptedFiles[0])
+        reader.onload = () => {
+            this.setState({
+                imageUri: reader.result,
+                img: reader.result,
+                croppedImg: this.state.croppedImg,
+                cropperOpen: true,
+                imageFileName: acceptedFiles[0].name
+            })
+        }
+
+        reader.onerror = error => {
+            console.log('Error: ', error)
+        }
+    }
     handleRoleChange = event => {
         event.preventDefault()
         // should add some validator before setState in real use cases
@@ -254,6 +333,7 @@ class EditUser extends Component {
           username: this.state.username,
           email: this.state.email,
           role: this.state.role,
+          imageUri: this.state.croppedImg,
           firstName: this.state.firstName,
           lastName: this.state.lastName
         };

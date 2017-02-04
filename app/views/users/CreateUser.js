@@ -3,6 +3,7 @@ import { Form, Select, Switch, Radio, Upload, Icon, Row, message } from 'antd'
 import { Loader } from '../../components'
 import React, { Component, PropTypes } from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
+import Dropzone from 'react-dropzone'
 
 import { Checkbox, RaisedButton} from 'material-ui'
 import {GridList, GridTile} from 'material-ui/GridList';
@@ -10,6 +11,7 @@ import Subheader from 'material-ui/Subheader';
 import IconButton from 'material-ui/IconButton';
 import StarBorder from 'material-ui/svg-icons/toggle/star-border';
 import Snackbar from 'material-ui/Snackbar';
+import UploadIcon from 'material-ui/svg-icons/file/file-upload'
 
 import {Table, TableBody, TableFooter, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
@@ -20,6 +22,9 @@ import Slider from 'material-ui/Slider';
 import {RadioButtonGroup, RadioButton} from 'material-ui/RadioButton';
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import FlatButton from 'material-ui/FlatButton';
+import AvatarCropper from "react-avatar-cropper";
+import defaultUserImage from '../../style/empty.png'
+
 
 const styles = {
   root: {
@@ -162,6 +167,27 @@ class CreateUser extends Component {
                               <GridTile
                                 key='role'
                               >
+                              <Dropzone id='imageUri' onDrop={this.handlesImageUpload} multiple={false} accept='image/*'
+                                style={{ marginLeft: '10px', width: '180px', padding: '15px 0px' }}>
+                                <div className="avatar-photo">
+                                  <div className="avatar-edit">
+                                    <span>Click to Choose Image</span>
+                                    <i className="fa fa-camera"></i>
+                                  </div>
+                                  <img src={this.state.croppedImg || this.state.imageUri || defaultUserImage} style={{width: 200}} />
+                                </div>
+                                {
+                                  this.state.cropperOpen &&
+                                  <AvatarCropper
+                                    onRequestHide={this.handleRequestHide}
+                                    cropperOpen={this.state.cropperOpen}
+                                    onCrop={this.handleCrop}
+                                    image={this.state.img}
+                                    width={400}
+                                    height={400}
+                                  />
+                                }
+                                </Dropzone>
                               <RadioButtonGroup style={{width:450, margin: 5}} name="role" id="role" valueSelected={this.state.role} onChange={this.handleRoleChange}>
                                     <RadioButton
                                       value="admin"
@@ -182,6 +208,59 @@ class CreateUser extends Component {
                           </div>
                     </div>
             )
+        }
+
+        getInitialState = () => {
+            return {
+              cropperOpen: false,
+              img: null,
+              croppedImg: defaultImage
+            };
+          }
+          handleFileChange = (dataURI) => {
+            this.setState({
+              img: dataURI,
+              croppedImg: this.state.croppedImg,
+              cropperOpen: true
+            });
+          }
+          handleCrop = (dataURI) => {
+            this.setState({
+              cropperOpen: false,
+              img: null,
+              croppedImg: dataURI
+            });
+          }
+          handleRequestHide = () =>{
+            this.setState({
+              cropperOpen: false
+            });
+          }
+        handleRequestDelete = () => {
+          alert('You clicked the delete button.');
+        }
+
+        handleTouchTap = () => {
+          alert('You clicked the Chip.');
+        }
+
+        handlesImageUpload = (acceptedFiles, rejectedFiles) => {
+            let reader = new FileReader()
+
+            reader.readAsDataURL(acceptedFiles[0])
+            reader.onload = () => {
+                this.setState({
+                    imageUri: reader.result,
+                    img: reader.result,
+                    croppedImg: this.state.croppedImg,
+                    cropperOpen: true,
+                    imageFileName: acceptedFiles[0].name
+                })
+            }
+
+            reader.onerror = error => {
+                console.log('Error: ', error)
+            }
         }
 
         handlesUserClick = event => {
@@ -235,7 +314,8 @@ class CreateUser extends Component {
               role: this.state.role,
               password: this.state.password,
               firstName: this.state.firstName,
-              lastName: this.state.lastName
+              lastName: this.state.lastName,
+              imageUri: this.state.croppedImg
             };
             console.log('creating user -', userToCreate)
             console.log('this.props -', this.props)

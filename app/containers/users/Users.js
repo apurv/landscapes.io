@@ -23,6 +23,7 @@ import * as viewsActions from '../../redux/modules/views'
              _id,
              username,
              email,
+             imageUri,
              firstName,
              lastName,
              password,
@@ -40,6 +41,7 @@ import * as viewsActions from '../../redux/modules/views'
                isAdmin,
                userId
              },
+             imageUri,
              description,
              landscapes,
              permissions

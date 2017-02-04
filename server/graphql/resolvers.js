@@ -267,7 +267,7 @@ const resolveFunctions = {
         },
         createUser(_, { user }) {
 
-            console.log(' ---> creating User')
+            console.log(' ---> creating User', user)
             let newUser = new User(user)
 
             newUser.save(err => {

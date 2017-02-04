@@ -1,0 +1,173 @@
+/* Sticky footer styles
+-------------------------------------------------- */
+
+/* Custom page CSS
+-------------------------------------------------- */
+/* Not required for template or sticky footer method. */
+
+.container .text-muted {
+  margin: 20px 0;
+}
+
+.footer > .container {
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+.avatar-photo {
+  position: relative;
+  background-color: #666;
+  height: 300px;
+  width: 300px;
+  overflow: hidden;
+  border-radius: 3px;
+  box-shadow: 0 0 0 6px #fff, 0 0 0 7px #ccc;
+  z-index: 3;
+}
+.avatar-photo img{
+  position: relative;
+  background-color: #666;
+  object-fit: cover;
+  height: 300px;
+  width: 300px;
+  min-width:300px;
+}
+
+.avatar-edit span {
+  -webkit-transition: all 0.3s ease;
+  -moz-transition: all 0.3s ease;
+  -ms-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+  width: 100%;
+  font-size: 16px;
+  font-weight: 900;
+  text-align: center;
+  position: absolute;
+  z-index: 5;
+  bottom: 5px;
+  right: 5px;
+  color: white;
+}
+
+.avatar-photo input[type=file] {
+  position: absolute;
+  top:0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  -moz-opacity:0 ;
+  opacity: 0;
+  z-index: 9;
+}
+
+.avatar-edit {
+  text-align: center;
+}
+.avatar-edit i {
+  text-align: center;
+  -webkit-transition: all 0.3s ease;
+  -moz-transition: all 0.3s ease;
+  -o-transition: all 0.3s ease;
+  -ms-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+  position: absolute;
+  z-index: 5;
+  color:white;
+  top: 24px;
+  right: 24px;
+  font-size: 92px;
+  opacity: 0.2;
+}
+.avatar-photo:hover {
+  cursor: pointer;
+}
+.avatar-photo:hover .avatar-edit i {
+  opacity: 0.8;
+  font-size: 100px;
+}
+
+.m-top {
+  margin-top: 2em;
+}
+
+#demo {
+  background-color: #2196f3;
+  text-align: center;
+  font-size: 40px;
+  text-transform: uppercase;
+  padding: 0.5em;
+  color: whitesmoke;
+  margin:0;
+}
+
+#content {
+  background-color: #2196f3;
+  text-align: center;
+  font-size: 40px;
+  text-transform: uppercase;
+  padding: 0.5em;
+  color: whitesmoke;
+  margin:0;
+}
+
+#usage {
+  background-color: #2196f3;
+  text-align: center;
+  font-size: 40px;
+  text-transform: uppercase;
+  padding: 0.5em;
+  color: whitesmoke;
+  margin:0;
+}
+#installation {
+  background-color: #2196f3;
+  text-align: center;
+  font-size: 40px;
+  text-transform: uppercase;
+  padding: 0.5em;
+  color: whitesmoke;
+  margin:0;
+}
+#contributing {
+  background-color: #2196f3;
+  text-align: center;
+  font-size: 40px;
+  text-transform: uppercase;
+  padding: 0.5em;
+  color: whitesmoke;
+  margin:0;
+}
+
+/*////////////STARS LOL LOOK AT THOSE STYLES!////////////////*/
+
+#title {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  color: #FFF;
+  text-align: center;
+  font-family: "lato", sans-serif;
+  font-weight: 300;
+  font-size: 50px;
+  letter-spacing: 10px;
+  margin-top: -60px;
+  padding-left: 10px;
+}
+#title span {
+  background: -webkit-linear-gradient(white, #38495a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@keyframes animStar {
+  from {
+    transform: translateY(0px);
+  }
+  to {
+    transform: translateY(-2000px);
+  }
+}
