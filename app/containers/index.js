@@ -12,12 +12,12 @@ import ConnectedUsers from './users/Users'
 import ConnectedCreateUser from './users/CreateUser'
 import ConnectedEditUser from './users/EditUser'
 import ConnectedUserDetails from './users/UserDetails'
+import ConnectedProfile from './users/Profile'
 
 import ConnectedGroups from './groups/Groups'
 import ConnectedCreateGroup from './groups/CreateGroup'
 import ConnectedEditGroup from './groups/EditGroup'
 import ConnectedGroupDetails from './groups/GroupDetails'
-import GroupDetails from './groups/GroupDetails'
 
 import ConnectedDeployments from './deployments/Deployments'
 import ConnectedCreateDeployment from './deployments/CreateDeployment'
@@ -59,6 +59,7 @@ export {
     ConnectedCreateUser,
     ConnectedEditUser,
     ConnectedUserDetails,
+    ConnectedProfile,
 
     ConnectedLandscapes,
     ConnectedCreateLandscape,

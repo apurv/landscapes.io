@@ -99,7 +99,8 @@ const Query = `
         landscapes: [Landscape]
         landscapeById(id: String): [Landscape]
         landscapesWithDeploymentStatus: [Landscape]
-        users: [User]
+        users: [User],
+        userById(id: String): [User]
     }
 `
 

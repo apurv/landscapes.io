@@ -16,6 +16,7 @@ import Users            from './users/Users'
 import CreateUser       from './users/CreateUser'
 import EditUser         from './users/EditUser'
 import UserDetails      from './users/UserDetails'
+import Profile          from './users/Profile'
 
 import Groups           from './groups/Groups'
 import CreateGroup      from './groups/CreateGroup'
@@ -47,6 +48,7 @@ export {
     CreateUser,
     EditUser,
     UserDetails,
+    Profile,
 
     Groups,
     CreateGroup,

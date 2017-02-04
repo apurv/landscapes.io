@@ -16,6 +16,7 @@ import {
     ConnectedLogin,
     ConnectedRegister,
     ConnectedPasswordChange,
+    ConnectedProfile,
 
     // protected views
     ConnectedProtected,
@@ -81,6 +82,7 @@ export const Routes = () => {
                         </Route>
                         {/* misc views */}
                         <Route path="/login" component={ConnectedLogin}/>
+                        <Route path="/profile" component={ConnectedProfile}/>
                         <Route path="/register" component={ConnectedRegister}/> {/* logout: just redirects to home (App will take care of removing the token) */}
                         <Route path="/logout" onEnter={logOutUser}/> {/* protected views */}
                         <Route path="/protected" component={ConnectedProtected} onEnter={requireAuth}/> {/* page not found */}

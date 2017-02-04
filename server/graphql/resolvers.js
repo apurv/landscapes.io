@@ -244,6 +244,12 @@ const resolveFunctions = {
                 if (err) return err
                 return groups
             })
+        },
+        userById(root, args, context) {
+            return User.find().sort('-created').populate('user', 'displayName').exec((err, groups) => {
+                if (err) return err
+                return groups
+            })
         }
     },
     Mutation: {
