@@ -15,6 +15,7 @@ import {Tabs, Tab} from 'material-ui/Tabs';
 import TextField from 'material-ui/TextField';
 import Slider from 'material-ui/Slider';
 import {RadioButtonGroup, RadioButton} from 'material-ui/RadioButton';
+import Toggle from 'material-ui/Toggle';
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import FlatButton from 'material-ui/FlatButton';
 import Dropzone from 'react-dropzone'
@@ -25,7 +26,7 @@ import defaultUserImage from '../../style/empty.png'
 import defaultImage from '../../style/empty-group.png'
 import AvatarCropper from "react-avatar-cropper";
 import ReactDom from "react-dom";
-
+import {sortBy} from "lodash";
 
 import {Loader} from '../../components'
 
@@ -104,7 +105,11 @@ class EditGroup extends Component {
                 }
             }
         }
-        this.setState({users: users})
+        var usersSorted = [];
+        if(users){
+          usersSorted = sortBy(users, ['lastName']);
+          this.setState({users: usersSorted})
+        }
         this.setState({currentGroup: currentGroup})
         this.setState({landscapes: landscapes})
         let selectedLandscapeRows = []
@@ -123,9 +128,12 @@ class EditGroup extends Component {
         }
         if (currentGroup.users) {
             for (var i = 0; i < currentGroup.users.length; i++) {
-                users.find((user, index) => {
+                usersSorted.find((user, index) => {
                     if (currentGroup.users[i].userId === user._id) {
                         user.selected = true;
+                        if(currentGroup.users[i].isAdmin){
+                          user.isAdmin = true;
+                        }
                         selectedUserRows.push(index)
                     }
                 })
@@ -134,7 +142,7 @@ class EditGroup extends Component {
         let stateUsers = []
 
         if (users) {
-            users.map(user => {
+            usersSorted.map(user => {
                 if (!user.imageUri) {
                     user.imageUri = defaultUserImage
                 }
@@ -187,7 +195,11 @@ class EditGroup extends Component {
             }
 
         }
-        this.setState({users: users})
+        var usersSorted = [];
+        if(users){
+          usersSorted = sortBy(users, ['lastName']);
+          this.setState({users: usersSorted})
+        }
         this.setState({currentGroup: currentGroup})
         this.setState({landscapes: landscapes})
         let selectedLandscapeRows = []
@@ -207,9 +219,12 @@ class EditGroup extends Component {
         }
         if (currentGroup.users) {
             for (var i = 0; i < currentGroup.users.length; i++) {
-                users.find((user, index) => {
+                usersSorted.find((user, index) => {
                     if (currentGroup.users[i].userId === user._id) {
                         user.selected = true;
+                        if(currentGroup.users[i].isAdmin){
+                          user.isAdmin = true;
+                        }
                         selectedUserRows.push(index)
                     }
                     if (!user.imageUri) {
@@ -220,7 +235,7 @@ class EditGroup extends Component {
         }
         let stateUsers = []
         if (users) {
-            users.map(user => {
+            usersSorted.map(user => {
                 if (!user.imageUri) {
                     user.imageUri = defaultUserImage
                 }
@@ -367,7 +382,7 @@ class EditGroup extends Component {
                                         this.handleRequestDelete(row, index)
                                       }} >
                                       <Avatar src={this.state.stateUsers[row].imageUri}/>
-                                      {row} {this.state.stateUsers[row].firstName} {this.state.stateUsers[row].lastName}
+                                       {this.state.stateUsers[row].firstName} {this.state.stateUsers[row].lastName}
                                     </Chip>
                                 ))
                               }
@@ -376,9 +391,9 @@ class EditGroup extends Component {
                                 <TableHeader displaySelectAll={this.state.showCheckboxes} adjustForCheckbox={this.state.showCheckboxes} enableSelectAll={this.state.enableSelectAll}>
                                     <TableRow>
                                         <TableHeaderColumn tooltip="Image"></TableHeaderColumn>
+                                          <TableHeaderColumn tooltip="Name">Name</TableHeaderColumn>
                                         <TableHeaderColumn tooltip="Email">Email</TableHeaderColumn>
-                                        <TableHeaderColumn tooltip="Name">Name</TableHeaderColumn>
-                                        <TableHeaderColumn tooltip="Role">Role</TableHeaderColumn>
+                                        <TableHeaderColumn tooltip="Role">Admin?</TableHeaderColumn>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody displayRowCheckbox={this.state.showCheckboxes} deselectOnClickaway={false} showRowHover={this.state.showRowHover} stripedRows={false}>
@@ -386,9 +401,14 @@ class EditGroup extends Component {
                                       this.state.stateUsers.map((row, index) => (
                                           <TableRow key={row._id} selected={this.state.selectedUserRows.indexOf(index) !== -1}>
                                               <TableRowColumn><img src={row.imageUri} style={{width: 40, borderRadius: 50}}/></TableRowColumn>
+                                              <TableRowColumn>{row.lastName}, {row.firstName} </TableRowColumn>
                                               <TableRowColumn>{row.email}</TableRowColumn>
-                                              <TableRowColumn>{row.firstName} {row.lastName}</TableRowColumn>
-                                              <TableRowColumn>{row.role}</TableRowColumn>
+                                              <TableRowColumn>
+                                                <Toggle toggled={row.isAdmin} onToggle={() => (
+                                                    this.state.stateUsers[index].isAdmin = !this.state.stateUsers[index].isAdmin,
+                                                    this.setState({stateUsers: [...this.state.stateUsers]})
+                                                  )} />
+                                              </TableRowColumn>
                                           </TableRow>
                                       ))
                                     }
@@ -425,6 +445,10 @@ class EditGroup extends Component {
             </div>
 
         )
+    }
+
+    handleOnToggle = (event) => {
+        console.log('event --- ', event)
     }
 
     getInitialState = () => {
@@ -569,7 +593,7 @@ class EditGroup extends Component {
             for (var i = 0; i < this.state.selectedUserRows.length; i++) {
                 groupToCreate.users.push({
                     userId: this.state.users[this.state.selectedUserRows[i]]._id,
-                    isAdmin: false
+                    isAdmin: this.state.users[this.state.selectedUserRows[i]].isAdmin
                 })
             }
         }
