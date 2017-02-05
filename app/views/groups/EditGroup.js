@@ -76,6 +76,8 @@ class EditGroup extends Component {
 
         fixedHeader: true,
         fixedFooter: true,
+        successOpen: false,
+        failOpen: false,
         stripedRows: true,
         showRowHover: true,
         selectable: true,
@@ -106,24 +108,31 @@ class EditGroup extends Component {
             }
         }
         var usersSorted = [];
+        var landscapesSorted = [];
         if(users){
           usersSorted = sortBy(users, ['lastName']);
           this.setState({users: usersSorted})
+        }
+        if(landscapes){
+          landscapesSorted = sortBy(landscapes, ['name']);
+          this.setState({landscapes: landscapesSorted})
         }
         this.setState({currentGroup: currentGroup})
         this.setState({landscapes: landscapes})
         let selectedLandscapeRows = []
         let selectedUserRows = []
+        let stateLandscapes = []
         if (currentGroup.landscapes) {
             for (var i = 0; i < currentGroup.landscapes.length; i++) {
-                landscapes.find((ls, index) => {
+                landscapesSorted.find((ls, index) => {
                     if (currentGroup.landscapes[i] === ls._id) {
                         ls.selected = true;
                         selectedLandscapeRows.push(index)
                     }
+                    stateLandscapes.push(ls)
                 })
             }
-            this.setState({landscapes: landscapes})
+            this.setState({landscapes: stateLandscapes})
 
         }
         if (currentGroup.users) {
@@ -174,7 +183,7 @@ class EditGroup extends Component {
                 }
             })
         }
-        this.setState({stateLandscapes: this.state.landscapes || [], stateUsers})
+        this.setState({stateLandscapes, stateUsers})
     }
 
     componentWillReceiveProps(nextProps) {
@@ -196,26 +205,31 @@ class EditGroup extends Component {
 
         }
         var usersSorted = [];
+        var landscapesSorted = [];
         if(users){
           usersSorted = sortBy(users, ['lastName']);
           this.setState({users: usersSorted})
+        }
+        if(landscapes){
+          landscapesSorted = sortBy(landscapes, ['name']);
+          this.setState({landscapes: landscapesSorted})
         }
         this.setState({currentGroup: currentGroup})
         this.setState({landscapes: landscapes})
         let selectedLandscapeRows = []
         let selectedUserRows = []
         let userImageUsers = []
+        let stateLandscapes = []
         if (currentGroup.landscapes) {
             for (var i = 0; i < currentGroup.landscapes.length; i++) {
-                landscapes.find((ls, index) => {
+                landscapesSorted.find((ls, index) => {
                     if (currentGroup.landscapes[i] === ls._id) {
                         ls.selected = true;
                         selectedLandscapeRows.push(index)
                     }
+                    stateLandscapes.push(ls)
                 })
             }
-            this.setState({landscapes: landscapes})
-
         }
         if (currentGroup.users) {
             for (var i = 0; i < currentGroup.users.length; i++) {
@@ -267,7 +281,7 @@ class EditGroup extends Component {
                 }
             })
         }
-        this.setState({stateLandscapes: this.state.landscapes || [], stateUsers})
+        this.setState({stateLandscapes, stateUsers})
     }
 
     componentDidMount() {
@@ -312,6 +326,18 @@ class EditGroup extends Component {
                     justifyContent: 'space-between'
                 }}>
                     <h4>Edit Group</h4><br/>
+                      <Snackbar
+                        open={this.state.successOpen}
+                        message="Group successfully saved."
+                        autoHideDuration={3000}
+                        onRequestClose={this.handleRequestClose}
+                      />
+                      <Snackbar
+                        open={this.state.failOpen}
+                        message="Error saving group."
+                        autoHideDuration={3000}
+                        onRequestClose={this.handleRequestClose}
+                      />
                     <RaisedButton primary={true} label="Save" onClick={this.handlesCreateClick}/>
                 </Row>
                 <Row center='xs' middle='xs' className={cx({'animatedViews': animated, 'view-enter': viewEntersAnim})}>
@@ -378,16 +404,14 @@ class EditGroup extends Component {
                             <div style={styles.wrapper}>
                                 {
                                   this.state.selectedUserRows.map((row, index) => (
-                                    <Chip style = {styles.chip} key={index} onRequestDelete={() => {
-                                        this.handleRequestDelete(row, index)
-                                      }} >
+                                    <Chip style = {styles.chip} key={index} >
                                       <Avatar src={this.state.stateUsers[row].imageUri}/>
                                        {this.state.stateUsers[row].firstName} {this.state.stateUsers[row].lastName}
                                     </Chip>
                                 ))
                               }
                             </div>
-                            <Table height={this.state.height} fixedHeader={this.state.fixedHeader} fixedFooter={this.state.fixedFooter} selectable={this.state.selectable} multiSelectable={this.state.multiSelectable} onRowSelection={this.handleOnRowSelectionUsers}>
+                            <Table key="userTable" height={this.state.height} fixedHeader={this.state.fixedHeader} fixedFooter={this.state.fixedFooter} selectable={this.state.selectable} multiSelectable={this.state.multiSelectable} onRowSelection={this.handleOnRowSelectionUsers}>
                                 <TableHeader displaySelectAll={this.state.showCheckboxes} adjustForCheckbox={this.state.showCheckboxes} enableSelectAll={this.state.enableSelectAll}>
                                     <TableRow>
                                         <TableHeaderColumn tooltip="Image"></TableHeaderColumn>
@@ -418,7 +442,17 @@ class EditGroup extends Component {
 
                         </Tab>
                         <Tab label="Landscapes" key="3">
-                            <Table height={this.state.height} fixedHeader={this.state.fixedHeader} fixedFooter={this.state.fixedFooter} selectable={this.state.selectable} multiSelectable={this.state.multiSelectable} onRowSelection={this.handleOnRowSelectionLandscapes}>
+                          <div style={styles.wrapper}>
+                              {
+                                this.state.selectedLandscapeRows.map((row, index) => (
+                                  <Chip style = {styles.chip} key={index} >
+                                    <Avatar src={this.state.stateLandscapes[row].imageUri}/>
+                                     {this.state.stateLandscapes[row].name}
+                                  </Chip>
+                              ))
+                            }
+                          </div>
+                            <Table key="landscapeTable" height={this.state.height} fixedHeader={this.state.fixedHeader} fixedFooter={this.state.fixedFooter} selectable={this.state.selectable} multiSelectable={this.state.multiSelectable} onRowSelection={this.handleOnRowSelectionLandscapes}>
                                 <TableHeader displaySelectAll={this.state.showCheckboxes} adjustForCheckbox={this.state.showCheckboxes} enableSelectAll={this.state.enableSelectAll}>
                                     <TableRow>
                                         <TableHeaderColumn tooltip="Image"></TableHeaderColumn>
@@ -428,7 +462,7 @@ class EditGroup extends Component {
                                 </TableHeader>
                                 <TableBody displayRowCheckbox={this.state.showCheckboxes} deselectOnClickaway={false} showRowHover={this.state.showRowHover} stripedRows={false}>
                                     {this.state.stateLandscapes.map((row, index) => (
-                                        <TableRow key={row._id} selected={row.selected}>
+                                        <TableRow key={row._id} selected={this.state.selectedLandscapeRows.indexOf(index) !== -1}>
                                             <TableRowColumn><img src={row.imageUri} style={{
                                             width: 50
                                         }}/></TableRowColumn>
@@ -445,10 +479,6 @@ class EditGroup extends Component {
             </div>
 
         )
-    }
-
-    handleOnToggle = (event) => {
-        console.log('event --- ', event)
     }
 
     getInitialState = () => {
@@ -585,7 +615,7 @@ class EditGroup extends Component {
         if (this.state.selectedLandscapeRows) {
             console.log('theres landscapes');
             for (var i = 0; i < this.state.selectedLandscapeRows.length; i++) {
-                groupToCreate.landscapes.push(this.state.landscapes[this.state.selectedLandscapeRows[i]]._id)
+                groupToCreate.landscapes.push(this.state.stateLandscapes[this.state.selectedLandscapeRows[i]]._id)
             }
         }
         if (this.state.selectedUserRows) {
@@ -593,7 +623,7 @@ class EditGroup extends Component {
             for (var i = 0; i < this.state.selectedUserRows.length; i++) {
                 groupToCreate.users.push({
                     userId: this.state.users[this.state.selectedUserRows[i]]._id,
-                    isAdmin: this.state.users[this.state.selectedUserRows[i]].isAdmin
+                    isAdmin: this.state.users[this.state.selectedUserRows[i]].isAdmin || false
                 })
             }
         }

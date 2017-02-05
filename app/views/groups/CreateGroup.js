@@ -9,6 +9,7 @@ import Subheader from 'material-ui/Subheader';
 import IconButton from 'material-ui/IconButton';
 import StarBorder from 'material-ui/svg-icons/toggle/star-border';
 import Snackbar from 'material-ui/Snackbar';
+import Toggle from 'material-ui/Toggle';
 import { Table, TableBody, TableFooter, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table';
 import { Card, CardActions, CardHeader, CardMedia, CardTitle, CardText } from 'material-ui/Card';
 import {Tabs, Tab} from 'material-ui/Tabs';
@@ -25,6 +26,7 @@ import defaultUserImage from '../../style/empty.png'
 import defaultImage from '../../style/empty-group.png'
 import AvatarCropper from "react-avatar-cropper";
 import ReactDom from "react-dom";
+import {sortBy} from "lodash";
 
 import {Loader} from '../../components'
 
@@ -67,6 +69,8 @@ class CreateGroup extends Component {
 
           fixedHeader: true,
           fixedFooter: true,
+          successOpen: false,
+          failOpen: false,
           stripedRows: true,
           showRowHover: true,
           selectable: true,
@@ -74,11 +78,9 @@ class CreateGroup extends Component {
           enableSelectAll: true,
           deselectOnClickaway: true,
           showCheckboxes: true,
-          successOpen: false,
-          failOpen: false,
-          height:'300'
+          height: '300'
     }
-    
+
     componentDidMount() {
         const { enterGroups } = this.props
         enterGroups()
@@ -88,9 +90,55 @@ class CreateGroup extends Component {
         return shallowCompare(this, nextProps, nextState)
     }
     componentWillMount(){
+      const { loading, groups, landscapes, users } = this.props
+
+      var stateUsers = []
+      if(users){
+        var usersSorted = sortBy(users, ['lastName']);
+        usersSorted.map(user => {
+          if(!user.imageUri){
+            user.imageUri = defaultUserImage
+          }
+          stateUsers.push(user)
+        })
+      }
+      this.setState({stateUsers: stateUsers || []})
+
+      if(landscapes){
+        console.log('landscapes', landscapes)
+        var landscapeIds = landscapes.map((index, landscape) =>{
+          return {key: landscape._id, id: landscape._id, name: landscape.name, description: landscape.description}
+        })
+      }
+      this.setState({stateLandscapes: landscapes || []})
+      this.setState({selectedLandscapeRows: []})
+      this.setState({selectedUserRows: []})
       this.setState({imageUri: defaultImage})
     }
     componentWillReceiveProps(nextProps){
+      const { loading, groups, landscapes, users } = nextProps
+
+      var stateUsers = []
+      if(users){
+        var usersSorted = sortBy(users, ['lastName']);
+        usersSorted.map(user => {
+          if(!user.imageUri){
+            user.imageUri = defaultUserImage
+          }
+          stateUsers.push(user)
+        })
+      }
+      this.setState({stateUsers: stateUsers || []})
+
+      if(landscapes){
+        console.log('landscapes', landscapes)
+        var landscapeIds = landscapes.map((index, landscape) =>{
+          return {key: landscape._id, id: landscape._id, name: landscape.name, description: landscape.description}
+        })
+      }
+      this.setState({stateLandscapes: landscapes || []})
+      this.setState({selectedLandscapeRows: []})
+      this.setState({selectedUserRows: []})
       this.setState({imageUri: defaultImage})
     }
 
@@ -105,22 +153,6 @@ class CreateGroup extends Component {
         const { animated, viewEntersAnim } = this.state
         const { loading, groups, landscapes, users } = this.props
 
-        var stateUsers = []
-        if(users){
-          users.map(user => {
-            if(!user.imageUri){
-              user.imageUri = defaultUserImage
-            }
-            stateUsers.push(user)
-          })
-        }
-
-        if(landscapes){
-          console.log('landscapes', landscapes)
-          var landscapeIds = landscapes.map((index, landscape) =>{
-            return {key: landscape._id, id: landscape._id, name: landscape.name, description: landscape.description}
-          })
-        }
 
         if (loading) {
             return (
@@ -136,10 +168,21 @@ class CreateGroup extends Component {
                   justifyContent: 'space-between'
               }}>
                   <h4>Edit Group</h4><br/>
+                    <Snackbar
+                      open={this.state.successOpen}
+                      message="Group successfully saved."
+                      autoHideDuration={3000}
+                      onRequestClose={this.handleRequestClose}
+                    />
+                    <Snackbar
+                      open={this.state.failOpen}
+                      message="Error saving group."
+                      autoHideDuration={3000}
+                      onRequestClose={this.handleRequestClose}
+                    />
                   <RaisedButton primary={true} label="Save" onClick={this.handlesCreateClick}/>
               </Row>
               <Row center='xs' middle='xs' className={cx({'animatedViews': animated, 'view-enter': viewEntersAnim})}>
-                  {console.log('stateUsers', stateUsers)}
                   <Snackbar open={this.state.successOpen} message="Group successfully updated." autoHideDuration={3000} onRequestClose={this.handleRequestClose}/>
                   <Snackbar open={this.state.failOpen} message="Error updating group" autoHideDuration={3000} onRequestClose={this.handleRequestClose}/>
                   <Tabs>
@@ -200,10 +243,10 @@ class CreateGroup extends Component {
                       <Tab label="Users" key="2">
                           <div style={styles.wrapper}>
                               {
-                                stateUsers.map((row, index) => {
+                                this.state.stateUsers.map((row, index) => {
                                   < Chip
                                   style = { styles.chip } onRequestDelete = {this.handleRequestDelete} >
-                                  <Avatar src={stateUsers.imageUri}/>
+                                  <Avatar src={row.imageUri}/>
                                   {row.firstName}
                                   {row.lastName}
                                   < /Chip>
@@ -214,55 +257,86 @@ class CreateGroup extends Component {
                               <TableHeader displaySelectAll={this.state.showCheckboxes} adjustForCheckbox={this.state.showCheckboxes} enableSelectAll={this.state.enableSelectAll}>
                                   <TableRow>
                                       <TableHeaderColumn tooltip="Image"></TableHeaderColumn>
+                                        <TableHeaderColumn tooltip="Name">Name</TableHeaderColumn>
                                       <TableHeaderColumn tooltip="Email">Email</TableHeaderColumn>
-                                      <TableHeaderColumn tooltip="Name">Name</TableHeaderColumn>
-                                      <TableHeaderColumn tooltip="Role">Role</TableHeaderColumn>
+                                      <TableHeaderColumn tooltip="Role">Admin?</TableHeaderColumn>
                                   </TableRow>
                               </TableHeader>
                               <TableBody displayRowCheckbox={this.state.showCheckboxes} deselectOnClickaway={false} showRowHover={this.state.showRowHover} stripedRows={false}>
-                                  {stateUsers.map((row, index) => (
-                                      <TableRow key={row._id} selected={row.selected}>
-                                          <TableRowColumn><img src={row.imageUri} style={{
-                                          width: 40,
-                                          borderRadius: 50
-                                      }}/></TableRowColumn>
-                                          <TableRowColumn>{row.email}</TableRowColumn>
-                                          <TableRowColumn>{row.firstName} {row.lastName}</TableRowColumn>
-                                          <TableRowColumn>{row.role}</TableRowColumn>
-                                      </TableRow>
-                                  ))}
+                                  {
+                                    this.state.stateUsers.map((row, index) => (
+                                        <TableRow key={row._id} selected={this.state.selectedUserRows.indexOf(index) !== -1}>
+                                            <TableRowColumn><img src={row.imageUri} style={{width: 40, borderRadius: 50}}/></TableRowColumn>
+                                            <TableRowColumn>{row.lastName}, {row.firstName} </TableRowColumn>
+                                            <TableRowColumn>{row.email}</TableRowColumn>
+                                            <TableRowColumn>
+                                              <Toggle toggled={row.isAdmin} onToggle={() => (
+                                                  this.state.stateUsers[index].isAdmin = !this.state.stateUsers[index].isAdmin,
+                                                  this.setState({stateUsers: [...this.state.stateUsers]})
+                                                )} />
+                                            </TableRowColumn>
+                                        </TableRow>
+                                    ))
+                                  }
                               </TableBody>
                               <TableFooter adjustForCheckbox={this.state.showCheckboxes}></TableFooter>
                           </Table>
 
                       </Tab>
                       <Tab label="Landscapes" key="3">
-                          <Table height={this.state.height} fixedHeader={this.state.fixedHeader} fixedFooter={this.state.fixedFooter} selectable={this.state.selectable} multiSelectable={this.state.multiSelectable} onRowSelection={this.handleOnRowSelectionLandscapes}>
-                              <TableHeader displaySelectAll={this.state.showCheckboxes} adjustForCheckbox={this.state.showCheckboxes} enableSelectAll={this.state.enableSelectAll}>
-                                  <TableRow>
-                                      <TableHeaderColumn tooltip="Image"></TableHeaderColumn>
-                                      <TableHeaderColumn tooltip="Name">Name</TableHeaderColumn>
-                                      <TableHeaderColumn tooltip="Description">Description</TableHeaderColumn>
-                                  </TableRow>
-                              </TableHeader>
-                              <TableBody displayRowCheckbox={this.state.showCheckboxes} deselectOnClickaway={false} showRowHover={this.state.showRowHover} stripedRows={false}>
-                                  {landscapes.map((row, index) => (
-                                      <TableRow key={row._id} selected={row.selected}>
-                                          <TableRowColumn><img src={row.imageUri} style={{
-                                          width: 50
-                                      }}/></TableRowColumn>
-                                          <TableRowColumn>{row.name}</TableRowColumn>
-                                          <TableRowColumn>{row.description}</TableRowColumn>
-                                      </TableRow>
-                                  ))}
-                              </TableBody>
-                              <TableFooter adjustForCheckbox={this.state.showCheckboxes}></TableFooter>
-                          </Table>
+                        <Table height={this.state.height} fixedHeader={this.state.fixedHeader} fixedFooter={this.state.fixedFooter} selectable={this.state.selectable} multiSelectable={this.state.multiSelectable} onRowSelection={this.handleOnRowSelectionLandscapes}>
+                            <TableHeader displaySelectAll={this.state.showCheckboxes} adjustForCheckbox={this.state.showCheckboxes} enableSelectAll={this.state.enableSelectAll}>
+                                <TableRow>
+                                    <TableHeaderColumn tooltip="Image"></TableHeaderColumn>
+                                    <TableHeaderColumn tooltip="Name">Name</TableHeaderColumn>
+                                    <TableHeaderColumn tooltip="Description">Description</TableHeaderColumn>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody displayRowCheckbox={this.state.showCheckboxes} deselectOnClickaway={false} showRowHover={this.state.showRowHover} stripedRows={false}>
+                                {this.state.stateLandscapes.map((row, index) => (
+                                    <TableRow key={row._id} selected={row.selected}>
+                                        <TableRowColumn><img src={row.imageUri} style={{
+                                        width: 50
+                                    }}/></TableRowColumn>
+                                        <TableRowColumn>{row.name}</TableRowColumn>
+                                        <TableRowColumn>{row.description}</TableRowColumn>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                            <TableFooter adjustForCheckbox={this.state.showCheckboxes}></TableFooter>
+                        </Table>
                       </Tab>
                   </Tabs>
               </Row>
           </div>
         )
+    }
+
+    handleOnRowSelectionUsers = selectedRows => {
+        console.log(selectedRows)
+        this.setState({selectedUserRows: selectedRows})
+    }
+
+    handleOnRowSelectionLandscapes = selectedRows => {
+        console.log(selectedRows)
+        this.setState({selectedLandscapeRows: selectedRows})
+    }
+
+    handleRequestDelete = (row, index) => {
+      console.log('this.state.selectedUserRows before', this.state.selectedUserRows)
+      console.log('this.state.selectedUserRows index', index)
+      console.log('this.state.selectedUserRows index', row)
+      var userSelected = this.state.selectedUserRows.splice(index, 1)
+      console.log('this.state.selectedUserRows spliced', userSelected)
+      this.state.stateUsers[userSelected[0]].selected = false;
+      this.setState({stateUsers: [...this.state.stateUsers]})
+      this.setState({selectedUserRows: [...this.state.selectedUserRows]})
+      console.log('this.state.selectedUserRows after', this.state.selectedUserRows)
+      this.render()
+    }
+
+    handleTouchTap = () => {
+      alert('You clicked the Chip.');
     }
 
     getInitialState = () => {
@@ -291,13 +365,6 @@ class CreateGroup extends Component {
           cropperOpen: false
         });
       }
-    handleRequestDelete = () => {
-      alert('You clicked the delete button.');
-    }
-
-    handleTouchTap = () => {
-      alert('You clicked the Chip.');
-    }
 
     handlesImageUpload = (acceptedFiles, rejectedFiles) => {
         let reader = new FileReader()
@@ -412,13 +479,21 @@ class CreateGroup extends Component {
         groupToCreate.users = []
         // groupToCreate.landscapes = this.state.selectedRows;
         console.log('this.state.selectedRows', this.state.selectedRows)
-        if(this.state.selectedRows){
-          groupToCreate.landscapes = this.state.selectedRows.map((row, i) =>{
-            return row._id
-          });
+        groupToCreate.landscapes = []
+        if (this.state.selectedLandscapeRows) {
+            console.log('theres landscapes');
+            for (var i = 0; i < this.state.selectedLandscapeRows.length; i++) {
+                groupToCreate.landscapes.push(this.state.stateLandscapes[this.state.selectedLandscapeRows[i]]._id)
+            }
         }
-        else{
-          groupToCreate.landscapes = []
+        if (this.state.selectedUserRows) {
+            console.log('theres landscapes');
+            for (var i = 0; i < this.state.selectedUserRows.length; i++) {
+                groupToCreate.users.push({
+                    userId: this.state.stateUsers[this.state.selectedUserRows[i]]._id,
+                    isAdmin: this.state.stateUsers[this.state.selectedUserRows[i]].isAdmin || false
+                })
+            }
         }
         groupToCreate.imageUri = this.state.croppedImg
 
@@ -428,12 +503,9 @@ class CreateGroup extends Component {
             variables: { group: groupToCreate }
          }).then(({ data }) => {
             console.log('got data', data)
-            message.config({
-              top: 5,
-              duration: 5,
-            });
-
-            message.success('Group was successfully created.');
+            this.setState({
+              successOpen: true
+            })
             // router.push({ pathname: '/groups' })
         }).then(() =>{
             this.props.refetchGroups({}).then(({ data }) =>{
@@ -441,9 +513,15 @@ class CreateGroup extends Component {
               router.push({ pathname: '/groups' })
             }).catch((error) => {
                 console.log('there was an error sending the SECOND query', error)
+                this.setState({
+                  failOpen: true
+                })
             })
         }).catch((error) => {
             console.log('there was an error sending the query', error)
+            this.setState({
+              failOpen: true
+            })
         })
 
     }
