@@ -1,5 +1,4 @@
 import cx from 'classnames'
-import { Form, Select, Switch, Radio, Upload, Icon, Row, message } from 'antd'
 import { Loader } from '../../components'
 import React, { Component, PropTypes } from 'react'
 import shallowCompare from 'react-addons-shallow-compare'

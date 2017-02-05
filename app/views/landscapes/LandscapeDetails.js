@@ -25,6 +25,13 @@ class LandscapeDetails extends Component {
             variables: { landscapeId: params.id }
         }).then(({ data }) => {
             return Promise.all(data.deploymentsByLandscapeId.map(deployment => {
+                if (deployment.isDeleted || deployment.awsErrors) {
+                    return {
+                        data: {
+                            deploymentStatus: deployment
+                        }
+                    }
+                }
                 return deploymentStatus({
                     variables: { deployment }
                 })
@@ -57,6 +64,8 @@ class LandscapeDetails extends Component {
 
         let _landscapes = refetchedLandscapes || landscapes
         let currentLandscape = activeLandscape
+        let runningStatus = ['CREATE_COMPLETE', 'ROLLBACK_COMPLETE', 'ROLLBACK_COMPLETE', 'DELETE_COMPLETE', 'UPDATE_COMPLETE', 'UPDATE_ROLLBACK_COMPLETE']
+        let pendingStatus = ['CREATE_IN_PROGRESS', 'ROLLBACK_IN_PROGRESS', 'DELETE_IN_PROGRESS', 'UPDATE_IN_PROGRESS', 'UPDATE_COMPLETE_CLEANUP_IN_PROGRESS', 'UPDATE_ROLLBACK_IN_PROGRESS', 'UPDATE_ROLLBACK_COMPLETE_CLEANUP_IN_PROGRESS', 'REVIEW_IN_PROGRESS']
 
         // for direct request
         if (activeLandscape && activeLandscape._id !== params.id)
@@ -140,6 +149,20 @@ class LandscapeDetails extends Component {
                         </CardHeader>
                         {
                             currentDeployments.map((deployment, index) => {
+
+                                let _color
+                                if (deployment && deployment.isDeleted) {
+                                    _color = 'rgb(204, 204, 204)'
+                                } else if (deployment && deployment.awsErrors) {
+                                    _color = 'rgb(236, 11, 67)'
+                                } else {
+                                    if (deployment && runningStatus.indexOf(deployment.stackStatus) > -1) {
+                                        _color = 'rgb(50, 205, 50)'
+                                    } else {
+                                        _color = 'rgb(255, 231, 77)'
+                                    }
+                                }
+
                                 return (
                                     <Card key={index} style={{ padding: '5px 15px' }}>
                                         <CardHeader actAsExpander={true} showExpandableButton={true} style={{ padding: '0px 15px' }}>
@@ -147,7 +170,9 @@ class LandscapeDetails extends Component {
                                                 <Col xs={2}>{deployment.stackName}</Col>
                                                 <Col xs={2}>{deployment.location}</Col>
                                                 <Col xs={2}>{moment(deployment.createdAt).format('MMM DD YYYY')}</Col>
-                                                <Col xs={4} style={{ color: 'limegreen' }}>{deployment.stackStatus}</Col>
+                                                <Col xs={4} style={{ color: _color }}>
+                                                    {deployment.isDeleted ? 'DELETED' : deployment.stackStatus}
+                                                </Col>
                                                 <Col xs={2}>
                                                     <FlatButton label={deployment.isDeleted ? 'Purge' : 'Delete'} icon={<IoAndroidClose/>} labelStyle={{ fontSize: '11px' }}
                                                         onTouchTap={this.handlesDialogToggle.bind(this, deployment)}/>

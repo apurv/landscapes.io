@@ -68,6 +68,7 @@ export const Routes = () => {
                         {/* deployment views */}
                         <Route path="/:landscapeId/deployments" component={ConnectedDeployments} onEnter={requireAuth}/>
                         <Route path="/:landscapeId/deployments/create" component={ConnectedCreateDeployment} onEnter={requireAuth}/>
+                        <Route path="/landscape/:landscapeId/deployments/create" component={ConnectedCreateDeployment} onEnter={requireAuth}/>
                         {/* user views */}
                         <Route path="/users" component={ConnectedUsers} onEnter={requireAuth}/>
                         <Route path="/users/create" component={ConnectedCreateUser} onEnter={requireAuth}/>

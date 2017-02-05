@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react'
+import { Link } from 'react-router'
 import Humburger from './humburger/Humburger'
 import LeftNav from './leftNav/LeftNav'
 import RightNav from './rightNav/RightNav'
@@ -9,9 +10,11 @@ const NavigationBar = ({ brand, navModel, handleLeftNavItemClick, handleRightNav
             <div className='containersCustom'>
                 <div className='navbar-header'>
                     {< Humburger />}
-                    <a className='navbar-brand'>
-                        { brand }
-                    </a>
+                    <div className='navbar-brand'>
+                        <Link to={'/landscapes'}>
+                            { brand }
+                        </Link>
+                    </div>
                 </div>
                 <div className='collapse navbar-collapse' id='bs-example-navbar-collapse-1'>
                     <ul className='nav navbar-nav'>

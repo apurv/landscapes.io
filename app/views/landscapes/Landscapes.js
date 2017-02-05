@@ -109,7 +109,7 @@ class Landscapes extends Component {
                 // flatten deployments in landscapesStatus
                 landscapesStatus = landscapesStatus.map(stack => {
                     return compact(stack.map(dep => {
-                        return (dep && dep.Stacks.length) ? dep.Stacks[0] : {}
+                        return (dep && dep.Stacks) ? dep.Stacks[0] : {}
                     }))
                 })
 
@@ -211,8 +211,8 @@ class Landscapes extends Component {
                                     <Col xs={4}>
                                         <FlatButton id='landscape-edit' onTouchTap={this.handlesEditLandscapeClick.bind(this, landscape)}
                                             label='Edit' labelStyle={{ fontSize: '10px' }} icon={<IoEdit/>}/>
-                                        {/* <FlatButton id='landscape-deploy' onTouchTap={this.handlesDeployClick.bind(this, landscape)}
-                                            label='Deploy' labelStyle={{ fontSize: '10px' }} icon={<IoIosCloudUploadOutline/>}/> */}
+                                        <FlatButton id='landscape-deploy' onTouchTap={this.handlesDeployClick.bind(this, landscape)}
+                                            label='Deploy' labelStyle={{ fontSize: '10px' }} icon={<IoIosCloudUploadOutline/>}/>
                                     </Col>
                                 </Row>
 

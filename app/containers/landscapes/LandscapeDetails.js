@@ -50,7 +50,9 @@ const DeploymentStatusMutation = gql `
             stackStatus,
             stackName,
             location,
-            createdAt
+            createdAt,
+            isDeleted,
+            awsErrors
         }
     }
 `

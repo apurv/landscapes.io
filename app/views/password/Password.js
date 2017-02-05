@@ -11,13 +11,9 @@ import RaisedButton from 'material-ui/RaisedButton';
 import { Link } from 'react-router'
 import React, { Component, PropTypes } from 'react'
 import shallowCompare from 'react-addons-shallow-compare'
-const FormItem = Form.Item
-import { Radio } from 'antd';
-const RadioButton = Radio.Button;
-const RadioGroup = Radio.Group;
-
 import { auth } from '../../services/auth'
 
+const FormItem = Form.Item
 
 class Password extends Component {
     state = {
