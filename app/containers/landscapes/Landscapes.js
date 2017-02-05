@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { graphql, compose } from 'react-apollo'
 import { bindActionCreators } from 'redux'
 import * as viewsActions from '../../redux/modules/views'
+import * as landscapesActions from '../../redux/modules/landscapes'
 
 /* -----------------------------------------
   GraphQL - Apollo client
@@ -131,10 +132,11 @@ const mapStateToProps = state => {
     return { currentView: state.views.currentView }
 }
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
     return bindActionCreators({
         enterLandscapes: viewsActions.enterLandscapes,
-        leaveLandscapes: viewsActions.leaveLandscapes
+        leaveLandscapes: viewsActions.leaveLandscapes,
+        setActiveLandscape: landscapesActions.setActiveLandscape
     }, dispatch)
 }
 

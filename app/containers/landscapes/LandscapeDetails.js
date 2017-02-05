@@ -27,36 +27,11 @@ const LandscapeQuery = gql `
  // img,
  // createdBy
 
-const DeploymentByLandscapeIdQuery = gql `
-    query getDeploymentsByLandscapeId($landscapeId: String) {
-        deploymentsByLandscapeId(landscapeId: $landscapeId) {
-            _id,
-            createdAt,
-            stackName,
-            accountName,
-            landscapeId,
-            isDeleted,
-            description,
-            location,
-            billingCode,
-            flavor,
-            cloudFormationTemplate,
-            cloudFormationParameters,
-            tags,
-            notes,
-            stackId,
-            stackStatus,
-            stackLastUpdate,
-            awsErrors
-        }
-    }
- `
-
-// 1- add queries:
 const LandscapesWithQuery = graphql(LandscapeQuery, {
-    props: ({ data: { loading, landscapes } }) => ({
-        landscapes,
-        loading
+    props: ({ data: { loading, refetch, landscapes } }) => ({
+        loading,
+        refetch,
+        landscapes
     })
 })
 
@@ -104,7 +79,10 @@ const composedRequest = compose(
   Redux
  ------------------------------------------*/
 const mapStateToProps = state => {
-    return { currentView: state.views.currentView }
+    return {
+        currentView: state.views.currentView,
+        activeLandscape: state.landscapes.activeLandscape
+    }
 }
 
 const mapDispatchToProps = dispatch => {

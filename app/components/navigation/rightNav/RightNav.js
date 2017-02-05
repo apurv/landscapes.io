@@ -57,7 +57,7 @@ class RightNav extends Component {
                     />
                     <IconMenu
                         open={this.state.userMenu}
-                        iconButtonElement={<span></span>}
+                        iconButtonElement={<IconButton style={{ display: 'none' }}></IconButton>}
                         onRequestChange={this.handleOnRequestChange}
                         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                         targetOrigin={{ horizontal: 'right', vertical: 'bottom' }}
@@ -83,8 +83,7 @@ class RightNav extends Component {
                     </IconMenu>
                     </div>
                     :
-                        <div>
-                        </div>
+                        null
                 }
             </Row>
         )

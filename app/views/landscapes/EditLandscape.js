@@ -62,7 +62,7 @@ class EditLandscape extends Component {
                     </Row>
                     <Paper zDepth={1} rounded={false}>
 
-                        <TextField id='name' ref='name' defaultValue={currentLandscape.name} floatingLabelText='Name' className={cx( { 'two-field-row': true } )}/>
+                        <TextField id='name' ref='name' defaultValue={currentLandscape.name} maxLength={64} floatingLabelText='Name' className={cx( { 'two-field-row': true } )}/>
                         <TextField id='version' ref='version' defaultValue={currentLandscape.version} floatingLabelText='Version' className={cx( { 'two-field-row': true } )}/>
 
                         <TextField id='description' ref='description' defaultValue={currentLandscape.description} multiLine={true} rows={4}

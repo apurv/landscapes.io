@@ -10,6 +10,16 @@
     src: url('./fonts/Nunito-SemiBold.ttf') format('truetype');
 }
 
+@font-face {
+    font-family: 'Nunito Light';
+    src: url('./fonts/Nunito-Light.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Nunito Extralight';
+    src: url('./fonts/Nunito-ExtraLight.ttf') format('truetype');
+}
+
 a:focus, a:hover {
     text-decoration: none;
 }

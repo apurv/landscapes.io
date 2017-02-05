@@ -27,6 +27,9 @@ import { printSchema } from 'graphql/utilities/schemaPrinter'
 import { SubscriptionServer } from 'subscriptions-transport-ws'
 import { graphqlExpress, graphiqlExpress } from 'graphql-server-express'
 
+import { describe } from '../../routes/deployments'
+import { deploymentsByLandscapeId } from '../../routes/landscapes'
+
 import logger from './logger'
 import config from '../config'
 import schema from '../../graphql/schema'
@@ -112,6 +115,8 @@ module.exports.initMiddleware = app => {
     let upload = multer({ dest: 'uploads/' })
 
     // TODO: Move to its own folder
+    app.get('/api/deployments/describe/:stackName/:region/:accountName', describe)
+    app.get('/api/landscapes/:landscapeId/deployments', deploymentsByLandscapeId)
     app.post('/api/upload/template', upload.single('file'), (req, res) => {
 
         let user = req.user || {

@@ -20,7 +20,6 @@ class LandscapeDetails extends Component {
     componentWillMount() {
         let self = this
         const { deploymentsByLandscapeId, params } = this.props
-
         deploymentsByLandscapeId({
             variables: { landscapeId: params.id }
         }).then(({ data }) => {
@@ -45,10 +44,18 @@ class LandscapeDetails extends Component {
     }
 
     render() {
-        const { animated, viewEntersAnim, currentDeployment, currentDeployments, deleteType } = this.state
-        const { loading, landscapes, deploymentsByLandscapeId, params } = this.props
+        console.log('%c props ', 'background: #1c1c1c; color: deeppink', this.props)
+        console.log('%c state ', 'background: #1c1c1c; color: yellow', this.state)
+        const { activeLandscape, loading, landscapes, deploymentsByLandscapeId, params } = this.props
+        const { animated, viewEntersAnim, currentDeployment, currentDeployments, deleteType, refetchedLandscapes } = this.state
 
-        const currentLandscape = landscapes.find(ls => { return ls._id === params.id })
+        let _landscapes = refetchedLandscapes || landscapes
+        let currentLandscape = activeLandscape
+
+        // for direct request
+        if (activeLandscape && activeLandscape._id !== params.id)
+            currentLandscape = _landscapes.find(ls => { return ls._id === params.id })
+
         const parsedCFTemplate = JSON.parse(currentLandscape.cloudFormationTemplate)
 
         let paramDetails = []
@@ -95,7 +102,7 @@ class LandscapeDetails extends Component {
             <div className={cx({ 'animatedViews': animated, 'view-enter': viewEntersAnim })}>
                 <Row middle='xs'>
                     <Col xs={4} style={{ textAlign: 'left' }}>
-                        <h4>Landscape Details - {currentLandscape.name}</h4>
+                        <h4>Landscape: {currentLandscape.name}</h4>
                     </Col>
                     <Col xs={8}>
                         <RaisedButton label='Deploy' onClick={this.handlesDeployClick}
@@ -151,9 +158,8 @@ class LandscapeDetails extends Component {
                     </Tab>
 
                     <Tab label='Template'>
-                        <textarea rows={100} style={{ background: '#f9f9f9', fontFamily: 'monospace', width: '100%' }}>
-                            { currentLandscape.cloudFormationTemplate }
-                        </textarea>
+                        <textarea rows={100} value={currentLandscape.cloudFormationTemplate} readOnly={true}
+                            style={{ background: '#f9f9f9', fontFamily: 'monospace', width: '100%' }}/>
                     </Tab>
 
                     <Tab label='Resources'>
@@ -241,9 +247,10 @@ class LandscapeDetails extends Component {
 
     handlesDeleteDeploymentClick = (deployment, event) => {
         event.preventDefault()
-
-        const { mutate, params } = this.props
+        const self = this
+        const { deploymentsByLandscapeId, mutate, params, refetch } = this.props
         const { router } = this.context
+        let landscapes = []
 
         this.handlesDialogToggle(deployment)
 
@@ -251,8 +258,19 @@ class LandscapeDetails extends Component {
             variables: { deployment }
          }).then(({ data }) => {
             console.log('deleted', data)
+            return refetch()
+         }).then(({ data }) => {
+             landscapes = data.landscapes
+             return deploymentsByLandscapeId({
+                 variables: { landscapeId: params.id }
+             })
+        }).then(({ data }) => {
+            self.setState({
+                landscapes,
+                currentDeployments: data.deploymentsByLandscapeId.filter(d => { return d.landscapeId === params.id })
+            })
             router.push({ pathname: `/landscape/${params.id}` })
-        }).catch((error) => {
+        }).catch(error => {
             console.log('there was an error sending the query', error)
         })
     }

@@ -76,7 +76,7 @@ class CreateLandscape extends Component {
                     </Row>
                     <Paper zDepth={1} rounded={false}>
 
-                        <TextField id='name' ref='name' floatingLabelText='Name' className={cx( { 'two-field-row': true } )}/>
+                        <TextField id='name' ref='name' floatingLabelText='Name' maxLength={64} className={cx( { 'two-field-row': true } )}/>
                         <TextField id='version' ref='version' floatingLabelText='Version' className={cx( { 'two-field-row': true } )}/>
 
                         <TextField id='description' ref='description' multiLine={true} rows={4} floatingLabelText='Description'

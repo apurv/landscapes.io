@@ -136,7 +136,7 @@ class CreateDeployment extends Component {
                                         {
                                             Object.keys(templateParameters || {}).map((param, index) => {
                                                 return (
-                                                    <Row bottom='xs' style={{ height: 72 }}>
+                                                    <Row key={index} bottom='xs' style={{ height: 72 }}>
                                                         <label style={{ marginBottom: '12px' }}>{param}</label>
                                                     </Row>
                                                 )
@@ -147,7 +147,7 @@ class CreateDeployment extends Component {
                                         {
                                             Object.keys(templateParameters || {}).map((param, index) => {
                                                 return (
-                                                    <Row bottom='xs' style={{ height: 72 }}>
+                                                    <Row key={index} bottom='xs' style={{ height: 72 }}>
                                                         <TextField id={'_p'+param} ref={'_p'+param} fullWidth={true} defaultValue={templateParameters[param].Default}
                                                             hintText={templateParameters[param].Description} hintStyle={{ opacity: 1, fontSize: '10px', bottom: '-20px', textAlign: 'left' }}/>
                                                     </Row>

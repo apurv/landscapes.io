@@ -7,6 +7,10 @@ const dateFormat = 'DD/MM/YYYY HH:mm'
 // non protected views:
 const ENTER_HOME_VIEW = 'ENTER_HOME_VIEW'
 const LEAVE_HOME_VIEW = 'LEAVE_HOME_VIEW'
+
+// protected views:
+const ENTER_PROTECTED_VIEW = 'ENTER_PROTECTED_VIEW'
+const LEAVE_PROTECTED_VIEW = 'LEAVE_PROTECTED_VIEW'
 const ENTER_LANDSCAPES_VIEW = 'ENTER_LANDSCAPES_VIEW'
 const LEAVE_LANDSCAPES_VIEW = 'LEAVE_LANDSCAPES_VIEW'
 const ENTER_USERS_VIEW = 'ENTER_USERS_VIEW'
@@ -22,19 +26,15 @@ const LEAVE_REGISTER_VIEW = 'LEAVE_REGISTER_VIEW'
 const ENTER_PASSWORD_CHANGE_VIEW = 'ENTER_PASSWORD_CHANGE_VIEW'
 const LEAVE_PASSWORD_CHANGE_VIEW = 'LEAVE_PASSWORD_CHANGE_VIEW'
 
-// protected views:
-const ENTER_PROTECTED_VIEW = 'ENTER_PROTECTED_VIEW'
-const LEAVE_PROTECTED_VIEW = 'LEAVE_PROTECTED_VIEW'
-
-/* -----------------------------------------
-  Reducer
- ------------------------------------------*/
 const initialState = {
     currentView: 'not set',
     enterTime: null,
     leaveTime: null
 }
 
+/* -----------------------------------------
+reducers
+------------------------------------------*/
 export default (state = initialState, action) => {
     const currentTime = moment().format(dateFormat)
 
@@ -125,7 +125,7 @@ export default (state = initialState, action) => {
 }
 
 /* -----------------------------------------
-  Reducer
+  action creators
  ------------------------------------------*/
 export function enterHome() {
     return {
