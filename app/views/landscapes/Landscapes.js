@@ -39,8 +39,6 @@ class Landscapes extends Component {
             this.deleted = 0
         }
 
-        console.log('%c _viewLandscapes ', 'background: #1c1c1c; color: yellow', _viewLandscapes)
-
         /////////// STATUS ////////////
         // if (_viewLandscapes.length > 1 && 'status' in _viewLandscapes[0]) {
         if (_viewLandscapes.length) {
@@ -68,8 +66,6 @@ class Landscapes extends Component {
 
                 landscapesDetails = landscapes
 
-                console.log('%c landscapes ', 'background: #1c1c1c; color: rgb(209, 29, 238)', landscapes)
-
                 // count deleted/purged/failed landscapes
                 landscapes.forEach((landscape, i) => {
                     landscape.forEach(deployment => {
@@ -87,7 +83,6 @@ class Landscapes extends Component {
                 let _promiseAll = landscapes.map((landscape, x) => {
                     if (landscape.length) {
                         _promises[x] = landscape.map(stack => {
-                            console.log('%c stack ', 'background: #1c1c1c; color: limegreen', stack)
                             if (!stack.isDeleted && !stack.awsErrors) {
                                 return new Promise((resolve, reject) => {
                                     axios.get(`http://localhost:8080/api/deployments/describe/${stack.stackName}/${stack.location}/${stack.accountName}`)
@@ -114,7 +109,7 @@ class Landscapes extends Component {
                 // flatten deployments in landscapesStatus
                 landscapesStatus = landscapesStatus.map(stack => {
                     return compact(stack.map(dep => {
-                        return dep ? dep.Stacks[0] : {}
+                        return (dep && dep.Stacks.length) ? dep.Stacks[0] : {}
                     }))
                 })
 

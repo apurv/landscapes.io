@@ -1,4 +1,4 @@
-
+import moment from 'moment'
 import cx from 'classnames'
 import { Loader } from '../../components'
 import React, { Component, PropTypes } from 'react'
@@ -19,12 +19,19 @@ class LandscapeDetails extends Component {
 
     componentWillMount() {
         let self = this
-        const { deploymentsByLandscapeId, params } = this.props
+        const { deploymentsByLandscapeId, deploymentStatus, params } = this.props
+
         deploymentsByLandscapeId({
             variables: { landscapeId: params.id }
         }).then(({ data }) => {
+            return Promise.all(data.deploymentsByLandscapeId.map(deployment => {
+                return deploymentStatus({
+                    variables: { deployment }
+                })
+            }))
+        }).then(deploymentStatusArray => {
             self.setState({
-                currentDeployments: data.deploymentsByLandscapeId.filter(d => { return d.landscapeId === params.id })
+                currentDeployments: deploymentStatusArray.map(({ data }) => { return data.deploymentStatus })
             })
         })
     }
@@ -44,8 +51,7 @@ class LandscapeDetails extends Component {
     }
 
     render() {
-        console.log('%c props ', 'background: #1c1c1c; color: deeppink', this.props)
-        console.log('%c state ', 'background: #1c1c1c; color: yellow', this.state)
+
         const { activeLandscape, loading, landscapes, deploymentsByLandscapeId, params } = this.props
         const { animated, viewEntersAnim, currentDeployment, currentDeployments, deleteType, refetchedLandscapes } = this.state
 
@@ -115,8 +121,8 @@ class LandscapeDetails extends Component {
                 </Row>
                 <Tabs>
                     <Tab label='Deployments'>
-                        <CardHeader style={{ background: '#e6e6e6' }}>
-                            <Row between='xs'>
+                        <CardHeader style={{ background: '#e6e6e6', padding: '0 25px' }}>
+                            <Row between='xs' style={{ marginTop: '-10px' }}>
                                 <Col xs={2}><label>Deployment Name</label></Col>
                                 <Col xs={2}><label>Region</label></Col>
                                 <Col xs={2}><label>Date Created</label></Col>
@@ -135,13 +141,13 @@ class LandscapeDetails extends Component {
                         {
                             currentDeployments.map((deployment, index) => {
                                 return (
-                                    <Card key={index}>
-                                        <CardHeader actAsExpander={true} showExpandableButton={true}>
-                                            <Row between='xs'>
+                                    <Card key={index} style={{ padding: '5px 15px' }}>
+                                        <CardHeader actAsExpander={true} showExpandableButton={true} style={{ padding: '0px 15px' }}>
+                                            <Row middle='xs' between='xs' style={{ marginTop: '-15px' }}>
                                                 <Col xs={2}>{deployment.stackName}</Col>
                                                 <Col xs={2}>{deployment.location}</Col>
-                                                <Col xs={2}>{deployment.createdAt}</Col>
-                                                <Col xs={4}></Col>
+                                                <Col xs={2}>{moment(deployment.createdAt).format('MMM DD YYYY')}</Col>
+                                                <Col xs={4} style={{ color: 'limegreen' }}>{deployment.stackStatus}</Col>
                                                 <Col xs={2}>
                                                     <FlatButton label={deployment.isDeleted ? 'Purge' : 'Delete'} icon={<IoAndroidClose/>} labelStyle={{ fontSize: '11px' }}
                                                         onTouchTap={this.handlesDialogToggle.bind(this, deployment)}/>

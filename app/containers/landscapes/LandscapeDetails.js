@@ -35,10 +35,22 @@ const LandscapesWithQuery = graphql(LandscapeQuery, {
     })
 })
 
-const deleteDeploymentMutation = gql `
+const DeleteDeploymentMutation = gql `
     mutation deleteDeployment($deployment: DeploymentInput!) {
         deleteDeployment(deployment: $deployment) {
             stackName
+        }
+    }
+`
+
+const DeploymentStatusMutation = gql `
+    mutation getDeploymentStatus($deployment: DeploymentInput!) {
+        deploymentStatus(deployment: $deployment) {
+            _id,
+            stackStatus,
+            stackName,
+            location,
+            createdAt
         }
     }
 `
@@ -70,7 +82,8 @@ const DeploymentByLandscapeIdMutation = gql `
 
 const composedRequest = compose(
     LandscapesWithQuery,
-    graphql(deleteDeploymentMutation),
+    graphql(DeleteDeploymentMutation),
+    graphql(DeploymentStatusMutation, { name: 'deploymentStatus' }),
     graphql(DeploymentByLandscapeIdMutation, { name: 'deploymentsByLandscapeId' })
 )(LandscapeDetails)
 

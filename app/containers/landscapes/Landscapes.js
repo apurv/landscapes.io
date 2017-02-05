@@ -81,15 +81,6 @@ const DeploymentByLandscapeIdMutation = gql `
     }
 `
 
-const DeploymentStatusMutation = gql `
-    mutation getDeploymentsStatus($deployment: DeploymentInput!) {
-        deploymentStatus(deployment: $deployment) {
-            _id,
-            stackStatus
-        }
-    }
-`
-
 const LandscapesWithQuery = graphql(LandscapeQuery, {
     props: ({ data: { loading, landscapes } }) => ({
         loading,
@@ -113,14 +104,12 @@ const GroupsWithQuery = graphql(GroupQuery, {
 })
 
 const DeploymentsWithMutation = graphql(DeploymentByLandscapeIdMutation, { name: 'deploymentsByLandscapeId' })
-const DeploymentStatusWithMutation = graphql(DeploymentStatusMutation, { name: 'deploymentStatus' })
 
 const composedRequest = compose(
     LandscapesWithQuery,
     UsersWithQuery,
     GroupsWithQuery,
-    DeploymentsWithMutation,
-    DeploymentStatusWithMutation
+    DeploymentsWithMutation
 )(Landscapes)
 
 
