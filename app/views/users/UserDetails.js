@@ -63,6 +63,12 @@ class UserDetails extends Component {
                   if(!group.imageUri){
                     group.imageUri = defaultGroupImage
                   }
+                  if(user.isAdmin){
+                    group.isGroupAdmin = 'Admin'
+                  }
+                  else{
+                    group.isGroupAdmin = ''
+                  }
                   userGroups.push(group)
                 }
               })
@@ -92,6 +98,12 @@ class UserDetails extends Component {
                 if(user.userId === params.id){
                   if(!group.imageUri){
                     group.imageUri = defaultGroupImage
+                  }
+                  if(user.isAdmin){
+                    group.isGroupAdmin = 'Admin'
+                  }
+                  else{
+                    group.isGroupAdmin = ''
                   }
                   userGroups.push(group)
                 }
@@ -172,6 +184,7 @@ class UserDetails extends Component {
                                     <TableHeaderColumn tooltip="Image"></TableHeaderColumn>
                                     <TableHeaderColumn tooltip="Name">Name</TableHeaderColumn>
                                     <TableHeaderColumn tooltip="Description">Description</TableHeaderColumn>
+                                    <TableHeaderColumn tooltip="GroupAdmin">Admin?</TableHeaderColumn>
                                     <TableHeaderColumn tooltip="Button"></TableHeaderColumn>
                                   </TableRow>
                                 </TableHeader>
@@ -182,6 +195,7 @@ class UserDetails extends Component {
                                     <TableRowColumn><img src={row.imageUri} style={{width: 40, borderRadius: 50}} /></TableRowColumn>
                                       <TableRowColumn>{row.name}</TableRowColumn>
                                       <TableRowColumn>{row.description}</TableRowColumn>
+                                      <TableRowColumn>{row.isGroupAdmin}</TableRowColumn>
                                       <TableRowColumn><FlatButton onClick={() => { this.handleOnClick(row._id) }} label="View"/></TableRowColumn>
                                     </TableRow>
                                     ))}

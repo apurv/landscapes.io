@@ -241,6 +241,16 @@ class CreateGroup extends Component {
                           </div>
                       </Tab>
                       <Tab label="Users" key="2">
+                        <div style={styles.wrapper}>
+                            {
+                              this.state.selectedUserRows.map((row, index) => (
+                                <Chip style = {styles.chip} key={index} >
+                                  <Avatar src={this.state.stateUsers[row].imageUri}/>
+                                   {this.state.stateUsers[row].firstName} {this.state.stateUsers[row].lastName}
+                                </Chip>
+                            ))
+                          }
+                        </div>
                           <div style={styles.wrapper}>
                               {
                                 this.state.stateUsers.map((row, index) => {
@@ -284,6 +294,16 @@ class CreateGroup extends Component {
 
                       </Tab>
                       <Tab label="Landscapes" key="3">
+                        <div style={styles.wrapper}>
+                            {
+                              this.state.selectedLandscapeRows.map((row, index) => (
+                                <Chip style = {styles.chip} key={index} >
+                                  <Avatar src={this.state.stateLandscapes[row].imageUri}/>
+                                   {this.state.stateLandscapes[row].name}
+                                </Chip>
+                            ))
+                          }
+                        </div>
                         <Table height={this.state.height} fixedHeader={this.state.fixedHeader} fixedFooter={this.state.fixedFooter} selectable={this.state.selectable} multiSelectable={this.state.multiSelectable} onRowSelection={this.handleOnRowSelectionLandscapes}>
                             <TableHeader displaySelectAll={this.state.showCheckboxes} adjustForCheckbox={this.state.showCheckboxes} enableSelectAll={this.state.enableSelectAll}>
                                 <TableRow>

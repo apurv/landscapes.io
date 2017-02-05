@@ -132,6 +132,12 @@ class GroupDetails extends Component {
                 if(!user.imageUri){
                   user.imageUri = defaultUserImage
                 }
+                if(currentGroup.users[i].isAdmin){
+                  user.isGroupAdmin = 'Admin'
+                }
+                else{
+                  user.isGroupAdmin = ''
+                }
                 groupUsers.push(user)
               }
             })
@@ -196,6 +202,12 @@ class GroupDetails extends Component {
                 user.selected = true;
                 if(!user.imageUri){
                   user.imageUri = defaultUserImage
+                }
+                if(currentGroup.users[i].isAdmin){
+                  user.isGroupAdmin = 'Admin'
+                }
+                else{
+                  user.isGroupAdmin = ''
                 }
                 groupUsers.push(user)
               }
@@ -299,7 +311,7 @@ class GroupDetails extends Component {
                                   <TableHeaderColumn tooltip="image"></TableHeaderColumn>
                                   <TableHeaderColumn tooltip="Email">Email</TableHeaderColumn>
                                   <TableHeaderColumn tooltip="Name">Name</TableHeaderColumn>
-                                  <TableHeaderColumn tooltip="Role">Role</TableHeaderColumn>
+                                  <TableHeaderColumn tooltip="isGroupAdmin">Admin?</TableHeaderColumn>
                                 </TableRow>
                               </TableHeader>
                               <TableBody displayRowCheckbox={false} deselectOnClickaway={this.state.deselectOnClickaway}
@@ -309,7 +321,7 @@ class GroupDetails extends Component {
                                   <TableRowColumn><img src={row.imageUri} style={{width: 40, borderRadius:50}} /></TableRowColumn>
                                     <TableRowColumn>{row.email}</TableRowColumn>
                                     <TableRowColumn>{row.firstName} {row.lastName}</TableRowColumn>
-                                    <TableRowColumn>{row.role}</TableRowColumn>
+                                    <TableRowColumn>{row.isGroupAdmin}</TableRowColumn>
                                   </TableRow>
                                   ))}
                               </TableBody>
