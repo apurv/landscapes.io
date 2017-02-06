@@ -194,7 +194,6 @@ class EditGroup extends Component {
             currentGroup = groups.find(ls => {
                 return ls._id === params.id
             })
-            console.log('%c currentGroup ', 'background: #1c1c1c; color: rgb(209, 29, 238)', currentGroup)
             this.setState({description: currentGroup.description})
             this.setState({name: currentGroup.name})
             if (currentGroup.imageUri) {
